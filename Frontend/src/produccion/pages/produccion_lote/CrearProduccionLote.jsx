@@ -35,6 +35,14 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 export const CrearProduccionLote = () => {
+
+  function onValidate(e) {
+    var t = e.value;
+    e.value = t.indexOf(".") >= 0 ? t.slice(0, t.indexOf(".") + 3) : t;
+    return e.value
+  }
+
+
   // ESTADO PARA LINEA DE PROGRESO
   const [showLinearProgress, setshowLinearProgress] = useState(false);
 
@@ -1007,6 +1015,8 @@ export const CrearProduccionLote = () => {
                                   onChangeItemDetalle={
                                     handleEditItemRequisicionProduccion
                                   }
+                                  onValidate={onValidate}
+
                                 />
                               );
                             }
@@ -1062,6 +1072,8 @@ export const CrearProduccionLote = () => {
                                   detalle={row}
                                   onDeleteItemRequisicion={handleDeleteItemRequisicionProduccion}
                                   onChangeItemDetalle={handleEditItemRequisicionProduccion}
+                                  onValidate={onValidate}
+
                                 />
                               );
                             }

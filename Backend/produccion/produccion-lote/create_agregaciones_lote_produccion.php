@@ -16,6 +16,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($pdo) {
         // $idAlm = 0;
+
+        $data = checkEntradas($pdo, $detAgrLotProd);
+        if (count($data["noDisponible"]) > 0) {
+            die(json_encode($data));
+        } 
+
         foreach ($detAgrLotProd as $value) {
             // OBTENEMOS LOS DATOS DE LOS DETALLES
             $idProdc = $value["idProdc"]; // lote produccion
@@ -25,6 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $canProdAgr = floatval($value["canProdAgr"]); // cantidad agregada
             $idAre = $value["idAre"]; // area que cargara la cantidad
             $idAlmDes = 0; // almacen destino
+            $fechaInicio = $value["fechaInicio"]; 
+            $fechaFin = $value["fechaFin"]; 
+            $flag = $value["flag"]; 
 
             // primero consultamos la disponibilidad de stock
             // $idAlmacenPrincipal = 1; // almacen principal
@@ -114,14 +123,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $idLastInsert = 0;
                         $sql_insert_detalle_agregacion_lote_produccion =
                             "INSERT INTO produccion_agregacion
-                        (idProdc, idProdt, idAlm, idProdAgrMot, canProdAgr)
-                        VALUES (?, ?, ?, ?, $canProdAgr)";
+                        (idProdc, idProdt, idAlm, idProdAgrMot, canProdAgr, fechaInicio, fechaFin, flag)
+                        VALUES (?, ?, ?, ?, $canProdAgr, ?, ?,?)";
 
                         $stmt_insert_detalle_agregacion_lote_produccion = $pdo->prepare($sql_insert_detalle_agregacion_lote_produccion);
                         $stmt_insert_detalle_agregacion_lote_produccion->bindParam(1, $idProdc, PDO::PARAM_INT);
                         $stmt_insert_detalle_agregacion_lote_produccion->bindParam(2, $idProdt, PDO::PARAM_INT);
                         $stmt_insert_detalle_agregacion_lote_produccion->bindParam(3, $idAlmDes, PDO::PARAM_INT);
                         $stmt_insert_detalle_agregacion_lote_produccion->bindParam(4, $idProdAgrMot, PDO::PARAM_INT);
+                        $stmt_insert_detalle_agregacion_lote_produccion->bindParam(5, $fechaInicio, PDO::PARAM_STR);
+                        $stmt_insert_detalle_agregacion_lote_produccion->bindParam(6, $fechaFin, PDO::PARAM_STR);
+                        $stmt_insert_detalle_agregacion_lote_produccion->bindParam(7, $flag, PDO::PARAM_STR);
                         $stmt_insert_detalle_agregacion_lote_produccion->execute();
 
                         $idLastInsert = $pdo->lastInsertId(); // obtenemos la referencia
@@ -309,4 +321,67 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['description_error'] = $description_error;
     $return['result'] = $result;
     echo json_encode($return);
+}
+
+
+function checkEntradas( $pdo, $detAgrLotProd){
+
+    
+    $messageCustom["noDisponible"] = [];
+
+    foreach ($detAgrLotProd as $value) {
+        // OBTENEMOS LOS DATOS DE LOS DETALLES
+        $idProdc = $value["idProdc"]; // lote produccion
+        $nomProd = $value["nomProd"]; // nombre producto
+        $idProdt = $value["idProdt"]; // producto
+        $idProdAgrMot = $value["idProdAgrMot"]; // motivo de agregacion
+        $canProdAgr = floatval($value["canProdAgr"]); // cantidad agregada
+        $idAre = $value["idAre"]; // area que cargara la cantidad
+        $idAlmDes = 0; // almacen destino
+        $fechaInicio = $value["fechaInicio"]; 
+        $fechaFin = $value["fechaFin"]; 
+        $flag = $value["flag"]; 
+
+        // primero consultamos la disponibilidad de stock
+        // $idAlmacenPrincipal = 1; // almacen principal
+
+        // se aplica las reglas del FIFO
+        // PASO NUMERO 1: CONSULTA DE ENTRADAS DISPONIBLES
+        $idEntStoEst = 1; // ESTADO DISPONIBLE DE LAS ENTRADAS
+        $array_entradas_disponibles = [];
+        $sql_consult_entradas_disponibles =
+            "SELECT
+            es.id,
+            es.codEntSto,
+            es.refNumIngEntSto,
+            DATE(es.fecEntSto) AS fecEntSto,
+            es.canTotDis 
+            FROM entrada_stock AS es
+            WHERE idProd = ? AND idEntStoEst = ? AND canTotDis <> 0.000
+            ORDER BY es.fecEntSto ASC";
+
+        try {
+
+            $stmt_consult_entradas_disponibles = $pdo->prepare($sql_consult_entradas_disponibles);
+            $stmt_consult_entradas_disponibles->bindParam(1, $idProdt, PDO::PARAM_INT);
+            $stmt_consult_entradas_disponibles->bindParam(2, $idEntStoEst, PDO::PARAM_INT);
+            $stmt_consult_entradas_disponibles->execute();
+
+            while ($row = $stmt_consult_entradas_disponibles->fetch(PDO::FETCH_ASSOC)) {
+                array_push($array_entradas_disponibles, $row);
+            }
+
+            if (empty($array_entradas_disponibles)) {
+                array_push($messageCustom["noDisponible"], $value["nomProd"]);
+            }  
+        } catch (PDOException $e) {
+            $message_error = "ERROR INTERNO SERVER: fallo en la consulta de entradas disponibles";
+            $description_error = $e->getMessage();
+            array_push($messageCustom, $description_error);
+
+        }
+
+    }
+    return $messageCustom;
+
 }

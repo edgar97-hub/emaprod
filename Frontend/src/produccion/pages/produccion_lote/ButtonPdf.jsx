@@ -10,6 +10,7 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -91,7 +92,7 @@ export default function ButtonPdf({ id, handleButtonClick }) {
         <MenuItem onClick={() => {
             handleButtonClick(id, "detalleOrden");
           }} disableRipple>
-          <EditIcon />
+          <FormatListBulletedIcon />
           Orden
         </MenuItem>
         <MenuItem
@@ -100,8 +101,8 @@ export default function ButtonPdf({ id, handleButtonClick }) {
           }}
           disableRipple
         >
-          <EditIcon />
-          agregaciones
+          <FormatListBulletedIcon />
+          Agregaciones
         </MenuItem>
       </StyledMenu>
     </div>

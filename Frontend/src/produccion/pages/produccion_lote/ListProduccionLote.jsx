@@ -49,6 +49,8 @@ import iconReturns from "../../../../src/assets/easy_returns.svg";
 import ButtonPdf from "./ButtonPdf";
 import { getProduccionLoteWithAgregacionesById } from "./../../helpers/produccion_lote/getProduccionLoteWithAgregacionesById";
 import config from "../../../config";
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+
 const domain = config.API_URL;
 
 //***********************************************GENERATE PDF ********************************************* */
@@ -1076,6 +1078,8 @@ export const ListProduccionLote = () => {
     obtenerDataProduccionLote();
   }, []);
 
+ 
+
   const handleButtonClick = async (id, show) => {
     console.log("id items: ", id);
     try {
@@ -1754,18 +1758,31 @@ export const ListProduccionLote = () => {
                             </Dialog>
                           </div>
 
+                         
+
+                          <div className="btn-toolbar">
+                            <Link
+                              to={`/produccion/produccion-lote/produccion-agregacion?idLotProdc=${row.id}`}
+                              className="btn btn-primary me-2 btn"
+                            >
+                                <FormatListBulletedIcon />
+                            </Link>
+                          </div>
+
                           <div>
                             <div className="btn-toolbar">
-                              <ButtonPdf
+                             {/**
+                               <ButtonPdf
                                 id={row.id}
                                 handleButtonClick={handleButtonClick}
                               />
-                              {/* <button
+                              */}
+                               <button
                                 onClick={() => {
-                                  handleButtonClick(dataj, row.id);
+                                  handleButtonClick(row.id, "detalleOrden");
                                 }}
-                                className="btn btn-danger me-2"
-                              >
+                                className="btn btn-primary me-2 btn"
+                                >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"
@@ -1776,7 +1793,7 @@ export const ListProduccionLote = () => {
                                 >
                                   <path d="M0 2.5A2.5 2.5 0 0 1 2.5 0h11A2.5 2.5 0 0 1 16 2.5V8h-2V2.5A.5.5 0 0 0 13.5 2h-11a.5.5 0 0 0-.5.5V8H0V2.5zM1 9h14a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1zm2 1v2h10v-2H3zm2 3v2h6v-2H5z" />
                                 </svg>
-                              </button> */}
+                              </button>
                             </div>
                           </div>
 

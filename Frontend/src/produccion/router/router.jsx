@@ -24,4 +24,5 @@ export const RouterProduccion = [
     element: <LayoutModulo />,
     children: RouterFormulaPorProducto,
   },
+   
 ];

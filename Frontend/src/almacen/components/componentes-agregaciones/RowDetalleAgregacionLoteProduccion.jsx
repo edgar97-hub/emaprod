@@ -4,8 +4,11 @@ import TableRow from "@mui/material/TableRow";
 
 export const RowDetalleAgregacionLoteProduccion = ({ detalle, _parseInt }) => {
   return (
-    <TableRow>
+    <TableRow >
+      <TableCell>{detalle.flag}</TableCell>
       <TableCell>{detalle.nomProd}</TableCell>
+      <TableCell>{detalle.fechaInicio}</TableCell>
+      <TableCell>{detalle.fechaFin}</TableCell>
       <TableCell>{detalle.simMed}</TableCell>
       <TableCell>{detalle.nomAlm}</TableCell>
       <TableCell>{detalle.desProdAgrMot}</TableCell>

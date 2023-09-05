@@ -22,7 +22,7 @@ import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 
 
-export default function DetalleProducts({produccionLote, setproduccionLote}) {
+export default function DetalleProducts({produccionLote, setproduccionLote, entradasNoDisponible,setEntradasNoDisponible}) {
 
 
   function _parseInt(str){
@@ -195,14 +195,15 @@ const {
 
       
   // *********** MANEJADOR DE ACCIONES ARREGLO DE PRODUCTOS FINALES O SUBPRODUCTOS **********
+
   const handleAddProductoProduccionLote = async (e) => {
     e.preventDefault();
  
      //console.log(prodDetProdc,idProdFin)
      //return
- 
+     setEntradasNoDisponible([])
     if (productoLoteProduccion.idProdFin !== 0 
-      && (productoLoteProduccion.cantidadDeLote > 0.0 || productoLoteProduccion.cantidadDeProducto > 0)) {
+      && (productoLoteProduccion.cantidadDeProducto > 0)) {
       const itemFound = produccionLote.prodDetProdc.find(
         (element) => element.idProdFin === productoLoteProduccion.idProdFin
       );
@@ -213,21 +214,22 @@ const {
         });
         handleClickFeeback();
       } else {
+
         //console.log("idPRODFIN: ",idProdFin);
         // buscamos su formulación de producto
+
         const resultPeticion = await getFormulaProductoDetalleByProducto(
           productoLoteProduccion.idProdFin
         );
         const { message_error, description_error, result } = resultPeticion;
-
-        //console.log(result);
-          //return
+        console.log(result);
+        //return 
 
 
         if (message_error.length === 0) {
           const { idProdFin, nomProd, simMed, reqDet } = result[0]; // obtenemos la requisicion
           let equivalenteKilogramos = 0;
-          // buscamos la requisicion de materia prima
+          //buscamos la requisicion de materia prima
           //console.log("Complete Element -> ",reqDet);
 
           
@@ -243,13 +245,15 @@ const {
           let cantidadUnidades = 0;
           let cantidadklgLote = 0;
           if (parseFloat(productoLoteProduccion.cantidadDeLote) > 0.00000) {
-            // obtenemos el numero de unidades que podemos obtener (redondeado al entero)
+            //obtenemos el numero de unidades que podemos obtener (redondeado al entero)
             //console.log("OP:: ",parseFloat(productoLoteProduccion.cantidadDeLote),"  /",equivalenteKilogramos);
 
             cantidadUnidades = 
-              parseFloat(productoLoteProduccion.cantidadDeLote) /equivalenteKilogramos;
-           cantidadklgLote = parseFloat(productoLoteProduccion.cantidadDeLote).toFixed(2);
+              parseFloat(productoLoteProduccion.cantidadDeLote) / equivalenteKilogramos;
+            cantidadklgLote = parseFloat(productoLoteProduccion.cantidadDeLote).toFixed(2);
+           
           } else {
+
             // simplemente le asignamos el valor de las unidades requeridas
             cantidadUnidades = Math.round(parseFloat(productoLoteProduccion.cantidadDeProducto));
             cantidadklgLote = parseFloat(
@@ -317,7 +321,7 @@ const {
                 return;
               }
             });
-            console.log(detalleRequisicionesFormula)
+            //console.log(detalleRequisicionesFormula)
             detalleRequisicionesFormula.map((obj)=>{
               obj.canReqProdLot = _parseInt(obj)
             })
@@ -764,6 +768,9 @@ const {
                                     handleEditItemRequisicionProduccion
                                   }
                                   onValidate={onValidate}
+                                  isAggregation={true}
+                                  entradasNoDisponible={entradasNoDisponible} 
+
                                 />
                               );
                             }
@@ -827,6 +834,8 @@ const {
                                   }
                                   onValidate={onValidate}
                                   isAggregation={true}
+                                  entradasNoDisponible={entradasNoDisponible} 
+
                                 />
                               );
                             }
