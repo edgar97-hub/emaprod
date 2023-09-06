@@ -1042,6 +1042,9 @@ export const ListProduccionLote = () => {
   const obtenerDataProduccionLote = async (body = {}) => {
     const resultPeticion = await getProduccionLote(body);
     const { message_error, description_error, result } = resultPeticion;
+    console.log(resultPeticion)
+    //return
+
     if (message_error.length === 0) {
       //console.log(result); // Imprimir los datos en la consola
       setdataProduccionLote(result);

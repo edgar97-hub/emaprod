@@ -91,6 +91,7 @@ const ListEntradaStock = () => {
     // hacer validaciones correpondientes
     const resultPeticion = await getEntradasStock(body);
     const { message_error, description_error, result } = resultPeticion;
+    console.log(result)
     if (message_error.length === 0) {
       setdataEntSto(result);
       setdataEntStoTmp(result);
@@ -469,7 +470,9 @@ const ListEntradaStock = () => {
                     </TableCell>
                     <TableCell align="left" width={160}>
                       <b>Fecha de entrada</b>
-                      <FechaPickerDay onNewfecEntSto={onChangeDate} />
+                     {/**
+                       <FechaPickerDay onNewfecEntSto={onChangeDate} />
+                      */}
                     </TableCell>
                     <TableCell align="left" width={50}>
                       <b>Acciones</b>

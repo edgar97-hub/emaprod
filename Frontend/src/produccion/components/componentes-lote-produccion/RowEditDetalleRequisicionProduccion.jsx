@@ -105,7 +105,9 @@ export const RowEditDetalleRequisicionProduccion = ({
               onDeleteItemRequisicion(detalle.idProd, detalle.indexProdFin);
             }}
             className="btn btn-danger"
-            style={{ ...{ backgroundColor: entradasNoDisponible?.includes(detalle.nomProd) ? "black" : "",}}}
+            style={{ ...{ backgroundColor: entradasNoDisponible?.includes(detalle.nomProd) ? "#BC2503" : "",
+            color: entradasNoDisponible?.includes(detalle.nomProd) ? "black" : "",
+          }}}
 
           >
             <svg

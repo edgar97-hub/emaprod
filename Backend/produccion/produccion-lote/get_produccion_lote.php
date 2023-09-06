@@ -27,6 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $fechaFin = $data["fecProdLotFin"];
             }
         }
+        #die(json_encode($data["fecProdLotFin"]));
 
         $sql =
             "SELECT
