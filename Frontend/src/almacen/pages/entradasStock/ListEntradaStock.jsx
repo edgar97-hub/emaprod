@@ -206,7 +206,7 @@ const ListEntradaStock = () => {
         (data.canTotDis.includes(inputs.disponible) ||
           inputs.disponible.length == 0)
       ) {
-        resultSearch.push({ ...data });
+        resultSearch.push({ ...data });   
       }
     });
     setdataEntStoTmp(resultSearch);
