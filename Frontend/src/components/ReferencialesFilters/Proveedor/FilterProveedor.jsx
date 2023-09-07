@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getProveedores } from "./../../../helpers/Referenciales/proveedor/getProveedores";
 
-export const FilterProveedor = ({ onNewInput }) => {
+export const FilterProveedor = ({ onNewInput, inputs }) => {
   const [result, setResult] = useState([]);
 
   const obtenerDataProveedor = async () => {
@@ -34,6 +34,13 @@ export const FilterProveedor = ({ onNewInput }) => {
         disableClearable
         getOptionLabel={(option) => option.label}
         onChange={handledChange}
+        value={inputs.provedor}
+        onInputChange={(event, value, reason) => {
+          if (reason == "input" && value == "") {
+            //console.log(reason, value);
+            onNewInput({ label: value });
+          }
+        }}
         renderInput={(params) => <TextField {...params} size="small" />}
       />
     </>

@@ -5,7 +5,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { getAllProductos } from "./../../../helpers/Referenciales/producto/getAllProductos";
 import { useAuth } from "../../../hooks/useAuth";
 
-export const FilterAllProductos = ({ onNewInput }) => {
+export const FilterAllProductos = ({ onNewInput, inputs }) => {
   const [result, setResult] = useState([]);
   const { user } = useAuth();
   const obtenerDataProductos = async () => {
@@ -39,6 +39,12 @@ export const FilterAllProductos = ({ onNewInput }) => {
               {option.label}
             </li>
           );
+        }}
+        value={inputs.producto}
+        onInputChange={(event, value, reason) => {
+          if (reason == "input" && value == "") {
+            onNewInput({ label: value });
+          }
         }}
         onChange={handledChange}
         renderInput={(params) => <TextField {...params} size="small" />}

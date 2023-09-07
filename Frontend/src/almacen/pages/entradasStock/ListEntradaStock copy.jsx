@@ -44,16 +44,11 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const ListEntradaStock = () => {
   // ESTADOS PARA LOS FILTROS PERSONALIZADOS
   const [dataEntSto, setdataEntSto] = useState([]);
-  const [dataEntStoTmp, setdataEntStoTmp] = useState([]);
 
   const [inputs, setInputs] = useState({
-    producto: { label: "" },
-    provedor: { label: "" },
-    almacen: { label: "" },
-    codigo: "",
-    seleccion: false,
-    ingresado: "",
-    disponible: "",
+    producto: "",
+    provedor: "",
+    almacen: "",
   });
 
   // ESTADOS PARA FILTROS GENERALES DE FECHA
@@ -101,10 +96,10 @@ const ListEntradaStock = () => {
     // hacer validaciones correpondientes
     const resultPeticion = await getEntradasStock(body);
     const { message_error, description_error, result } = resultPeticion;
-    //console.log(result);
+    console.log(result);
+
     if (message_error.length === 0) {
       setdataEntSto(result);
-      setdataEntStoTmp(result);
     } else {
       setfeedbackMessages({
         style_message: "error",
@@ -117,36 +112,25 @@ const ListEntradaStock = () => {
   // Manejadores de cambios
   const handleFormFilter = ({ target }) => {
     const { name, value } = target;
-    setInputs({
-      ...inputs,
-      [name]: value,
-    });
-    //filter(value, name);
+    filter(value, name);
   };
 
-  const onChangeProducto = (obj) => {
-    setInputs({
-      ...inputs,
-      producto: obj,
-    });
-    //filter(label, "filterProducto");
+  const onChangeProducto = ({ label }) => {
+    filter(label, "filterProducto");
   };
 
-  const onChangeProveedor = (obj) => {
-    setInputs({
-      ...inputs,
-      provedor: obj,
-    });
-    //filter(obj.label, "filterProveedor");
+  const onChangeProveedor = ({ label }) => {
+    filter(label, "filterProveedor");
   };
 
   const onChangeAlmacen = (obj) => {
-    //console.log(obj);
+
+    console.log(obj)
     setInputs({
       ...inputs,
-      almacen: obj,
-    });
-    //filter(obj.label, "filterAlmacen");
+      almacen:obj
+    })
+    filter(obj.label, "filterAlmacen");
   };
 
   const onChangeDate = (newDate) => {
@@ -182,50 +166,9 @@ const ListEntradaStock = () => {
     obtenerDataEntradaStock(body);
   };
 
-  React.useEffect(() => {
-    let resultSearch = [];
-    console.log(dataEntSto);
-
-    // codigo: "",
-    // seleccion: "",
-    // ingresado: "",
-    // disponible: "",
-
-    dataEntSto.map((data) => {
-      if (
-        (inputs.almacen.label.includes(data.nomAlm) ||
-          inputs.almacen.label.length == 0) &&
-        (inputs.provedor.label.includes(data.nomProv) ||
-          inputs.provedor.label.length == 0) &&
-        (inputs.producto.label.includes(data.nomProd) ||
-          inputs.producto.label.length == 0) &&
-        (data.codEntSto.includes(inputs.codigo) || inputs.codigo.length == 0) &&
-        // inputs.seleccion == data.esSel &&
-        (data.canTotEnt.includes(inputs.ingresado) ||
-          inputs.ingresado.length == 0) &&
-        (data.canTotDis.includes(inputs.disponible) ||
-          inputs.disponible.length == 0)
-      ) {
-        resultSearch.push({ ...data });
-      }
-    });
-    setdataEntStoTmp(resultSearch);
-  }, [inputs, dataEntSto]);
-
-  function filter() {}
   // Funcion para filtrar la data
-  const filter2 = (terminoBusqueda, name) => {
+  const filter = (terminoBusqueda, name) => {
     let resultSearch = [];
-    dataEntSto.map((data) => {
-      if (
-        (inputs.almacen.label.includes(data.nomAlm) ||
-          inputs.almacen.label.length == 0) &&
-        (inputs.provedor.label.includes(data.nomProv) ||
-          inputs.provedor.label.length == 0)
-      ) {
-        resultSearch.push({ ...data });
-      }
-    });
     switch (name) {
       case "filterProducto":
         resultSearch = dataEntSto.filter((element) => {
@@ -240,25 +183,25 @@ const ListEntradaStock = () => {
             return false;
           }
         });
-        setdataEntStoTmp(resultSearch);
+        setdataEntSto(resultSearch);
         break;
       case "filterProveedor":
-        console.log(dataEntSto);
         resultSearch = dataEntSto.filter((element) => {
           if (
             element.nomProv
-              ?.toString()
-              ?.toLowerCase()
-              ?.includes(terminoBusqueda?.toLowerCase())
+              .toString()
+              .toLowerCase()
+              .includes(terminoBusqueda.toLowerCase())
           ) {
             return true;
           } else {
             return false;
           }
         });
-        setdataEntStoTmp(resultSearch);
+        setdataEntSto(resultSearch);
         break;
       case "filterAlmacen":
+
         resultSearch = dataEntSto.filter((element) => {
           if (
             element.nomAlm
@@ -271,7 +214,8 @@ const ListEntradaStock = () => {
             return false;
           }
         });
-        setdataEntStoTmp(resultSearch);
+        console.log(dataEntSto, resultSearch)
+        setdataEntSto(resultSearch);
         break;
       case "filterCodigo":
         resultSearch = dataEntSto.filter((element) => {
@@ -286,7 +230,7 @@ const ListEntradaStock = () => {
             return false;
           }
         });
-        setdataEntStoTmp(resultSearch);
+        setdataEntSto(resultSearch);
         break;
       case "filterEsSeleccion":
         resultSearch = dataEntSto.filter((element) => {
@@ -301,7 +245,7 @@ const ListEntradaStock = () => {
             return false;
           }
         });
-        setdataEntStoTmp(resultSearch);
+        setdataEntSto(resultSearch);
         break;
       case "filterCantidadTotal":
         resultSearch = dataEntSto.filter((element) => {
@@ -316,7 +260,7 @@ const ListEntradaStock = () => {
             return false;
           }
         });
-        setdataEntStoTmp(resultSearch);
+        setdataEntSto(resultSearch);
         break;
       case "filterCantidadDisponible":
         resultSearch = dataEntSto.filter((element) => {
@@ -331,7 +275,7 @@ const ListEntradaStock = () => {
             return false;
           }
         });
-        setdataEntStoTmp(resultSearch);
+        setdataEntSto(resultSearch);
         break;
       case "filterFechaEntrada":
         resultSearch = dataEntSto.filter((element) => {
@@ -347,7 +291,7 @@ const ListEntradaStock = () => {
             return false;
           }
         });
-        setdataEntStoTmp(resultSearch);
+        setdataEntSto(resultSearch);
         break;
       default:
         break;
@@ -356,7 +300,7 @@ const ListEntradaStock = () => {
 
   // RESET FILTERS
   const resetData = () => {
-    setdataEntStoTmp(dataEntSto);
+    //setdataEntSto(dataEntSto);
   };
 
   useEffect(() => {
@@ -471,32 +415,26 @@ const ListEntradaStock = () => {
                   >
                     <TableCell align="left" width={160}>
                       <b>Producto</b>
-                      <FilterAllProductos
-                        onNewInput={onChangeProducto}
-                        inputs={inputs}
-                      />
+                      <FilterAllProductos onNewInput={onChangeProducto} />
                     </TableCell>
                     <TableCell align="left" width={160}>
                       <b>Proveedor</b>
-                      <FilterProveedor
-                        onNewInput={onChangeProveedor}
-                        inputs={inputs}
-                      />
+                      <FilterProveedor onNewInput={onChangeProveedor} />
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Almacen</b>
                       <FilterAlmacen
                         onNewInput={onChangeAlmacen}
+                        setInputs={setInputs}
                         inputs={inputs}
                       />
                     </TableCell>
                     <TableCell align="left" width={80}>
                       <b>Codigo</b>
                       <TextField
-                        name="codigo"
+                        name="filterCodigo"
                         onChange={handleFormFilter}
                         size="small"
-                        value={inputs.codigo}
                         autoComplete="off"
                         InputProps={{
                           style: {
@@ -511,8 +449,6 @@ const ListEntradaStock = () => {
                       <div className="d-flex justify-content-center">
                         <Checkbox
                           {...label}
-                          name="seleccion"
-                          value={inputs.seleccion}
                           defaultChecked={false}
                           onChange={onChangeSeleccionado}
                         />
@@ -521,11 +457,10 @@ const ListEntradaStock = () => {
                     <TableCell align="left" width={50}>
                       <b>Ingresado</b>
                       <TextField
+                        name="filterCantidadTotal"
                         onChange={handleFormFilter}
                         type="number"
                         size="small"
-                        name="ingresado"
-                        value={inputs.ingresado}
                         InputProps={{
                           style: {
                             color: "black",
@@ -537,11 +472,10 @@ const ListEntradaStock = () => {
                     <TableCell align="left" width={50}>
                       <b>Disponible</b>
                       <TextField
+                        name="filterCantidadDisponible"
                         onChange={handleFormFilter}
                         type="number"
                         size="small"
-                        name="disponible"
-                        value={inputs.disponible}
                         InputProps={{
                           style: {
                             color: "black",
@@ -562,7 +496,7 @@ const ListEntradaStock = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {dataEntStoTmp
+                  {dataEntSto
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <TableRow
@@ -639,7 +573,7 @@ const ListEntradaStock = () => {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={dataEntStoTmp.length}
+              count={dataEntSto.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
