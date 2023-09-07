@@ -10,7 +10,7 @@ export const RowRequisicionDetalleLoteProduccion = ({
   /**         CHANGE FOR ME, THIS OP OINDICATE THE FIX  */
   /***************************************************************************************** */
   if (detalle.idAre === 6 || detalle.idAre === 5) {
-    console.log("ROW REQUISICIONES DETALLE: ", detalle);
+    //console.log("ROW REQUISICIONES DETALLE: ", detalle);
     const canReqDetFloat = parseFloat(detalle.canReqDet);
     const canReqDetRedondeado = Math.ceil(canReqDetFloat);
     detalle.canReqDet = canReqDetRedondeado.toString();

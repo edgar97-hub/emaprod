@@ -14,7 +14,7 @@ export const RowRequisicionLoteProduccion = ({
   onCreateSalidasStock,
   onUpdateDetalleRequisicion,
 }) => {
-  console.log("REQUISICIONES:  ",requisicion);
+  //console.log("REQUISICIONES:  ",requisicion);
   return (
     <div className="card d-flex mb-4">
       <h6 className="card-header">

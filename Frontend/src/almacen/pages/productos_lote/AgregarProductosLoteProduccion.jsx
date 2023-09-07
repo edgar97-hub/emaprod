@@ -166,7 +166,7 @@ export const AgregarProductosLoteProduccion = () => {
             fecVenEntProdFin: fecVenLotProd, // fecha de vencimiento del lote
             canProdFin: cantidadIngresada, // cantidad devuelta
           };
-          console.log(detalle);
+          //console.log(detalle);
 
           // seteamos el detalle
           const dataDetalle = [...detalleProductosFinales, detalle];
@@ -226,6 +226,8 @@ export const AgregarProductosLoteProduccion = () => {
     const resultPeticion = await getProduccionWhitProductosFinales(idLotProdc);
 
     const { message_error, description_error, result } = resultPeticion;
+    //ProFinProd.proFinProdDet     
+    console.log(result)
     if (message_error.length === 0) {
       setProFinProd(result[0]);
     } else {
@@ -240,16 +242,17 @@ export const AgregarProductosLoteProduccion = () => {
   // ****** SUBMIT PRODUCTOS FINALES ******
   const crearProductosFinalesLoteProduccion = async () => {
     const { idProdTip } = proFinProd;
-    // obtenemos la fecha de ingreso
     const fechaIngreso = FormatDateTimeMYSQLNow();
 
-    // data entrada
     const dataEntrada = {
       letAniEntSto: letraAnio(fechaIngreso),
       diaJulEntSto: DiaJuliano(fechaIngreso),
       fecEntSto: fechaIngreso,
     };
     console.log(detalleProductosFinales, idProdTip, dataEntrada);
+
+    //setdisableButton(false);
+    //return
     const resultPeticion = await createProductosFinalesLoteProduccion(
       detalleProductosFinales,
       idProdTip,
@@ -273,7 +276,6 @@ export const AgregarProductosLoteProduccion = () => {
   const handleSubmitProductosFinalesLoteProduccion = (e) => {
     e.preventDefault();
     if (detalleProductosFinales.length === 0) {
-      // MANEJAMOS FORMULARIOS INCOMPLETOS
       setfeedbackMessages({
         style_message: "warning",
         feedback_description_error: "No has agregado items al detalle",
@@ -281,7 +283,6 @@ export const AgregarProductosLoteProduccion = () => {
       handleClickFeeback();
     } else {
       setdisableButton(true);
-      // crear devolucion
       crearProductosFinalesLoteProduccion();
     }
   };
@@ -454,6 +455,7 @@ export const AgregarProductosLoteProduccion = () => {
                   </label>
                   <FilterAllProductos
                     onNewInput={onAddProductoFinalSubProducto}
+                    productos={proFinProd.proFinProdDet}
                   />
                 </div>
 

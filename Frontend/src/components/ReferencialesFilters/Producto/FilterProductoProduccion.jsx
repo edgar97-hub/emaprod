@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getProductosProduccion } from "./../../../helpers/Referenciales/producto/getProductosProduccion";
 
-export const FilterProductoProduccion = ({ onNewInput }) => {
+export const FilterProductoProduccion = ({ onNewInput, inputs }) => {
   const [result, setResult] = useState([]);
 
   const obtenerDataProductoProduccion = async () => {
@@ -27,13 +27,27 @@ export const FilterProductoProduccion = ({ onNewInput }) => {
     onNewInput(value);
   };
 
+  var d = {}
+  if(inputs?.producto){
+    d.producto = inputs.producto
+
+  }
+
   return (
     <>
       <Autocomplete
         options={result}
         disableClearable
         getOptionLabel={(option) => option.label}
+        {...d}
+        //value={inputs.producto}
         onChange={handledChange}
+        onInputChange={(event, value, reason) => {
+          if (reason == "input" && value == "") {
+            console.log("reason: ",reason, "value:", value)
+            onNewInput({ label: value });
+          }
+        }}
         renderInput={(params) => <TextField {...params} size="small" />}
       />
     </>

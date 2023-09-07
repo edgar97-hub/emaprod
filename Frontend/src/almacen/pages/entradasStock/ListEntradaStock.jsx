@@ -184,14 +184,16 @@ const ListEntradaStock = () => {
 
   React.useEffect(() => {
     let resultSearch = [];
-    console.log(dataEntSto);
+    //console.log(dataEntSto);
 
     // codigo: "",
     // seleccion: "",
     // ingresado: "",
     // disponible: "",
 
+    var total = 0
     dataEntSto.map((data) => {
+
       if (
         (inputs.almacen.label.includes(data.nomAlm) ||
           inputs.almacen.label.length == 0) &&
@@ -206,6 +208,11 @@ const ListEntradaStock = () => {
         (data.canTotDis.includes(inputs.disponible) ||
           inputs.disponible.length == 0)
       ) {
+        console.log(data.canTotDis)
+        total += parseFloat(data.canTotDis)
+        data.acumulado = total.toFixed(2)
+        //data.canTotDis = parseFloat(data.canTotDis)
+
         resultSearch.push({ ...data });
       }
     });
@@ -357,6 +364,16 @@ const ListEntradaStock = () => {
   // RESET FILTERS
   const resetData = () => {
     setdataEntStoTmp(dataEntSto);
+    setInputs({
+      producto: { label: "" },
+      provedor: { label: "" },
+      almacen: { label: "" },
+      codigo: "",
+      seleccion: false,
+      ingresado: "",
+      disponible: "",
+    })
+
   };
 
   useEffect(() => {
@@ -556,6 +573,9 @@ const ListEntradaStock = () => {
                        <FechaPickerDay onNewfecEntSto={onChangeDate} />
                       */}
                     </TableCell>
+                    <TableCell align="left" width={160}>
+                      <b>Acumulado</b>
+                    </TableCell>
                     <TableCell align="left" width={50}>
                       <b>Acciones</b>
                     </TableCell>
@@ -563,7 +583,7 @@ const ListEntradaStock = () => {
                 </TableHead>
                 <TableBody>
                   {dataEntStoTmp
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <TableRow
                         key={row.id}
@@ -607,6 +627,7 @@ const ListEntradaStock = () => {
                         <TableCell align="left">{row.canTotEnt}</TableCell>
                         <TableCell align="left">{row.canTotDis}</TableCell>
                         <TableCell align="left">{row.fecEntSto}</TableCell>
+                        <TableCell align="left">{row.acumulado}</TableCell>
                         <TableCell align="left">
                           <div className="btn-toolbar">
                             <Link
@@ -635,8 +656,9 @@ const ListEntradaStock = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            {/* PAGINACION DE LA TABLA */}
-            <TablePagination
+            {
+              /**
+               <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
               count={dataEntStoTmp.length}
@@ -645,6 +667,8 @@ const ListEntradaStock = () => {
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
+               */
+            }
           </Paper>
         </div>
       </div>

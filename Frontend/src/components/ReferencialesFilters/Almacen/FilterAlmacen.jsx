@@ -26,13 +26,18 @@ export const FilterAlmacen = ({ onNewInput, disabled, inputs }) => {
     onNewInput(value);
   };
 
+  var d = {}
+  if(inputs?.almacen){
+    d.value = inputs.almacen
+  }
   return (
     <>
       <Autocomplete
         disabled={disabled}
         options={result}
         disableClearable
-        value={inputs.almacen}
+        //value={inputs.almacen}
+        {...d}
         getOptionLabel={(option) => option.label}
         onChange={handledChange}
         onInputChange={(event, value, reason) => {

@@ -87,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_insert_entrada_producto_final->execute();
 
                     // evaluamos si es un tipo de produccion de sub producto
-                    if ($idProdTip == 5) {
+                    if (true  || $idProdTip == 5) {
                         // OBTENEMOS LOS DATOS DE LA ENTRADA
                         $fecEntSto = $datEntSto["fecEntSto"]; // fecha de entrada de stock
                         $codProd = $row["codProd2"]; // codigo de producto

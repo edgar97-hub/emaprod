@@ -227,6 +227,7 @@ export const AgregarAgregacion = () => {
 
   // FUNCION PARA TRAES DATOS DE PRODUCCION LOTE
   const traerDatosProduccionLoteWithAgregaciones = async () => {
+
     if (idLotProdc.length !== 0) {
       const resultPeticion = await getProduccionLoteWithAgregacionesById(
         idLotProdc

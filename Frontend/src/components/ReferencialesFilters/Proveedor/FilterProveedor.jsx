@@ -26,6 +26,11 @@ export const FilterProveedor = ({ onNewInput, inputs }) => {
   const handledChange = (event, value) => {
     onNewInput(value);
   };
+  var d = {}
+  if(inputs?.almacen){
+    d.value = inputs.provedor
+  }
+
 
   return (
     <>
@@ -34,7 +39,8 @@ export const FilterProveedor = ({ onNewInput, inputs }) => {
         disableClearable
         getOptionLabel={(option) => option.label}
         onChange={handledChange}
-        value={inputs.provedor}
+//        value={inputs.provedor}
+        {...d}
         onInputChange={(event, value, reason) => {
           if (reason == "input" && value == "") {
             //console.log(reason, value);

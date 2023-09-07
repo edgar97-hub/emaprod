@@ -743,6 +743,15 @@ export const ListProduccionLote = () => {
   const [dataProduccionLote, setdataProduccionLote] = useState([]);
   const [dataProduccionLoteTemp, setdataProduccionLoteTemp] = useState([]);
 
+
+
+  const [inputs, setInputs] = useState({
+    producto: {label:""},
+    provedor: {label:""},
+    almacen: {label:""},
+  });
+
+
   // ESTADOS PARA EL MODAL
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [produccionSeleccionado, setProduccionSeleccionado] = useState(null);
@@ -829,8 +838,13 @@ export const ListProduccionLote = () => {
     filter(inputValue, name);
   };
 
-  const onChangeProducto = ({ label }) => {
-    filter(label, "filterProducto");
+  const onChangeProducto = (obj) => {
+    console.log(obj)
+    setInputs({
+      ...inputs,
+      producto: obj,
+    });
+    //filter(label, "filterProducto");
   };
 
   /************************************************** */
@@ -1234,7 +1248,8 @@ export const ListProduccionLote = () => {
 
                     <TableCell align="left" width={140}>
                       <b>Producto</b>
-                      <FilterProductoProduccion onNewInput={onChangeProducto} />
+                      <FilterProductoProduccion onNewInput={onChangeProducto} 
+                      inputs={inputs}/>
                     </TableCell>
 
                     <TableCell align="left" width={100}>

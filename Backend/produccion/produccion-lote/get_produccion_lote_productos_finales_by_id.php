@@ -75,7 +75,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $message_error = "ERROR INTERNO SERVER";
                     $description_error = $e->getMessage();
                 }
-                //AÑADIMOS TODA LA DATA FORMATEADA
                 array_push($result, $row);
             }
         } catch (Exception $e) {
@@ -91,4 +90,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['description_error'] = $description_error;
     $return['result'] = $result;
     echo json_encode($return);
+}
+
+function getProductsFinal($pdo, $idLotProdc,$row){
+    try {
+     
+        $sql_produccion_producto_final = "";
+            //$sql_produccion_producto_final =
+            //    "SELECT 
+            //pf.id as idProFin,
+            //p.id,
+            //p.codProd2 as 'value',
+            //p.nomProd as label
+            //FROM produccion as pd
+            //JOIN produccion_producto_final as pf ON pf.idProdc = pd.id
+            //JOIN producto as p ON p.id = pf.idProdt
+            //WHERE pd.id = ?";
+            $idLotProdc = $row["idSubCla"];
+            $sql_produccion_producto_final =
+            "SELECT 
+            p.id as idProFin,
+            p.id,
+            p.codProd2 as 'value',
+            p.nomProd as label
+            FROM producto  as p
+            WHERE p.idSubCla = ? OR p.idCla = 2";
+
+            //$sql_produccion_producto_final = "
+            //SELECT * FROM `producto` 
+            //WHERE idSubCla = 51 
+            //OR idCla = 2";
+            $stmt_produccion_producto_final = $pdo->prepare($sql_produccion_producto_final);
+            $stmt_produccion_producto_final->bindParam(1, $idLotProdc, PDO::PARAM_INT);
+            $stmt_produccion_producto_final->execute();
+
+            while ($row_detalle  = $stmt_produccion_producto_final->fetch(PDO::FETCH_ASSOC)) {
+                array_push($row["finalProducts"], $row_detalle);
+            }
+            return $row;
+
+    } catch (PDOException $e) {
+        $message_error = "ERROR INTERNO EN LA CONSULTA DE produccion_producto_final";
+        $description_error = $e->getMessage();
+        $error[0] = $message_error;
+        $error[1] = $description_error;
+        return $error[0];
+    }
 }
