@@ -119,6 +119,7 @@ const ListEntradaStock = () => {
   };
 
   const onChangeAlmacen = ({ label }) => {
+    //console.log(label)
     filter(label, "filterAlmacen");
   };
 
@@ -199,7 +200,7 @@ const ListEntradaStock = () => {
           ) {
             return true;
           } else {
-            return false;
+            return true;
           }
         });
         setdataEntStoTmp(resultSearch);
