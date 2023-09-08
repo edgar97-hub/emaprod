@@ -23,7 +23,7 @@ export const RowDetalleDevolucionLoteProduccionEdit = ({
       <TableCell>
         <FilterMotivoDevolucion
           onNewInput={handleDetalleChangeMotivoDevolucion}
-          disabled={disabledInput}
+          //disabled={disabledInput}
         />
       </TableCell>
       <TableCell>

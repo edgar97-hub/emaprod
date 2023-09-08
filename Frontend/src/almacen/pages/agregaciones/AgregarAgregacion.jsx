@@ -371,7 +371,7 @@ export const AgregarAgregacion = () => {
       obj.flag = flag
     })
 
-    console.log(flag, detalleProductosAgregados)
+    //console.log(flag, detalleProductosAgregados)
       
       // console.log("test")
       //return
@@ -379,7 +379,7 @@ export const AgregarAgregacion = () => {
       detalleProductosAgregados
     );
     const { message_error, description_error, noDisponible } = resultPeticion;
-    console.log(noDisponible);
+    
     if(noDisponible?.length){
       setEntradasNoDisponible(noDisponible)
       setfeedbackMessages({
@@ -406,7 +406,6 @@ export const AgregarAgregacion = () => {
   };
 
   useEffect(() => {
-    // TRAEMOS LA DATA DE REQUSICION DETALLE
     traerDatosProduccionLoteWithAgregaciones();
   }, []);
 
@@ -443,6 +442,19 @@ export const AgregarAgregacion = () => {
                     className="form-control"
                   />
                 </div>
+
+                <div className="col-md-2">
+                  <label htmlFor="nombre" className="form-label">
+                    <b>Numero OP</b>
+                  </label>
+                  <input
+                    type="text"
+                    disabled={true}
+                    value={"numop"}
+                    className="form-control"
+                  />
+                </div>
+
                 {/* PRODUCTO */}
                 <div className="col-md-4 me-4">
                   <label htmlFor="nombre" className="form-label">

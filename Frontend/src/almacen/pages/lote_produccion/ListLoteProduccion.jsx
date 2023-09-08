@@ -62,6 +62,18 @@ export const ListLoteProduccion = () => {
   });
   const { style_message, feedback_description_error } = feedbackMessages;
 
+
+  const [inputs, setInputs] = useState({
+    producto: {label:""},
+    provedor: {label:""},
+    estado: {label:""},
+    tipoProduccion:{label:""},
+    estadoInicio:{label:""},
+    numeroOP:"",
+    lotePrduccion:"",
+  });
+
+
   // MANEJADORES DE FEEDBACK
   const handleClickFeeback = () => {
     setfeedbackDelete(true);
@@ -79,7 +91,11 @@ export const ListLoteProduccion = () => {
   // Manejadores de cambios
   const handleFormFilter = ({ target }) => {
     const { name, value } = target;
-    filter(value, name);
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
+    //filter(value, name);
   };
 
   // Manejadores de cambios
@@ -88,20 +104,36 @@ export const ListLoteProduccion = () => {
     filter(inputValue, name);
   };
 
-  const onChangeProducto = ({ label }) => {
-    filter(label, "filterProducto");
+  const onChangeProducto = (obj) => {
+    setInputs({
+      ...inputs,
+      producto: obj,
+    });
+    //filter(label, "filterProducto");
   };
 
-  const onChangeEstadoProduccion = ({ label }) => {
-    filter(label, "filterEstadoProduccion");
+  const onChangeEstadoProduccion = (obj) => {
+    setInputs({
+      ...inputs,
+      estado: obj,
+    });
+    //filter(label, "filterEstadoProduccion");
   };
 
-  const onChangeTipoProduccion = ({ label }) => {
-    filter(label, "filterTipoProduccion");
+  const onChangeTipoProduccion = (obj) => {
+    setInputs({
+      ...inputs,
+      tipoProduccion: obj,
+    });
+    //filter(label, "filterTipoProduccion");
   };
 
-  const onChangeEstadoInicioProduccion = ({ label }) => {
-    filter(label, "filterEstadoInicioProgramado");
+  const onChangeEstadoInicioProduccion = (obj) => {
+    setInputs({
+      ...inputs,
+      estadoInicio: obj,
+    });
+    //filter(label, "filterEstadoInicioProgramado");
   };
 
   const onChangeDateFechaIniciado = (newDate) => {
@@ -129,7 +161,6 @@ export const ListLoteProduccion = () => {
   const onChangeDateEndData = (newDate) => {
     let dateFormat = newDate.split(" ")[0];
     setFormState({ ...formState, fecProdLotFin: dateFormat });
-    // realizamos una promesa
     let body = {
       ...formState,
       fecProdLotFin: dateFormat,
@@ -137,147 +168,16 @@ export const ListLoteProduccion = () => {
     obtenerDataProduccionLote(body);
   };
 
-  // Funcion para filtrar la data
   const filter = (terminoBusqueda, name) => {
-    let resultSearch = [];
-    switch (name) {
-      case "filterLoteProduccion":
-        resultSearch = dataProduccionLote.filter((element) => {
-          if (
-            element.codLotProd
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-
-      // New State to filter OP with search opcion
-      case "filterNumeroOP":
-        resultSearch = dataProduccionLote.filter((element) => {
-          // Verificamos que numop no sea null y tenga al menos 3 caracteres
-          if (element.numop && element.numop.length >= 3) {
-            // Comparamos directamente el campo numop con el término de búsqueda sin convertirlo a minúsculas
-            if (element.numop.includes(terminoBusqueda)) {
-              return true;
-            } else {
-              return false;
-            }
-          } else {
-            // Si numop es null o no cumple con la longitud mínima, no se incluye en el resultado
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-
-      case "filterProducto":
-        resultSearch = dataProduccionLote.filter((element) => {
-          if (
-            element.nomProd
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-      case "filterEstadoProduccion":
-        resultSearch = dataProduccionLote.filter((element) => {
-          if (
-            element.desEstPro
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-      case "filterTipoProduccion":
-        resultSearch = dataProduccionLote.filter((element) => {
-          if (
-            element.desProdTip
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-      case "filterEstadoInicioProgramado":
-        resultSearch = dataProduccionLote.filter((element) => {
-          if (
-            element.desProdIniProgEst
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-      case "filterFechaInicioProduccion":
-        resultSearch = dataProduccionLote.filter((element) => {
-          let aux = element.fecProdIni.split(" ");
-          if (
-            aux[0]
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-      case "filterFechaInicioProgramadoProduccion":
-        resultSearch = dataProduccionLote.filter((element) => {
-          let aux = element.fecProdIniProg.split(" ");
-          if (
-            aux[0]
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-
-      default:
-        break;
-    }
+    
   };
 
   //FUNCION PARA TRAER LA DATA DE REQUISICION MOLIENDA
   const obtenerDataProduccionLote = async (body = {}) => {
     const resultPeticion = await getProduccionLote(body);
     const { message_error, description_error, result } = resultPeticion;
+
+    console.log(result)
     if (message_error.length === 0) {
       setdataProduccionLote(result);
       setdataProduccionLoteTemp(result);
@@ -304,6 +204,48 @@ export const ListLoteProduccion = () => {
     obtenerDataProduccionLote();
   }, []);
 
+  
+  useEffect(() => {
+    let resultSearch = [];
+    dataProduccionLote.map((data) => {
+
+      if (
+        (inputs.estado.label.includes(data.desEstPro) ||
+          inputs.estado.label.length == 0) &&
+        (inputs.tipoProduccion.label.includes(data.desProdTip) ||
+          inputs.tipoProduccion.label.length == 0) &&
+        (inputs.producto.label.includes(data.nomProd) ||
+          inputs.producto.label.length == 0) &&
+          (inputs.estadoInicio.label.includes(data.desProdIniProgEst) ||
+          inputs.estadoInicio.label.length == 0) 
+          &&
+        (data.numop.includes(inputs.numeroOP) || 
+         inputs.numeroOP.length == 0) &&
+        (data.codLotProd?.includes(inputs.lotePrduccion) ||
+          inputs.lotePrduccion.length == 0) 
+      ) {
+        resultSearch.push({ ...data });
+      }
+    });
+    setdataProduccionLoteTemp(resultSearch);
+  }, [inputs, dataProduccionLote]);
+
+
+  const resetData = () => {
+    setdataProduccionLoteTemp(dataProduccionLote);
+    setInputs({
+      producto: {label:""},
+      provedor: {label:""},
+      estado: {label:""},
+      tipoProduccion:{label:""},
+      estadoInicio:{label:""},
+      numeroOP:"",
+      lotePrduccion:"",
+    });
+
+  };
+
+
   return (
     <>
       <div className="container-fluid">
@@ -319,6 +261,26 @@ export const ListLoteProduccion = () => {
                 Hasta
                 <FechaPickerMonth onNewfecEntSto={onChangeDateEndData} />
               </div>
+
+              <div className="col-2 d-flex align-items-end">
+                <button onClick={resetData} className="btn btn-success">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    className="bi bi-arrow-clockwise"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"
+                    />
+                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                  </svg>
+                </button>
+              </div>
+
             </div>
           </div>
           <div className="col-6 d-flex justify-content-end align-items-center">
@@ -375,7 +337,8 @@ export const ListLoteProduccion = () => {
                     <TableCell align="left" width={70}>
                       <b>Lote</b>
                       <TextField
-                        name="filterLoteProduccion"
+                        name="lotePrduccion"
+                        value={inputs.lotePrduccion}
                         onChange={handleFormFilter}
                         type="number"
                         size="small"
@@ -393,11 +356,10 @@ export const ListLoteProduccion = () => {
                     <TableCell align="left" width={140}>
                       <b>Número OP</b>
                       <TextField
-                        name="filterNumeroOP"
-                        onChange={(event) =>
-                          handleFormFilterop(event, "filterNumeroOP")
-                        } // Agregamos el segundo parámetro para identificar el filtro
-                        type="text" // Cambiamos el tipo a "text" para que admita el formato "OP" seguido de números
+                        name="numeroOP"
+                        value={inputs.numeroOP}
+                        onChange={handleFormFilter}
+                        type="text"  
                         size="small"
                         autoComplete="off"
                         InputProps={{
@@ -412,36 +374,47 @@ export const ListLoteProduccion = () => {
 
                     <TableCell align="left" width={140}>
                       <b>Producto</b>
-                      <FilterProductoProduccion onNewInput={onChangeProducto} />
+                      <FilterProductoProduccion onNewInput={onChangeProducto}  inputs={inputs} />
                     </TableCell>
                     <TableCell align="left" width={100}>
                       <b>Estado</b>
                       <FilterEstadoProduccion
                         onNewInput={onChangeEstadoProduccion}
+                        inputs={inputs}
                       />
                     </TableCell>
                     <TableCell align="left" width={100}>
                       <b>Tipo</b>
                       <FilterTipoProduccion
                         onNewInput={onChangeTipoProduccion}
+                        inputs={inputs}
                       />
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Inicio</b>
-                      <FechaPickerDay
+                      {
+                        /**
+                         <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaIniciado}
                       />
+                         */
+                      }
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Inicio programado</b>
-                      <FechaPickerDay
+                      {
+                        /**
+                         <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaIniciadoProgramado}
                       />
+                         */
+                      }
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Estado Inicio</b>
                       <FilterEstadoInicioProgramadoProduccion
                         onNewInput={onChangeEstadoInicioProduccion}
+                        inputs={inputs}
                       />
                     </TableCell>
                     <TableCell align="left" width={120}>

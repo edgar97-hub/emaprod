@@ -4,9 +4,9 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getMotivoAgregaciones } from "./../../../helpers/Referenciales/motivo_agregaciones/getMotivoAgregaciones";
 
-export const FilterMotivoAgregacion = ({ onNewInput, disabled }) => {
+export const FilterMotivoAgregacion = ({ onNewInput, inputs, defaultValueFlag }) => {
   const [result, setResult] = useState([]);
-  const [defaultValue, setDefaultValue] = useState({value:"", label:""});
+  const [value, setValue] = useState({value:"", label:""});
 
   const obtenerDataMotivoAgregacion = async () => {
     const resultPeticion = await getMotivoAgregaciones();
@@ -17,9 +17,11 @@ export const FilterMotivoAgregacion = ({ onNewInput, disabled }) => {
         id: element.id,
       };
     });
+
+    if(defaultValueFlag){
+      setValue(formatSelect[0])
+    }
     setResult(formatSelect);
-    //console.log(formatSelect[0])
-    //setDefaultValue({value: 1, label: 'Faltante de materiales', id: 1})
 
   };
 
@@ -31,13 +33,25 @@ export const FilterMotivoAgregacion = ({ onNewInput, disabled }) => {
     onNewInput(value);
   };
   
+  useEffect(() => {
+
+    if(inputs){
+      setValue(inputs.motivo)
+    }
+    }, [inputs]);
+
   return (
     <>
       <Autocomplete
-        //disabled={disabled}
         options={result}
-        defaultValue={{value: 1, label: 'Faltante de materiales', id: 1}}
         disableClearable
+        value={value}
+        onInputChange={(event, value, reason) => {
+          if (reason == "input" && value == "") {
+            console.log("reason: ",reason, "value:", value)
+            onNewInput({ label: value });
+          }
+        }}
         getOptionLabel={(option) => option.label}
         onChange={handledChange}
         renderInput={(params) => <TextField {...params} size="small" />}

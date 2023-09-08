@@ -147,8 +147,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 canTotDis,
                                 docEntSto,
                                 fecEntSto,
-                                fecVenEntSto)
-                                VALUES (?,?,?,?,?,?,?,?,?, $canProdFin, $canProdFin,?,?,?)";
+                                fecVenEntSto, referencia)
+                                VALUES (?,?,?,?,?,?,?,?,?, $canProdFin, $canProdFin,?,?,?,?)";
 
                             try {
                                 $stmt_insert_entrada_stock = $pdo->prepare($sql_insert_entrada_stock);
@@ -164,6 +164,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 $stmt_insert_entrada_stock->bindParam(10, $docEntSto, PDO::PARAM_STR);
                                 $stmt_insert_entrada_stock->bindParam(11, $fecEntSto);
                                 $stmt_insert_entrada_stock->bindParam(12, $fecVenEntProdFin);
+                                $stmt_insert_entrada_stock->bindParam(13, $idProdc);
+
                                 $stmt_insert_entrada_stock->execute();
                             } catch (PDOException $e) {
                                 $message_error = "Error en la insercion de entrada";

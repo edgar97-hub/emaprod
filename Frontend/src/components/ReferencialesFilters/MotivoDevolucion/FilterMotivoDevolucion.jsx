@@ -6,6 +6,7 @@ import { getMotivoDevoluciones } from "./../../../helpers/Referenciales/motivo_d
 
 export const FilterMotivoDevolucion = ({ onNewInput, disabled }) => {
   const [result, setResult] = useState([]);
+  const [value, setValue] = useState({});
 
   const obtenerDataMotivoDevolucion = async () => {
     const resultPeticion = await getMotivoDevoluciones();
@@ -16,6 +17,11 @@ export const FilterMotivoDevolucion = ({ onNewInput, disabled }) => {
         id: element.id,
       };
     });
+    //console.log(formatSelect)
+    if(formatSelect.length){
+      //console.log(formatSelect)
+      setValue(formatSelect[0])
+    }
     setResult(formatSelect);
   };
 
@@ -23,7 +29,11 @@ export const FilterMotivoDevolucion = ({ onNewInput, disabled }) => {
     obtenerDataMotivoDevolucion();
   }, []);
 
+ 
+
+
   const handledChange = (event, value) => {
+    setValue(value)
     onNewInput(value);
   };
 
@@ -32,6 +42,7 @@ export const FilterMotivoDevolucion = ({ onNewInput, disabled }) => {
       <Autocomplete
         disabled={disabled}
         options={result}
+        value={value}
         disableClearable
         getOptionLabel={(option) => option.label}
         onChange={handledChange}

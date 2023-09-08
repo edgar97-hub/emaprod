@@ -43,8 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $idAlm = 1; // almacen principal
             }
 
-            // MANEJAMOS LAS 2 CASUISTICAS
-            // si es diferente de desmedro
             if ($idProdDevMot != 2) {
 
                 $salidasEmpleadas = []; // salidas empleadas

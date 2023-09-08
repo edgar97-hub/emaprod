@@ -121,7 +121,6 @@ const ListEntradaStock = () => {
       ...inputs,
       [name]: value,
     });
-    //filter(value, name);
   };
 
   const onChangeProducto = (obj) => {
@@ -129,7 +128,6 @@ const ListEntradaStock = () => {
       ...inputs,
       producto: obj,
     });
-    //filter(label, "filterProducto");
   };
 
   const onChangeProveedor = (obj) => {
@@ -141,12 +139,10 @@ const ListEntradaStock = () => {
   };
 
   const onChangeAlmacen = (obj) => {
-    //console.log(obj);
     setInputs({
       ...inputs,
       almacen: obj,
     });
-    //filter(obj.label, "filterAlmacen");
   };
 
   const onChangeDate = (newDate) => {
@@ -182,7 +178,7 @@ const ListEntradaStock = () => {
     obtenerDataEntradaStock(body);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     let resultSearch = [];
     //console.log(dataEntSto);
 

@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getTiposProduccion } from "./../../../helpers/Referenciales/tipo_produccion/getTiposProduccion";
 
-export const FilterTipoProduccion = ({ onNewInput }) => {
+export const FilterTipoProduccion = ({ onNewInput,inputs }) => {
   const [result, setResult] = useState([]);
 
   const obtenerDataTipoProduccion = async () => {
@@ -28,13 +28,26 @@ export const FilterTipoProduccion = ({ onNewInput }) => {
     onNewInput(value);
   };
 
+  var d = {}
+  if(inputs?.tipoProduccion){
+    d.value = inputs.tipoProduccion
+  }
+
   return (
     <>
       <Autocomplete
         options={result}
         disableClearable
+        {...d}
+
         getOptionLabel={(option) => option.label}
         onChange={handledChange}
+        onInputChange={(event, value, reason) => {
+          if (reason == "input" && value == "") {
+            console.log("reason: ",reason, "value:", value)
+            onNewInput({ label: value });
+          }
+        }}
         renderInput={(params) => <TextField {...params} size="small" />}
       />
     </>

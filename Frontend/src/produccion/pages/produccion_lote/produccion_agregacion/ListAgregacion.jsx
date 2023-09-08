@@ -11,7 +11,6 @@ import TablePagination from "@mui/material/TablePagination";
 // IMPORTACIONES PARA EL FEEDBACK
 import MuiAlert from "@mui/material/Alert";
 import { getProduccionLote } from "./../../../helpers/produccion_lote/getProduccionLote";
-import { FilterProductoProduccion } from "./../../../../components/ReferencialesFilters/Producto/FilterProductoProduccion";
 import { FilterEstadoProduccion } from "./../../../../components/ReferencialesFilters/Produccion/FilterEstadoProduccion";
 import { FilterTipoProduccion } from "./../../../../components/ReferencialesFilters/TipoProduccion/FilterTipoProduccion";
 import { FilterEstadoInicioProgramadoProduccion } from "./../../../../components/ReferencialesFilters/Produccion/FilterEstadoInicioProgramadoProduccion";
@@ -49,6 +48,12 @@ import ButtonPdf from "../ButtonPdf";
 import config from "../../../../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import { FilterMotivoAgregacion } from "./../../../../components/ReferencialesFilters/MotivoAgregacion/FilterMotivoAgregacion";
+import { FilterAlmacen } from "./../../../../components/ReferencialesFilters/Almacen/FilterAlmacen";
+import { FilterAllProductos } from "./../../../../components/ReferencialesFilters/Producto/FilterAllProductos";
+
+
 const domain = config.API_URL;
 
 //***********************************************GENERATE PDF ********************************************* */
@@ -222,7 +227,18 @@ function _parseInt(str) {
 }
 
 const PDFExample = ({ data, show }) => {
-  console.log(data);
+
+
+  var agregaciones = data.result.agregaciones.detAgr
+  //console.log(agregaciones)
+  var fecCreProdAgr = data.result.agregaciones.detAgr[0].fecCreProdAgr
+  var fechaInicio = data.result.agregaciones.detAgr[0].fechaInicio
+  var fechaFin = data.result.agregaciones.detAgr[0].fechaFin
+  var flag = data.result.agregaciones.detAgr[0].flag
+
+
+
+
   return (
     <PDFViewer width="100%" height="100%">
       <Document>
@@ -268,7 +284,7 @@ const PDFExample = ({ data, show }) => {
                   }}
                 >
                   Fecha de Inicio Programado:{" "}
-                  {data.result.produccion.fecProdIniProg}
+                  {fechaInicio}
                 </Text>
                 ,
                 <Text
@@ -282,9 +298,11 @@ const PDFExample = ({ data, show }) => {
                   }}
                 >
                   Fecha de Fin Programado:{" "}
-                  {data.result.produccion.fecProdFinProg}
+                  {fechaFin}
                 </Text>
-                <Text
+                {
+                  /**
+                   <Text
                   style={{
                     ...styles.content,
                     fontWeight: "bold",
@@ -297,6 +315,8 @@ const PDFExample = ({ data, show }) => {
                   Fecha de Vencimiento Lt:{" "}
                   {data.result.produccion.fecVenLotProd}
                 </Text>
+                   */
+                }
                 <Text
                   style={{
                     ...styles.content,
@@ -354,7 +374,7 @@ const PDFExample = ({ data, show }) => {
                       marginRight: 20,
                     }}
                   >
-                    ORDEN DE PRODUCCIÓN
+                    ORDEN DE AGREGACION 
                   </Text>
                   <View
                     style={{
@@ -365,12 +385,14 @@ const PDFExample = ({ data, show }) => {
                   >
                     <Text
                       style={{
-                        ...styles.gridContent,
-                        marginLeft: 50,
+                        //flex: 1,
+                        textAlign: "center",
+                        //marginLeft: 10,
+                        marginRight: 40,
                         marginTop: 10,
                       }}
                     >
-                      {data.result.produccion.numop}
+                      {data.result.produccion.numop + " - "+  flag}
                     </Text>
                   </View>
 
@@ -425,14 +447,13 @@ const PDFExample = ({ data, show }) => {
                       fontSize: 5,
                     }}
                   >
-                    Fecha de Creación: {data.result.produccion.fecCreProd}
+                    Fecha de Creación: {fecCreProdAgr}
                   </Text>
                 </View>
               </View>
             </View>
 
-            {show == "agregaciones" && <Agregations data={data} />}
-            {show == "detalleOrden" && <DetalleOrden data={data} />}
+             <Agregations data={data} />
           </View>
         </Page>
       </Document>
@@ -644,8 +665,7 @@ const DetalleOrden = ({ data }) => {
 };
 
 const Agregations = ({ data }) => {
-  //console.log(data.result?.agregaciones.detAgr);
-  return (
+   return (
     <>
       <Text
         style={{
@@ -709,27 +729,14 @@ const Agregations = ({ data }) => {
 };
 const generatePDF = (data, show) => {
   const windowName = data.result.produccion.numop; // Nombre de la ventana basado en los datos
-  //const newWindow = window.open('', windowName, 'fullscreen=yes');
-  //console.log(newWindow)
 
   const newWindow = window.open("", windowName, "fullscreen=yes");
-  //const newWindow = window.open(
-  //  '',
-  //  '_blank',
-  //  'noopener,noreferrer'
-  //);
   ReactDOM.render(
     <PDFExample data={data} show={show} />,
     newWindow.document.body
   );
 };
 
-/*
-const handleButtonClick = () => {
-  const newWindow = window.open('', '_blank', 'fullscreen=yes');
-  ReactDOM.render(<PDFExample/>, newWindow.document.body);
-};
-*/
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -741,6 +748,17 @@ export const ListAgregacion = () => {
   const location = useLocation();
   const { idLotProdc = "" } = queryString.parse(location.search);
   const [ordenProduccion, setOrdenProduccion] = useState({});
+
+
+
+  const [inputs, setInputs] = useState({
+    producto: {label:""},
+    motivo: {label:""},
+    almacen: {label:""},
+    codigoAgregacion:"",
+    cantidad:"",
+  });
+
 
   // ESTADOS PARA LOS FILTROS PERSONALIZADOS
   const [dataProduccionLote, setdataProduccionLote] = useState([]);
@@ -823,7 +841,10 @@ export const ListAgregacion = () => {
   // Manejadores de cambios
   const handleFormFilter = ({ target }) => {
     const { name, value } = target;
-    filter(value, name);
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
   };
 
   // Manejadores de cambios
@@ -832,14 +853,25 @@ export const ListAgregacion = () => {
     filter(inputValue, name);
   };
 
-  const onChangeProducto = ({ label }) => {
-    filter(label, "filterProducto");
+  const onChangeProducto = (obj) => {
+    setInputs({
+      ...inputs,
+      producto: obj,
+    });
   };
 
-  /************************************************** */
+  const onChangeAlmacen = (obj) => {
+    setInputs({
+      ...inputs,
+      almacen: obj,
+    });
+  };
 
-  const onChangeEstadoProduccion = ({ label }) => {
-    filter(label, "filterEstadoProduccion");
+  const handleDetalleChangeMotivoAgregacion = (obj) => {
+    setInputs({
+      ...inputs,
+      motivo: obj,
+    });
   };
 
   const onChangeTipoProduccion = ({ label }) => {
@@ -885,142 +917,7 @@ export const ListAgregacion = () => {
 
   // Funcion para filtrar la data
   const filter = (terminoBusqueda, name) => {
-    let resultSearch = [];
-    switch (name) {
-      case "filterLoteProduccion":
-        resultSearch = dataProduccionLote.filter((element) => {
-          if (
-            element.codLotProd
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-
-      case "filterNumeroOP":
-        resultSearch = dataProduccionLote.filter((element) => {
-          // Verificamos que numop no sea null y tenga al menos 3 caracteres
-          if (element.numop && element.numop.length >= 3) {
-            // Convertimos tanto numop como terminoBusqueda a minúsculas
-            const numOpLower = element.numop.toLowerCase();
-            const terminoBusquedaLower = terminoBusqueda.toLowerCase();
-
-            // Comparamos los campos en minúsculas
-            if (numOpLower.includes(terminoBusquedaLower)) {
-              return true;
-            } else {
-              return false;
-            }
-          } else {
-            // Si numop es null o no cumple con la longitud mínima, no se incluye en el resultado
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-
-      case "filterProducto":
-        resultSearch = dataProduccionLote.filter((element) => {
-          if (
-            element.nomProd
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-      case "filterEstadoProduccion":
-        resultSearch = dataProduccionLote.filter((element) => {
-          if (
-            element.desEstPro
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-      case "filterTipoProduccion":
-        resultSearch = dataProduccionLote.filter((element) => {
-          if (
-            element.desProdTip
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-      case "filterEstadoInicioProgramado":
-        resultSearch = dataProduccionLote.filter((element) => {
-          if (
-            element.desProdIniProgEst
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-      case "filterFechaInicioProduccion":
-        resultSearch = dataProduccionLote.filter((element) => {
-          let aux = element.fecProdIni.split(" ");
-          if (
-            aux[0]
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-      case "filterFechaInicioProgramadoProduccion":
-        resultSearch = dataProduccionLote.filter((element) => {
-          let aux = element.fecProdIniProg.split(" ");
-          if (
-            aux[0]
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataProduccionLoteTemp(resultSearch);
-        break;
-
-      default:
-        break;
-    }
+     
   };
 
   // ******** ACTUALIZACION DE FECHAS ********
@@ -1066,13 +963,14 @@ export const ListAgregacion = () => {
 
   //FUNCION PARA TRAER LA DATA DE REQUISICION MOLIENDA
   const obtenerDataProduccionLote = async (body = {}) => {
-    console.log(idLotProdc)
+    //console.log(idLotProdc)
     if (idLotProdc.length !== 0) {
     var resultPeticion = await getAgregationsByOrderProduccion(idLotProdc)
     const {   result } = resultPeticion;
     const { agregaciones, produccion } = result;
 
     console.log(agregaciones.detAgr)
+    
     setOrdenProduccion(produccion) 
     setdataProduccionLote(agregaciones.detAgr);
     setdataProduccionLoteTemp(agregaciones.detAgr);
@@ -1118,8 +1016,7 @@ export const ListAgregacion = () => {
     obtenerDataProduccionLote();
   }, []);
 
-  const handleButtonClick = async (id, show) => {
-    console.log("id items: ", id);
+  const handleButtonClick = async (id, show, flag) => {
     try {
       let url;
       if (
@@ -1133,12 +1030,39 @@ export const ListAgregacion = () => {
       }
 
       const response = await axios.get(url);
-      console.log(response.data);
+
+      response.data.result.agregaciones.detAgr = response.data.result?.agregaciones?.detAgr.filter((obj)=> obj.flag == flag)
+      //console.log(response.data);
       generatePDF(response.data, show);
     } catch (error) {
       console.error("Error al obtener los datos:", error);
     }
   };
+
+
+
+  useEffect(() => {
+    let resultSearch = [];
+    dataProduccionLote.map((data) => {
+
+    if (
+        (inputs.almacen.label.includes(data.nomAlm) ||
+          inputs.almacen.label.length == 0) &&
+        (inputs.motivo.label.includes(data.desProdAgrMot) ||
+          inputs.motivo.label.length == 0) &&
+        (inputs.producto.label.includes(data.nomProd) ||
+          inputs.producto.label.length == 0) &&
+        (data.canProdAgr.includes(inputs.cantidad) || inputs.cantidad.length == 0) &&
+        (data.flag.toLowerCase().includes(inputs.codigoAgregacion.toLowerCase()) ||
+          inputs.codigoAgregacion.length == 0)  
+        
+      ) {
+        resultSearch.push({ ...data });
+      }
+    });
+    setdataProduccionLoteTemp(resultSearch);
+  }, [inputs, dataProduccionLote]);
+
 
   return (
     <>
@@ -1242,82 +1166,92 @@ export const ListAgregacion = () => {
                   
                     <TableCell align="left"  sx={{ width:"10% !important"}}>
                       <b>Codigo</b>
-                      {/*
-                        <FilterProductoProduccion onNewInput={onChangeProducto} />
-                      */}  
-                      {/**
-                       <TextField
-                        name="filterNumeroOP"
-                        onChange={(event) =>
-                          handleFormFilterop(event, "filterNumeroOP")
-                        } // Agregamos el segundo parámetro para identificar el filtro
-                        type="text" // Cambiamos el tipo a "text" para que admita el formato "OP" seguido de números
+                      <TextField
+                        name="codigoAgregacion"
+                        onChange={handleFormFilter}
                         size="small"
+                        value={inputs.codigoAgregacion}
                         autoComplete="off"
                         InputProps={{
                           style: {
-                            textTransform: "uppercase",
                             color: "black",
                             background: "white",
                           },
-                          inputProps: {
-                            pattern: "[A-Z0-9]*",
-                          },
                         }}
                       />
-                       */}
                     </TableCell>
 
                     <TableCell align="left" sx={{ width:"30% !important"}}>
                       <b>Producto</b>
-                      <FilterProductoProduccion onNewInput={onChangeProducto} />
+                      {
+                        /*
+                        <FilterProductoProduccion onNewInput={onChangeProducto} 
+                      inputs={inputs}/>
+                        */
+                      }
+
+                       <FilterAllProductos
+                        onNewInput={onChangeProducto}
+                        inputs={inputs}
+                      />
+
                     </TableCell>
 
                     <TableCell align="left" sx={{ width:"15% !important"}}>
                       <b>Motivo</b>
-                      <FilterEstadoProduccion
+                    {/**
+                       <FilterEstadoProduccion
                         onNewInput={onChangeEstadoProduccion}
+                         inputs={inputs}
                       />
+                     */}
+                       <FilterMotivoAgregacion
+                          onNewInput={handleDetalleChangeMotivoAgregacion}
+                          inputs={inputs}
+                        />
+
                     </TableCell>
                     <TableCell align="left" sx={{ width:"15% !important"}}>
                       <b>Almacen destino</b>
-                      <FilterTipoProduccion
-                        onNewInput={onChangeTipoProduccion}
+                      <FilterAlmacen
+                        onNewInput={onChangeAlmacen}
+                        inputs={inputs}
                       />
                     </TableCell>
                     <TableCell align="left" sx={{ width:"15% !important"}}>
                       <b>Fecha inicio</b>
-                      <FechaPickerDay
+                      {
+                        /**
+                         <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaIniciado}
                       />
+                         */
+                      }
                     </TableCell>
                     <TableCell align="left" sx={{ width:"15% !important"}}>
                       <b>Fecha Finalización</b>
-                      <FechaPickerDay
+                     {/**
+                       <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaIniciadoProgramado}
                       />
+                      */}
                     </TableCell>
                     <TableCell align="left" sx={{ width:"20% !important"}}>
                       <b>Cantidad</b>
                       <TextField
-                        name="filterNumeroOP"
-                        onChange={(event) =>
-                          handleFormFilterop(event, "filterNumeroOP")
-                        } // Agregamos el segundo parámetro para identificar el filtro
-                        type="text" // Cambiamos el tipo a "text" para que admita el formato "OP" seguido de números
+                        name="cantidad"
+                        onChange={handleFormFilter}
                         size="small"
+                        value={inputs.cantidad}
                         autoComplete="off"
                         InputProps={{
                           style: {
-                            textTransform: "uppercase",
                             color: "black",
                             background: "white",
                           },
-                          inputProps: {
-                            pattern: "[A-Z0-9]*",
-                          },
                         }}
                       />
+                   
                     </TableCell>
                     <TableCell align="left" width={120}>
                       <b>Acciones</b>
@@ -1326,7 +1260,6 @@ export const ListAgregacion = () => {
                 </TableHead>
                 <TableBody>
                   {dataProduccionLoteTemp
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, i) => (
                       <TableRow
                         key={row.id}
@@ -1353,12 +1286,6 @@ export const ListAgregacion = () => {
                             flexDirection: "row",
                           }}
                         >
-                        
-
-                           
-
-                             
-
                           <div>
                             <div className="btn-toolbar">
                               ´{/**
@@ -1369,41 +1296,22 @@ export const ListAgregacion = () => {
                                */}
                              <button
                                 onClick={() => {
-                                  handleButtonClick(  row.id, "test");
+                                  handleButtonClick(idLotProdc, "agregaciones", row.flag);
+
                                 }}
-                                className="btn btn-danger me-2"
+                                className="btn btn-primary me-2 btn"
                               >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="16"
-                                  height="16"
-                                  fill="currentColor"
-                                  className="bi bi-printer-fill"
-                                  viewBox="0 0 16 16"
-                                >
-                                  <path d="M0 2.5A2.5 2.5 0 0 1 2.5 0h11A2.5 2.5 0 0 1 16 2.5V8h-2V2.5A.5.5 0 0 0 13.5 2h-11a.5.5 0 0 0-.5.5V8H0V2.5zM1 9h14a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1zm2 1v2h10v-2H3zm2 3v2h6v-2H5z" />
-                                </svg>
+                                
+                                <PictureAsPdfIcon/>
                               </button>
                             </div>
                           </div>
-
-                         
                         </TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
               </Table>
             </TableContainer>
-            {/* PAGINACION DE LA TABLA */}
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={dataProduccionLoteTemp.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
           </Paper>
           {mostrarOpciones && (
             <AccionesProduccionLote

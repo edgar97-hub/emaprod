@@ -99,11 +99,8 @@ export const AgregarDevolucion = () => {
     navigate(-1);
   };
 
-  // ESTADO PARA BOTON CREAR
   const [disableButton, setdisableButton] = useState(false);
 
-  // ******** MANEJADORES PARA EL ARREGLO DE DEVOLUCIONES ******
-  // MANEJADOR DE PRODUCTO
   const onAddProductoDevuelto = (value) => {
     setproductoDevuelto({
       ...productoDevuelto,
@@ -128,13 +125,15 @@ export const AgregarDevolucion = () => {
     });
   };
 
-  // ACCION DE AÑADIR UN PRODUCTO A DEVOLVER AL DETALLE
   const handleAddProductoDevuelto = async (e) => {
     e.preventDefault();
     if (idProdDev !== 0 && cantidadDevuelta > 0.0) {
       const itemFound = detalleProductosDevueltos.find(
         (element) => element.idProdt === idProdDev
       );
+
+
+      //return 
 
       if (itemFound) {
         setfeedbackMessages({
@@ -144,6 +143,8 @@ export const AgregarDevolucion = () => {
         handleClickFeeback();
       } else {
         const resultPeticion = await getMateriaPrimaById(idProdDev);
+     //console.log(resultPeticion)
+
         const { message_error, description_error, result } = resultPeticion;
         if (message_error.length === 0) {
           const {
@@ -159,7 +160,7 @@ export const AgregarDevolucion = () => {
           const detalle = {
             idProdc: id, // lote de produccion asociado
             idProdt: idProd, // producto
-            idProdDevMot: 0, // motivo de devolucion
+            idProdDevMot: 1, // motivo de devolucion
             codProd: codProd, // codigo de producto
             desCla: desCla, // clase del producto
             desSubCla: desSubCla, // subclase del producto
@@ -168,7 +169,7 @@ export const AgregarDevolucion = () => {
             simMed: simMed, // medida del producto
             canProdDev: cantidadDevuelta, // cantidad devuelta
           };
-          console.log(detalle);
+          //console.log(detalle);
 
           // seteamos el detalle
           const dataDetalle = [...detalleProductosDevueltos, detalle];
@@ -264,9 +265,11 @@ export const AgregarDevolucion = () => {
     }
   };
 
-  // ********** SUBMIT DE DEVOLUCIONES ***********
   const crearDevolucionesLoteProduccion = async () => {
     console.log(detalleProductosDevueltos);
+
+
+    return
     const resultPeticion = await createDevolucionesLoteProduccion(
       detalleProductosDevueltos
     );
@@ -296,13 +299,12 @@ export const AgregarDevolucion = () => {
       });
       handleClickFeeback();
     } else {
-      // hacemos una verificacio de los motivos
+
       const validMotivoDevolucion = detalleProductosDevueltos.find(
         (element) => element.idProdDevMot === 0
       );
 
       if (validMotivoDevolucion) {
-        // MANEJAMOS FORMULARIOS INCOMPLETOS
         setfeedbackMessages({
           style_message: "warning",
           feedback_description_error:
@@ -318,7 +320,6 @@ export const AgregarDevolucion = () => {
   };
 
   useEffect(() => {
-    // TRAEMOS LA DATA DE REQUSICION DETALLE
     traerDatosProduccionLoteWithDevoluciones();
   }, []);
 

@@ -29,8 +29,7 @@ export const FilterProductoProduccion = ({ onNewInput, inputs }) => {
 
   var d = {}
   if(inputs?.producto){
-    d.producto = inputs.producto
-
+    d.value = inputs.producto
   }
 
   return (

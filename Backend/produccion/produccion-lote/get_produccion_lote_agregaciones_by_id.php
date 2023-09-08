@@ -30,7 +30,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         pd.klgLotProd,
         pd.canLotProd,
         pd.fecVenLotProd,
-        p.idSubCla 
+        p.idSubCla,
+        pd.numop 
     FROM produccion pd
     JOIN producto as p ON p.id = pd.idProdt
     JOIN produccion_estado as pe ON pe.id = pd.idProdEst
@@ -84,9 +85,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $row = getProductsFinal($pdo,$idLotProdc, $row);
                 array_push($result, $row);
                 //die(json_encode($test));
-
-
             }
+
+ 
+
+
+
         } catch (PDOException $e) {
             $message_error = "ERROR INTERNO EN LA CONSULTA DE ENTRADAS";
             $description_error = $e->getMessage();

@@ -28,6 +28,7 @@ import {
   FormatDateTimeMYSQLNow,
   letraAnio,
 } from "../../../utils/functions/FormatDate";
+import { DetalleProductosFinales } from "./DetalleProductosFinales"
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -42,6 +43,7 @@ export const AgregarProductosLoteProduccion = () => {
   // ESTADOS DE LOS PRODUCTOS FINALES DE LA PRODUCCION
   const [proFinProd, setProFinProd] = useState({
     id: 0,
+    numop:"",
     canLotProd: 0,
     codLotProd: "",
     desEstPro: "",
@@ -57,6 +59,7 @@ export const AgregarProductosLoteProduccion = () => {
 
   const {
     id,
+    numop,
     canLotProd,
     codLotProd,
     desEstPro,
@@ -314,6 +317,20 @@ export const AgregarProductosLoteProduccion = () => {
                     className="form-control"
                   />
                 </div>
+
+                <div className="col-md-2">
+                  <label htmlFor="nombre" className="form-label">
+                    <b>Numero OP</b>
+                  </label>
+                  <input
+                    type="text"
+                    disabled={true}
+                    value={numop}
+                    className="form-control"
+                  />
+                </div>
+
+                
                 {/* PRODUCTO */}
                 <div className="col-md-4 me-4">
                   <label htmlFor="nombre" className="form-label">
@@ -425,6 +442,9 @@ export const AgregarProductosLoteProduccion = () => {
                         <TableCell align="left" width={120}>
                           <b>Cantidad ingresada</b>
                         </TableCell>
+                        <TableCell align="left" width={10} sx={{width:5}}>
+                          <b>Action</b>
+                        </TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -432,6 +452,8 @@ export const AgregarProductosLoteProduccion = () => {
                         <RowProductosAgregadosProduccion
                           key={row.id}
                           detalle={row}
+                          DetalleProductosFinales={DetalleProductosFinales}
+                          idProduccion={proFinProd.id}
                         />
                       ))}
                     </TableBody>

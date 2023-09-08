@@ -202,7 +202,7 @@ const {
      //console.log(prodDetProdc,idProdFin)
      //return
      setEntradasNoDisponible([])
-    if (productoLoteProduccion.idProdFin !== 0 
+    if (true ||  productoLoteProduccion.idProdFin !== 0 
       && (productoLoteProduccion.cantidadDeProducto > 0)) {
       const itemFound = produccionLote.prodDetProdc.find(
         (element) => element.idProdFin === productoLoteProduccion.idProdFin

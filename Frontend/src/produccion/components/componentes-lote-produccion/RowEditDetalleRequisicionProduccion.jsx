@@ -54,6 +54,7 @@ export const RowEditDetalleRequisicionProduccion = ({
       {isAggregation && <TableCell>
         <FilterMotivoAgregacion
           onNewInput={handleDetalleChangeMotivoAgregacion}
+          defaultValueFlag={true}
           //disabled={disabledInput}
         />
       </TableCell>}

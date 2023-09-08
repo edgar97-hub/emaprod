@@ -18,6 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql =
             "SELECT
             pd.id,
+            pd.numop,
             pd.idProdt,
             p.nomProd,
             pd.idProdEst,
