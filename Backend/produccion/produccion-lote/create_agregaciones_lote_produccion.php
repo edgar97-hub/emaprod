@@ -163,10 +163,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             // }
                         }
 
-
-
+                        $idLastInsert = 0;
+                        //die(json_encode($flag));
+                        
                         try {
-                            $idLastInsert = 0;
                             $sql_insert_detalle_agregacion_lote_produccion =
                                 "INSERT INTO produccion_agregacion
                             (idProdc, idProdt, idAlm, idProdAgrMot, canProdAgr, fechaInicio, fechaFin, flag, idProdFin)
@@ -175,8 +175,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $stmt_insert_detalle_agregacion_lote_produccion->bindParam(1, $idProdc, PDO::PARAM_INT);
                             $stmt_insert_detalle_agregacion_lote_produccion->bindParam(2, $idProdt, PDO::PARAM_INT);
                             $stmt_insert_detalle_agregacion_lote_produccion->bindParam(3, $idAlmDes, PDO::PARAM_INT);
-                            $stmt_insert_detalle_agregacion_lote_produccion->bindParam(4, $canProdAgr, PDO::PARAM_INT);
-                            $stmt_insert_detalle_agregacion_lote_produccion->bindParam(5, $idProdAgrMot, PDO::PARAM_INT);
+                            $stmt_insert_detalle_agregacion_lote_produccion->bindParam(4, $idProdAgrMot, PDO::PARAM_INT);
+                            $stmt_insert_detalle_agregacion_lote_produccion->bindParam(5, $canProdAgr, PDO::PARAM_INT);
                             $stmt_insert_detalle_agregacion_lote_produccion->bindParam(6, $fechaInicio, PDO::PARAM_STR);
                             $stmt_insert_detalle_agregacion_lote_produccion->bindParam(7, $fechaFin, PDO::PARAM_STR);
                             $stmt_insert_detalle_agregacion_lote_produccion->bindParam(8, $flag, PDO::PARAM_STR);
@@ -188,7 +188,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $description_error = $e->getMessage();
                             //die(json_encode($description_error));
                         }
-                        //die(json_encode("test"));
+                        //die(json_encode($idLastInsert));
 
                         //
 

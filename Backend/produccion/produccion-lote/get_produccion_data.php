@@ -153,7 +153,7 @@ function getAgregations($pdo,$idLotProdc){
             JOIN producto as p ON p.id = pa.idProdt
             JOIN medida as me ON me.id =  p.idMed
             JOIN almacen as al ON al.id = pa.idAlm
-            JOIN produccion_agregacion_motivo as pam ON pam.id = pa.idProdAgrMot
+            LEFT JOIN produccion_agregacion_motivo as pam ON pam.id = pa.idProdAgrMot
             WHERE pa.idProdc = ?";
 
                 $stmt_detalle_agregaciones_lote_produccion = $pdo->prepare($sql_detalle_agregaciones_lote_produccion);

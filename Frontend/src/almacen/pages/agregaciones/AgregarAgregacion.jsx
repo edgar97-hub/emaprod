@@ -232,7 +232,7 @@ export const AgregarAgregacion = () => {
       resultPeticion.result[0].detAgr.sort(function (a, b) {
         return a.id - b.id;
       });
-      
+
       if (message_error.length === 0) {
         setproduccionLote({
           ...produccionLote,
@@ -282,8 +282,6 @@ export const AgregarAgregacion = () => {
     detalleProductosAgregados.sort(function (a, b) {
       return parseFloat(a.indexProdFin) - parseFloat(b.indexProdFin);
     });
-    console.log(detalleProductosAgregados);
-    //return;
 
     if (detalleProductosAgregados.length === 0) {
       // MANEJAMOS FORMULARIOS INCOMPLETOS
@@ -378,16 +376,14 @@ export const AgregarAgregacion = () => {
       obj.flag = flag;
     });
 
-    //console.log(flag, detalleProductosAgregados)
-
-    // console.log("test")
-    //return
+   
+    
     const resultPeticion = await createAgregacionesLoteProduccion(
       detalleProductosAgregados
     );
 
-    console.log(resultPeticion);
-    return;
+    //console.log( resultPeticion);
+    //return;
     const { message_error, description_error, noDisponible } = resultPeticion;
 
     if (noDisponible?.length) {

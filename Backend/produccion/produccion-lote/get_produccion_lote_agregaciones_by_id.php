@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 JOIN producto as p ON p.id = pa.idProdt
                 JOIN medida as me ON me.id =  p.idMed
                 JOIN almacen as al ON al.id = pa.idAlm
-                JOIN produccion_agregacion_motivo as pam ON pam.id = pa.idProdAgrMot
+                LEFT JOIN produccion_agregacion_motivo as pam ON pam.id = pa.idProdAgrMot
                 WHERE pa.idProdc = ?";
 
                 try {

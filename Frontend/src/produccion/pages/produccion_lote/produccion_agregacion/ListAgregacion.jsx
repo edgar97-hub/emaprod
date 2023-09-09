@@ -969,8 +969,10 @@ export const ListAgregacion = () => {
     const {   result } = resultPeticion;
     const { agregaciones, produccion } = result;
 
-    console.log(agregaciones.detAgr)
-    
+    //console.log(agregaciones.detAgr)
+    agregaciones.detAgr.sort(function (a, b) {
+      return a.id - b.id;
+    });
     setOrdenProduccion(produccion) 
     setdataProduccionLote(agregaciones.detAgr);
     setdataProduccionLoteTemp(agregaciones.detAgr);
