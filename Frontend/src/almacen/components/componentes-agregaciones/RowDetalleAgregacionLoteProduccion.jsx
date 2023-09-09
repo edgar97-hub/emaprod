@@ -3,6 +3,7 @@ import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 
 export const RowDetalleAgregacionLoteProduccion = ({ detalle, _parseInt }) => {
+  {/** detalle.canProdAgr */}
   return (
     <TableRow >
       <TableCell>{detalle.flag}</TableCell>
@@ -12,7 +13,7 @@ export const RowDetalleAgregacionLoteProduccion = ({ detalle, _parseInt }) => {
       <TableCell>{detalle.simMed}</TableCell>
       <TableCell>{detalle.nomAlm}</TableCell>
       <TableCell>{detalle.desProdAgrMot}</TableCell>
-      <TableCell>{_parseInt(detalle)}</TableCell> {/** detalle.canProdAgr */}
+      <TableCell>{_parseInt(detalle)}</TableCell> 
     </TableRow>
   );
 };

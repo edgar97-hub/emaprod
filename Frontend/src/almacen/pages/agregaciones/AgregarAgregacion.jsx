@@ -22,10 +22,10 @@ import { RowDetalleAgregacionLoteProduccionEdit } from "./../../components/compo
 import { FilterAreaEncargada } from "./../../../produccion/components/FilterAreaEncargada";
 import { createAgregacionesLoteProduccion } from "./../../helpers/agregaciones-lote-produccion/createAgregacionesLoteProduccion";
 import { getAgregacionByIdProduccion } from "./../../helpers/agregaciones-lote-produccion/getAgregacionByIdProduccion";
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import { FilterPresentacionFinal } from "../../../components/ReferencialesFilters/Producto/FilterPresentacionFinal";
-import  DetalleProducts  from "./DetalleProducts";
+import DetalleProducts from "./DetalleProducts";
 import { FormatDateTimeMYSQLNow } from "../../../utils/functions/FormatDate";
 
 // CONFIGURACION DE FEEDBACK
@@ -38,30 +38,28 @@ export const AgregarAgregacion = () => {
   const { idLotProdc = "" } = queryString.parse(location.search);
 
   const [entradasNoDisponible, setEntradasNoDisponible] = useState([]);
-  
 
-  function _parseInt(str){
-    // console.log(str)
-    if(str.canProdAgr){
-      str.canReqDet = str.canProdAgr
+  function _parseInt(str) {
+    if (str.canProdAgr) {
+      str.canReqDet = str.canProdAgr;
     }
-    if(str.canReqProdLot){
-      str.canReqDet = str.canReqProdLot
+    if (str.canReqProdLot) {
+      str.canReqDet = str.canReqProdLot;
     }
 
-     if(str.canTotProgProdFin){
-       str.canReqDet = str.canTotProgProdFin
-     }
-     str.canReqDet = parseFloat(str.canReqDet).toFixed(2)
-     let index = str.canReqDet.toString().indexOf(".");
-     let result = str.canReqDet.toString().substring(index+1);
-     //console.log("index: ",index, "result: ", result)
-     let val = parseInt(result) >= 1  && str.simMed !== "KGM" ? (Math.trunc(str.canReqDet) + 1) : str.canReqDet
-     return  val
-   }
-   
-  
-   
+    if (str.canTotProgProdFin) {
+      str.canReqDet = str.canTotProgProdFin;
+    }
+    str.canReqDet = parseFloat(str.canReqDet).toFixed(2);
+    let index = str.canReqDet.toString().indexOf(".");
+    let result = str.canReqDet.toString().substring(index + 1);
+    let val =
+      parseInt(result) >= 1 && str.simMed !== "KGM"
+        ? Math.trunc(str.canReqDet) + 1
+        : str.canReqDet;
+    return val;
+  }
+
   // ESTADO PARA LOS DATOS DE PRODUCCION LOTE
   const [produccionLote, setproduccionLote] = useState({
     idProdt: 0, // producto intermedio
@@ -75,14 +73,13 @@ export const AgregarAgregacion = () => {
     fecVenLotProd: "", // fecha de vencimiento del lote
     reqDetProdc: [], // detalle requisicion de lote
     prodDetProdc: [], // detalle de productos finales esperados
-    finalProducts:[], // records de la tabla productos final
-
+    finalProducts: [], // records de la tabla productos final
   });
-
 
   // ESTADOS PARA LA DATA DE DEVOLUCIONES
   const [agregacionesProduccionLote, setagregacionesProduccionLote] = useState({
     id: 0,
+    numop: "",
     canLotProd: 0,
     codLotProd: "",
     desEstPro: "",
@@ -98,6 +95,7 @@ export const AgregarAgregacion = () => {
 
   const {
     id,
+    numop,
     canLotProd,
     codLotProd,
     desEstPro,
@@ -111,7 +109,7 @@ export const AgregarAgregacion = () => {
   //const [detalleProductosAgregados, setdetalleProductosAgregados] = useState(
   //  []
   //);
-  var detalleProductosAgregados = []
+  var detalleProductosAgregados = [];
   // STATES PARA AGREGAR PRODUCTO
   const [productoAgregado, setproductoAgregado] = useState({
     idProdAgr: 0,
@@ -155,7 +153,6 @@ export const AgregarAgregacion = () => {
   const handleAddproductoAgregado = async (e) => {
     e.preventDefault();
 
-
     if (idProdAgr !== 0 && cantidadAgregada > 0.0 && idAreaEncargada !== 0) {
       if (idAreaEncargada === 5 || idAreaEncargada === 6) {
         const itemFound = detalleProductosAgregados.find(
@@ -192,14 +189,13 @@ export const AgregarAgregacion = () => {
               nomProd: nomProd, // nombre del producto
               simMed: simMed, // medida del producto
               canProdAgr: cantidadAgregada, // cantidad devuelta
-              idFinalProduct:productoAgregado.finalProduct,
+              idFinalProduct: productoAgregado.finalProduct,
             };
             console.log(productoAgregado);
 
             // seteamos el detalle
             const dataDetalle = [...detalleProductosAgregados, detalle];
             //setdetalleProductosAgregados(dataDetalle);
-
           } else {
             setfeedbackMessages({
               style_message: "error",
@@ -227,18 +223,18 @@ export const AgregarAgregacion = () => {
 
   // FUNCION PARA TRAES DATOS DE PRODUCCION LOTE
   const traerDatosProduccionLoteWithAgregaciones = async () => {
-
     if (idLotProdc.length !== 0) {
       const resultPeticion = await getProduccionLoteWithAgregacionesById(
         idLotProdc
       );
       const { message_error, description_error, result } = resultPeticion;
       console.log(resultPeticion);
-        
+
       if (message_error.length === 0) {
         setproduccionLote({
           ...produccionLote,
-          finalProducts : result[0].finalProducts})
+          finalProducts: result[0].finalProducts,
+        });
 
         setagregacionesProduccionLote(result[0]);
       } else {
@@ -258,26 +254,33 @@ export const AgregarAgregacion = () => {
     //console.log(produccionLote)
     //console.log(detalleProductosAgregados)
 
-    detalleProductosAgregados = []
-    produccionLote.reqDetProdc.map((obj)=>{
+    detalleProductosAgregados = [];
+    produccionLote.reqDetProdc.map((obj) => {
       detalleProductosAgregados.push({
         idProdc: idLotProdc, // lote de produccion asociado
         idProdt: obj.idProd, // producto
-        idProdAgrMot: (obj.idProdAgrMot ? obj.idProdAgrMot: 1), // motivo de devolucion
+        idProdAgrMot: obj.idProdAgrMot ? obj.idProdAgrMot : 1, // motivo de devolucion
         idAre: obj.idAre,
         codProd: obj.codProd, // codigo de producto
         desCla: obj.desCla, // clase del producto
         desSubCla: obj.desSubCla, // subclase del producto
         nomProd: obj.nomProd, // nombre del producto
         simMed: obj.simMed, // medida del producto
-        canProdAgr: obj.canReqProdLot, 
-        fechaInicio:fechaAgregacion.inicio,
-        fechaFin:fechaAgregacion.fin
-      })
-    })
+        canProdAgr: obj.canReqProdLot,
+        fechaInicio: fechaAgregacion.inicio,
+        fechaFin: fechaAgregacion.fin,
+        indexProdFin: obj.indexProdFin ? obj.indexProdFin : 0,
+        cantUnidadesProdFin: obj.cantidadUnidades ? obj.cantidadUnidades : 0,
+        cantidadklgLote: obj.cantidadklgLote,
+        idProdFin: obj.idProdFin,
+      });
+    });
 
-    //console.log(detalleProductosAgregados)
-   // return 
+    detalleProductosAgregados.sort(function (a, b) {
+      return parseFloat(a.indexProdFin) - parseFloat(b.indexProdFin);
+    });
+    console.log(detalleProductosAgregados);
+    //return;
 
     if (detalleProductosAgregados.length === 0) {
       // MANEJAMOS FORMULARIOS INCOMPLETOS
@@ -309,8 +312,6 @@ export const AgregarAgregacion = () => {
   };
 
   async function crearAgregacionesLoteProduccion() {
-
-
     /**
       canProdAgr: "1"
       codProd: null
@@ -325,8 +326,7 @@ export const AgregarAgregacion = () => {
       simMed : "KGM"
      */
 
-
-      /**
+    /**
       const detalle = {
         idProdc: id, // lote de produccion asociado
         idProdt: idProd, // producto
@@ -342,56 +342,64 @@ export const AgregarAgregacion = () => {
       };
        */
 
-      function nextLetter(s){
-        return s.replace(/([a-zA-Z])[^a-zA-Z]*$/, function(a){
-            var c= a.charCodeAt(0);
-            //console.log("a",a.charCodeAt(0))
-            switch(c){
-                case 90: return 'A';
-                case 122: return 'a';
-                default: return String.fromCharCode(++c);
-            }
-        });
-    }
-   // console.log(nextLetter("B"))
-    const res = await getAgregacionByIdProduccion(
-      idLotProdc
-    );
+    // function nextLetter(s) {
+    //   return s.replace(/([a-zA-Z])[^a-zA-Z]*$/, function (a) {
+    //     var c = a.charCodeAt(0);
+    //     //console.log("a",a.charCodeAt(0))
+    //     switch (c) {
+    //       case 90:
+    //         return "A";
+    //       case 122:
+    //         return "a";
+    //       default:
+    //         return String.fromCharCode(++c);
+    //     }
+    //   });
+    // }
+
+    // console.log(nextLetter("B"))
+    const res = await getAgregacionByIdProduccion(idLotProdc);
+
     const { result } = res;
     const { detAgr } = result;
-    var my_string = "A"
-    var flag = "A"
-    if(detAgr?.length){
-      var my_string = detAgr[0].flag
-      flag = my_string.substring(0, my_string.length - 1)
-        + String.fromCharCode(my_string.charCodeAt(my_string.length - 1) + 1)
+    var my_string = "A";
+    var flag = "A";
+    if (detAgr?.length) {
+      var my_string = detAgr[0].flag;
+      flag =
+        my_string.substring(0, my_string.length - 1) +
+        String.fromCharCode(my_string.charCodeAt(my_string.length - 1) + 1);
     }
 
-    detalleProductosAgregados.map((obj)=>{
-      obj.flag = flag
-    })
+    detalleProductosAgregados.map((obj) => {
+      obj.flag = flag;
+    });
 
     //console.log(flag, detalleProductosAgregados)
-      
-      // console.log("test")
-      //return
+
+    // console.log("test")
+    //return
     const resultPeticion = await createAgregacionesLoteProduccion(
       detalleProductosAgregados
     );
+
+    console.log(resultPeticion);
+    return;
     const { message_error, description_error, noDisponible } = resultPeticion;
-    
-    if(noDisponible?.length){
-      setEntradasNoDisponible(noDisponible)
+
+    if (noDisponible?.length) {
+      setEntradasNoDisponible(noDisponible);
       setfeedbackMessages({
         style_message: "error",
-        feedback_description_error: "No hay entradas disponibles para el producto del detalle",
+        feedback_description_error:
+          "No hay entradas disponibles para el producto del detalle",
       });
       handleClickFeeback();
-    }else{
-      setEntradasNoDisponible([])
+    } else {
+      setEntradasNoDisponible([]);
       if (message_error?.length === 0) {
         // regresamos a la anterior vista
-        console.log("insert success")
+        console.log("insert success");
         onNavigateBack();
       } else {
         setfeedbackMessages({
@@ -401,16 +409,17 @@ export const AgregarAgregacion = () => {
         handleClickFeeback();
       }
     }
-   
+
     setdisableButton(false);
-  };
+  }
 
   useEffect(() => {
     traerDatosProduccionLoteWithAgregaciones();
   }, []);
 
   const [fechaAgregacion, setFechaAgregacion] = useState({
-    inicio: FormatDateTimeMYSQLNow(), fin: FormatDateTimeMYSQLNow()
+    inicio: FormatDateTimeMYSQLNow(),
+    fin: FormatDateTimeMYSQLNow(),
   });
 
   const onAddFechaInicioProgramado = (newFecha) => {
@@ -450,7 +459,7 @@ export const AgregarAgregacion = () => {
                   <input
                     type="text"
                     disabled={true}
-                    value={"numop"}
+                    value={numop}
                     className="form-control"
                   />
                 </div>
@@ -533,10 +542,6 @@ export const AgregarAgregacion = () => {
             </div>
           </div>
 
-
-
-
-
           {/* DEVOLUCIONES ASOCIADAS AL LOTE DE PRODUCCION */}
           <div className="card d-flex mt-4">
             <h6 className="card-header">Agregaciones registradas</h6>
@@ -564,7 +569,7 @@ export const AgregarAgregacion = () => {
                             <b>Fecha Inicio</b>
                           </TableCell>
                           <TableCell align="left" width={150}>
-                          <b>Fecha Fin</b>
+                            <b>Fecha Fin</b>
                           </TableCell>
                           <TableCell align="left" width={20}>
                             <b>U.M</b>
@@ -596,12 +601,11 @@ export const AgregarAgregacion = () => {
             </div>
           </div>
 
-
           <div className="card d-flex mt-4">
             <h6 className="card-header">Fecha de programación</h6>
             <div className="card-body">
               <div className="mb-3 row">
-              <div className="col-md-3">
+                <div className="col-md-3">
                   <label htmlFor="nombre" className="form-label">
                     <b>Fecha de Inicio</b>
                   </label>
@@ -617,12 +621,12 @@ export const AgregarAgregacion = () => {
             </div>
           </div>
 
-           <DetalleProducts produccionLote={produccionLote}
-           setproduccionLote={setproduccionLote} 
-           entradasNoDisponible={entradasNoDisponible} 
-           setEntradasNoDisponible={setEntradasNoDisponible}
-           
-           />
+          <DetalleProducts
+            produccionLote={produccionLote}
+            setproduccionLote={setproduccionLote}
+            entradasNoDisponible={entradasNoDisponible}
+            setEntradasNoDisponible={setEntradasNoDisponible}
+          />
 
           {/* BOTONES DE CANCELAR Y GUARDAR */}
           <div className="btn-toolbar mt-4">

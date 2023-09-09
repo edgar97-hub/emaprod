@@ -252,7 +252,7 @@ export const AgregarProductosLoteProduccion = () => {
       diaJulEntSto: DiaJuliano(fechaIngreso),
       fecEntSto: fechaIngreso,
     };
-    console.log(detalleProductosFinales, idProdTip, dataEntrada);
+    //console.log(detalleProductosFinales, idProdTip, dataEntrada);
 
     //setdisableButton(false);
     //return
@@ -261,7 +261,7 @@ export const AgregarProductosLoteProduccion = () => {
       idProdTip,
       dataEntrada
     );
-    console.log(resultPeticion);
+    //console.log(resultPeticion);
     const { message_error, description_error } = resultPeticion;
     if (message_error.length === 0) {
       // regresamos a la anterior vista

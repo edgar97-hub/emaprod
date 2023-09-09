@@ -171,6 +171,3 @@ function getAgregations($pdo,$idLotProdc){
         return $description_error;
     }
 }
-?>
-
-

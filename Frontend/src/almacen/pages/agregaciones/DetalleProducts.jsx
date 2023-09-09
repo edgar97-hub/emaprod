@@ -21,28 +21,32 @@ import { getMateriaPrimaById } from "./../../../helpers/Referenciales/producto/g
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 
-
-export default function DetalleProducts({produccionLote, setproduccionLote, entradasNoDisponible,setEntradasNoDisponible}) {
-
-
-  function _parseInt(str){
+export default function DetalleProducts({
+  produccionLote,
+  setproduccionLote,
+  entradasNoDisponible,
+  setEntradasNoDisponible,
+}) {
+  function _parseInt(str) {
     // console.log(str)
-   
-    if(str.canReqProdLot){
-      str.canReqDet = str.canReqProdLot
+
+    if (str.canReqProdLot) {
+      str.canReqDet = str.canReqProdLot;
     }
 
-     if(str.canTotProgProdFin){
-       str.canReqDet = str.canTotProgProdFin
-     }
-     str.canReqDet = parseFloat(str.canReqDet).toFixed(2)
-     let index = str.canReqDet.toString().indexOf(".");
-     let result = str.canReqDet.toString().substring(index+1);
-     //console.log("index: ",index, "result: ", result)
-     let val = parseInt(result) >= 1  && str.simMed !== "KGM" ? (Math.trunc(str.canReqDet) + 1) : str.canReqDet
-     return  val
-   }
-
+    if (str.canTotProgProdFin) {
+      str.canReqDet = str.canTotProgProdFin;
+    }
+    str.canReqDet = parseFloat(str.canReqDet).toFixed(2);
+    let index = str.canReqDet.toString().indexOf(".");
+    let result = str.canReqDet.toString().substring(index + 1);
+    //console.log("index: ",index, "result: ", result)
+    let val =
+      parseInt(result) >= 1 && str.simMed !== "KGM"
+        ? Math.trunc(str.canReqDet) + 1
+        : str.canReqDet;
+    return val;
+  }
 
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -50,22 +54,20 @@ export default function DetalleProducts({produccionLote, setproduccionLote, entr
 
   const [finalProducts, setFinalProducts] = useState([]);
 
+  // ESTADO DE KLG DISPONIBLES PARA LOTE PRODUCCION
+  const [cantidadLoteProduccion, setcantidadLoteProduccion] = useState({
+    totalUnidadesLoteProduccion: 0,
+    klgTotalLoteProduccion: 0,
+    klgDisponibleLoteProduccion: 0,
+  });
 
+  const {
+    totalUnidadesLoteProduccion,
+    klgTotalLoteProduccion,
+    klgDisponibleLoteProduccion,
+  } = cantidadLoteProduccion;
 
- // ESTADO DE KLG DISPONIBLES PARA LOTE PRODUCCION
- const [cantidadLoteProduccion, setcantidadLoteProduccion] = useState({
-  totalUnidadesLoteProduccion: 0,
-  klgTotalLoteProduccion: 0,
-  klgDisponibleLoteProduccion: 0,
-});
-
-const {
-  totalUnidadesLoteProduccion,
-  klgTotalLoteProduccion,
-  klgDisponibleLoteProduccion,
-} = cantidadLoteProduccion;
-
-    // ESTADO PARA LOS DATOS DE PRODUCCION LOTE
+  // ESTADO PARA LOS DATOS DE PRODUCCION LOTE
   //const [produccionLote, setproduccionLote] = useState({
   //  idProdt: 0, // producto intermedio
   //  idProdTip: 0, // tipo de produccion
@@ -103,107 +105,100 @@ const {
     cantidadDeProducto: 0,
   });
 
-
   // state producto para detalle requisicion
   const [productoRequisicionProduccion, setproductoRequisicionProduccion] =
-  useState({
-    idProdReq: 0,
-    cantidadRequisicion: 0,
-    idAre: 0,
-    idAlm: 0,
-  });
+    useState({
+      idProdReq: 0,
+      cantidadRequisicion: 0,
+      idAre: 0,
+      idAlm: 0,
+    });
 
+  const onAddProductoFinalLoteProduccion = (value) => {
+    setproductoLoteProduccion({
+      ...productoLoteProduccion,
+      idProdFin: value.id,
+    });
+  };
 
+  const handleInputsProductosFinales = ({ target }) => {
+    const { value, name } = target;
 
-    const onAddProductoFinalLoteProduccion = (value) => {
-      setproductoLoteProduccion({
-        ...productoLoteProduccion,
-        idProdFin: value.id,
-      });
-    };
+    setproductoLoteProduccion({
+      ...productoLoteProduccion,
+      [name]: value,
+    });
+  };
 
+  const onAddProductoRequisicionLoteProduccion = (value) => {
+    setproductoRequisicionProduccion({
+      ...productoRequisicionProduccion,
+      idProdReq: value.id,
+    });
+  };
 
-    const handleInputsProductosFinales = ({ target }) => {
-      const { value, name } = target;
+  const handleAreaIdProductoRequisicion = ({ id }) => {
+    setproductoRequisicionProduccion({
+      ...productoRequisicionProduccion,
+      idAre: id,
+    });
+  };
 
-      setproductoLoteProduccion({
-        ...productoLoteProduccion,
-        [name]: value,
-      });
-    };
+  const handleInputsProductosRequisicion = ({ target }) => {
+    const { value, name } = target;
+    setproductoRequisicionProduccion({
+      ...productoRequisicionProduccion,
+      [name]: value,
+    });
+  };
 
-      const onAddProductoRequisicionLoteProduccion = (value) => {
-        setproductoRequisicionProduccion({
-          ...productoRequisicionProduccion,
-          idProdReq: value.id,
-        });
-      };
+  const handleDeleteItemRequisicionProduccion = (idItem, index) => {
+    const dataDetalleRequisicionProduccion = produccionLote.reqDetProdc.filter(
+      (element) => {
+        if (element.idProd === idItem && element.indexProdFin === index) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    );
 
-      
-      const handleAreaIdProductoRequisicion = ({ id }) => {
-        setproductoRequisicionProduccion({
-          ...productoRequisicionProduccion,
-          idAre: id,
-        });
-      };
+    setproduccionLote({
+      ...produccionLote,
+      reqDetProdc: dataDetalleRequisicionProduccion,
+    });
+  };
 
-      const handleInputsProductosRequisicion = ({ target }) => {
-        const { value, name } = target;
-        setproductoRequisicionProduccion({
-          ...productoRequisicionProduccion,
-          [name]: value,
-        });
-      };
-
-      const handleDeleteItemRequisicionProduccion = (idItem, index) => {
-
-         const dataDetalleRequisicionProduccion = produccionLote.reqDetProdc.filter((element) => {
-          if (element.idProd === idItem && element.indexProdFin === index) {
-            return false;
-          } else {
-            return true;
-          }
-        });
-    
-        setproduccionLote({
-          ...produccionLote,
-          reqDetProdc: dataDetalleRequisicionProduccion,
-        });
-        
-      };
-
-      const handleEditItemRequisicionProduccion = ({ target }, idItem, index) => {
-
-        const { value } = target;
-        //console.log("test " , value)
-        const editFormDetalle = produccionLote.reqDetProdc.map((element) => {
-          if (element.idProd === idItem && element.indexProdFin === index) {
-            return {
-              ...element,
-              canReqProdLot: value,
-            };
-          } else {
-            return element;
-          }
-        });
-        setproduccionLote({
-          ...produccionLote,
-          reqDetProdc: editFormDetalle,
-        });
-        
-      };
-
-      
-  // *********** MANEJADOR DE ACCIONES ARREGLO DE PRODUCTOS FINALES O SUBPRODUCTOS **********
+  const handleEditItemRequisicionProduccion = ({ target }, idItem, index) => {
+    const { value } = target;
+    //console.log("test " , value)
+    const editFormDetalle = produccionLote.reqDetProdc.map((element) => {
+      if (element.idProd === idItem && element.indexProdFin === index) {
+        return {
+          ...element,
+          canReqProdLot: value,
+        };
+      } else {
+        return element;
+      }
+    });
+    setproduccionLote({
+      ...produccionLote,
+      reqDetProdc: editFormDetalle,
+    });
+  };
 
   const handleAddProductoProduccionLote = async (e) => {
     e.preventDefault();
- 
-     //console.log(prodDetProdc,idProdFin)
-     //return
-     setEntradasNoDisponible([])
-    if (true ||  productoLoteProduccion.idProdFin !== 0 
-      && (productoLoteProduccion.cantidadDeProducto > 0)) {
+
+    //console.log(prodDetProdc,idProdFin)
+    //return
+    setEntradasNoDisponible([]);
+    console.log(productoLoteProduccion);
+    if (
+      parseFloat(productoLoteProduccion.cantidadDeLote) > 0.0 &&
+      productoLoteProduccion.idProdFin !== 0
+    ) {
       const itemFound = produccionLote.prodDetProdc.find(
         (element) => element.idProdFin === productoLoteProduccion.idProdFin
       );
@@ -215,16 +210,12 @@ const {
         handleClickFeeback();
       } else {
 
-        //console.log("idPRODFIN: ",idProdFin);
-        // buscamos su formulación de producto
-
         const resultPeticion = await getFormulaProductoDetalleByProducto(
           productoLoteProduccion.idProdFin
         );
         const { message_error, description_error, result } = resultPeticion;
-        console.log(result);
-        //return 
-
+        //console.log(result);
+        //return
 
         if (message_error.length === 0) {
           const { idProdFin, nomProd, simMed, reqDet } = result[0]; // obtenemos la requisicion
@@ -232,38 +223,35 @@ const {
           //buscamos la requisicion de materia prima
           //console.log("Complete Element -> ",reqDet);
 
-          
           reqDet.forEach((element) => {
-            if (element.idAre === 2 || element.idAre === 7 ) {
+            if (element.idAre === 2 || element.idAre === 7) {
               equivalenteKilogramos = parseFloat(element.canForProDet);
               //console.log("elemento are:", element.desAre);
               //console.log("elemento value: ", equivalenteKilogramos);
             }
           });
 
-          // si se ingreso la cantidad de unidades esperadas
           let cantidadUnidades = 0;
           let cantidadklgLote = 0;
-          if (parseFloat(productoLoteProduccion.cantidadDeLote) > 0.00000) {
-            //obtenemos el numero de unidades que podemos obtener (redondeado al entero)
-            //console.log("OP:: ",parseFloat(productoLoteProduccion.cantidadDeLote),"  /",equivalenteKilogramos);
+          //if (parseFloat(productoLoteProduccion.cantidadDeLote) > 0.0) {
+          cantidadUnidades =
+            parseFloat(productoLoteProduccion.cantidadDeLote) /
+            equivalenteKilogramos;
+          cantidadklgLote = parseFloat(
+            productoLoteProduccion.cantidadDeLote
+          ).toFixed(2);
+          //} else {
+          //cantidadUnidades = Math.round(
+          //  parseFloat(productoLoteProduccion.cantidadDeProducto)
+          //);
+          //cantidadklgLote = parseFloat(
+          //  (
+          //    equivalenteKilogramos *
+          //    parseFloat(productoLoteProduccion.cantidadDeProducto)
+          //  ).toFixed(2)
+          //);
+          //}
 
-            cantidadUnidades = 
-              parseFloat(productoLoteProduccion.cantidadDeLote) / equivalenteKilogramos;
-            cantidadklgLote = parseFloat(productoLoteProduccion.cantidadDeLote).toFixed(2);
-           
-          } else {
-
-            // simplemente le asignamos el valor de las unidades requeridas
-            cantidadUnidades = Math.round(parseFloat(productoLoteProduccion.cantidadDeProducto));
-            cantidadklgLote = parseFloat(
-              (equivalenteKilogramos * parseFloat(productoLoteProduccion.cantidadDeProducto)).toFixed(
-                2
-              )
-            );
-          }
-
-          // verificamos que la cantidad de klg no sobrepase lo permitido
           const cantidadTotalDelLoteProduccion = parseFloat(
             klgTotalLoteProduccion + cantidadklgLote
           );
@@ -272,7 +260,10 @@ const {
             totalUnidadesLoteProduccion + cantidadUnidades
           );
 
-          if (false &&  cantidadTotalDelLoteProduccion > klgDisponibleLoteProduccion) {
+          if (
+            false &&
+            cantidadTotalDelLoteProduccion > klgDisponibleLoteProduccion
+          ) {
             setfeedbackMessages({
               style_message: "warning",
               feedback_description_error:
@@ -280,7 +271,6 @@ const {
             });
             handleClickFeeback();
           } else {
-            // actualizamos la cantidad disponible
             setcantidadLoteProduccion({
               ...cantidadLoteProduccion,
               klgTotalLoteProduccion: cantidadTotalDelLoteProduccion,
@@ -288,7 +278,6 @@ const {
                 cantidadTotalUnidadesDelLoteProduccion,
             });
 
-            // formamos productos finales
             const nextIndex = produccionLote.prodDetProdc.length + 1;
             const detalleProductosFinales = [
               ...produccionLote.prodDetProdc,
@@ -302,8 +291,8 @@ const {
               },
             ];
 
-            // ahora formamos el detalle de las requisiciones, se usa el numero de unidades
             let detalleRequisicionesFormula = [];
+      
             reqDet.forEach((element) => {
               if (element.idAre === 5 || element.idAre === 6) {
                 detalleRequisicionesFormula.push({
@@ -311,20 +300,23 @@ const {
                   indexProdFin: nextIndex,
                   idProdFin: idProdFin,
                   idProdAgrMot: 1,
+                  cantidadUnidades,
+                  cantidadklgLote,
                   canReqProdLot: parseFloat(
                     (
                       parseFloat(element.canForProDet) * cantidadUnidades
                     ).toFixed(2)
-                  ), // la cantidad unitaria * cantidad de unidades * cantidad de lotes
+                  ), 
                 });
               } else {
                 return;
               }
             });
+
             //console.log(detalleRequisicionesFormula)
-            detalleRequisicionesFormula.map((obj)=>{
-              obj.canReqProdLot = _parseInt(obj)
-            })
+            detalleRequisicionesFormula.map((obj) => {
+              obj.canReqProdLot = _parseInt(obj);
+            });
             const detalleRequisicion = [
               ...produccionLote.reqDetProdc,
               ...detalleRequisicionesFormula,
@@ -350,8 +342,10 @@ const {
         advertenciaPresentacionFinal +=
           "Se debe proporcionar una presentacion final para agregar a la orden\n";
       }
-      if (productoLoteProduccion.cantidadDeLote <= 0.0 
-        || productoLoteProduccion.cantidadDeProducto <= 0) {
+      if (
+        productoLoteProduccion.cantidadDeLote <= 0.0 ||
+        productoLoteProduccion.cantidadDeProducto <= 0
+      ) {
         advertenciaPresentacionFinal +=
           "Se debe proporcionar una cantidad mayor a 0 para agregar a la orden\n";
       }
@@ -365,12 +359,13 @@ const {
     }
   };
 
-
   const handleAddProductoRequisicionLote = async (e) => {
     e.preventDefault();
-    if (productoRequisicionProduccion.idProdReq !== 0 
-      && productoRequisicionProduccion.idAre !== 0 
-      && productoRequisicionProduccion.cantidadRequisicion > 0.0) {
+    if (
+      productoRequisicionProduccion.idProdReq !== 0 &&
+      productoRequisicionProduccion.idAre !== 0 &&
+      productoRequisicionProduccion.cantidadRequisicion > 0.0
+    ) {
       const itemFound = produccionLote.reqDetProdc.find(
         (element) => element.idProd === productoRequisicionProduccion.idProdReq
       );
@@ -384,8 +379,13 @@ const {
         });
         handleClickFeeback();
       } else {
-        if (productoRequisicionProduccion.idAre === 5 || productoRequisicionProduccion.idAre === 6) {
-          const resultPeticion = await getMateriaPrimaById(productoRequisicionProduccion.idProdReq);
+        if (
+          productoRequisicionProduccion.idAre === 5 ||
+          productoRequisicionProduccion.idAre === 6
+        ) {
+          const resultPeticion = await getMateriaPrimaById(
+            productoRequisicionProduccion.idProdReq
+          );
           const { message_error, description_error, result } = resultPeticion;
 
           if (message_error.length === 0) {
@@ -402,10 +402,13 @@ const {
               nomProd: nomProd,
               simMed: simMed,
               canForProDet: 1,
-              canReqProdLot: productoRequisicionProduccion.cantidadRequisicion, // cantidad
+              canReqProdLot: productoRequisicionProduccion.cantidadRequisicion,  
             };
 
-            const dataDetalle = [...produccionLote.reqDetProdc, detalleFormulaProducto];
+            const dataDetalle = [
+              ...produccionLote.reqDetProdc,
+              detalleFormulaProducto,
+            ];
             setproduccionLote({
               ...produccionLote,
               reqDetProdc: dataDetalle,
@@ -446,17 +449,16 @@ const {
         feedback_description_error: advertenciaDetalleRequisicion,
       });
       handleClickFeeback();
-    } 
+    }
   };
 
-  
   // ELIMINAR UN PRODUCTO FINAL Y SU REQUISICION
   const handleDeleteDetalleProducto = (idItem) => {
     let totalKlgProductoFinal = 0;
     let totalUnidadesProductoFinal = 0;
     // filtramos el elemento eliminado
-    const dataDetalleProductoFinalProduccion = produccionLote.prodDetProdc.filter(
-      (element) => {
+    const dataDetalleProductoFinalProduccion =
+      produccionLote.prodDetProdc.filter((element) => {
         if (element.idProdFin !== idItem) {
           return true;
         } else {
@@ -464,17 +466,17 @@ const {
           totalUnidadesProductoFinal = element.canUnd;
           return false;
         }
+      });
+
+    const dataDetalleRequisicionProduccion = produccionLote.reqDetProdc.filter(
+      (element) => {
+        if (element.idProdFin !== idItem) {
+          return true;
+        } else {
+          return false;
+        }
       }
     );
-
-    const dataDetalleRequisicionProduccion = produccionLote.reqDetProdc.filter((element) => {
-      if (element.idProdFin !== idItem) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-
 
     // descontamos del total acumulado de klg
     setcantidadLoteProduccion({
@@ -493,7 +495,7 @@ const {
       prodDetProdc: dataDetalleProductoFinalProduccion,
       reqDetProdc: dataDetalleRequisicionProduccion,
     });
-  }
+  };
 
   //const handleSubmitProduccionLote = (e) => {
   //  e.preventDefault();
@@ -501,22 +503,20 @@ const {
   //};
 
   useEffect(() => {
-
-    if(produccionLote?.finalProducts?.length){
+    if (produccionLote?.finalProducts?.length) {
       //console.log(produccionLote.finalProducts)
-      setFinalProducts(produccionLote.finalProducts)
+      setFinalProducts(produccionLote.finalProducts);
     }
   }, [produccionLote]);
 
   function onValidate(e) {
     var t = e.value;
     e.value = t.indexOf(".") >= 0 ? t.slice(0, t.indexOf(".") + 3) : t;
-    return e.value
+    return e.value;
   }
 
-
-   // ACCION PARA CAMBIAR EL MOTIVO DEL DETALLE DE UN PRODUCTO DEVUELTO
-   const handleChangeMotivoAgregacionProductoAgregado = async (
+  // ACCION PARA CAMBIAR EL MOTIVO DEL DETALLE DE UN PRODUCTO DEVUELTO
+  const handleChangeMotivoAgregacionProductoAgregado = async (
     idProdAgrMot,
     idItem
   ) => {
@@ -540,58 +540,176 @@ const {
 
   return (
     <>
-            {/* DATOS DE PRODUCTOS FINALES O LOTES DE SUBPRODUCTOS*/}
-            <div className="card d-flex mt-4">
-            <h6 className="card-header">
-              Detalle Presentaciones Finales{" "}
-              <b className="text text-danger">
-                (No Aplica a Lotes de Subproducto)
-              </b>
-            </h6>
-            <div className="card-body">
-              <form className="row mb-4 mt-4 d-flex flex-row justify-content-start align-items-end">
-                {/* AGREGAR PRODUCTO */}
-                <div className="col-md-5">
-                  <label className="form-label">Presentación Final</label>
-                  {/* <FilterAllProductos onNewInput={onProductoId} /> */}
-                  <FilterPresentacionFinal
-                    onNewInput={onAddProductoFinalLoteProduccion}
-                    finalProducts={finalProducts}
-                  />
-                </div>
-                {/* KILOGRAMOS DE LOTE ASIGNADOS */}
-                <div className="col-md-2">
-                  <label className="form-label">Cantidad Lote (KG)</label>
-                  <TextField
-                    type="number"
-                    autoComplete="off"
-                    size="small"
-                    name="cantidadDeLote"
-                    onChange={handleInputsProductosFinales}
-                  />
-                </div>
+      {/* DATOS DE PRODUCTOS FINALES O LOTES DE SUBPRODUCTOS*/}
+      <div className="card d-flex mt-4">
+        <h6 className="card-header">
+          Detalle Presentaciones Finales{" "}
+          <b className="text text-danger">(No Aplica a Lotes de Subproducto)</b>
+        </h6>
+        <div className="card-body">
+          <form className="row mb-4 mt-4 d-flex flex-row justify-content-start align-items-end">
+            {/* AGREGAR PRODUCTO */}
+            <div className="col-md-5">
+              <label className="form-label">Presentación Final</label>
+              {/* <FilterAllProductos onNewInput={onProductoId} /> */}
+              <FilterPresentacionFinal
+                onNewInput={onAddProductoFinalLoteProduccion}
+                finalProducts={finalProducts}
+              />
+            </div>
+            {/* KILOGRAMOS DE LOTE ASIGNADOS */}
+            <div className="col-md-2">
+              <label className="form-label">Cantidad Lote (KG)</label>
+              <TextField
+                type="number"
+                autoComplete="off"
+                size="small"
+                name="cantidadDeLote"
+                onChange={handleInputsProductosFinales}
+              />
+            </div>
 
-                {/* BOTON AGREGAR PRODUCTO */}
-                <div className="col-md-3 d-flex justify-content-end align-self-center ms-auto">
-                  <button
-                    onClick={handleAddProductoProduccionLote}
-                    className="btn btn-primary"
+            {/* BOTON AGREGAR PRODUCTO */}
+            <div className="col-md-3 d-flex justify-content-end align-self-center ms-auto">
+              <button
+                onClick={handleAddProductoProduccionLote}
+                className="btn btn-primary"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-plus-circle-fill me-2"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+                </svg>
+                Agregar
+              </button>
+            </div>
+          </form>
+          {/* PRODUCTOS FINALES O SUBPRODUCTOS */}
+          <Paper>
+            <TableContainer>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      "& th": {
+                        color: "rgba(96, 96, 96)",
+                        backgroundColor: "#f5f5f5",
+                      },
+                    }}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      className="bi bi-plus-circle-fill me-2"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
-                    </svg>
-                    Agregar
-                  </button>
-                </div>
-              </form>
-              {/* PRODUCTOS FINALES O SUBPRODUCTOS */}
+                    <TableCell align="left" width={20}>
+                      <b>Prod-Asociado</b>
+                    </TableCell>
+                    <TableCell align="left" width={200}>
+                      <b>Nombre</b>
+                    </TableCell>
+                    <TableCell align="left" width={20}>
+                      <b>U.M</b>
+                    </TableCell>
+                    <TableCell align="left" width={150}>
+                      <b>Unidades</b>
+                    </TableCell>
+                    <TableCell align="left" width={150}>
+                      <b>Peso Lote (kg)</b>
+                    </TableCell>
+                    <TableCell align="left" width={150}>
+                      <b>Acciones</b>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {produccionLote.prodDetProdc.map((row, i) => {
+                    return (
+                      <RowEditDetalleProductosFinales
+                        key={row.idProdFin}
+                        detalle={row}
+                        onDeleteItemProductoFinal={handleDeleteDetalleProducto}
+                      />
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+          {/* 
+              
+              <div className="mt-4 d-flex justify-content-end align-items-center">
+                <p className="me-4 p-2 bg-dark-subtle">
+                  <b>Total Unidades: </b>
+                  {totalUnidadesLoteProduccion}
+                </p>
+                <p className="p-2 bg-danger-subtle">
+                  <b>Total Peso: </b>
+                  {klgTotalLoteProduccion} / {klgDisponibleLoteProduccion}
+                </p>
+              </div>
+              
+              
+              */}
+        </div>
+      </div>
+      {/* DATOS DEL DETALLE */}
+      <div className="card d-flex mt-4">
+        <h6 className="card-header">Detalle de las Requisiciones</h6>
+        <div className="card-body">
+          {/* AÑADIR PRODUCTOS ADICICONALES */}
+          <form className="row mb-4 mt-4 d-flex flex-row justify-content-start align-items-end">
+            {/* AGREGAR PRODUCTO */}
+            <div className="col-md-5">
+              <label className="form-label">
+                Envases, Embalajes u otros Materiales
+              </label>
+              {/* <FilterAllProductos onNewInput={onProductoId} /> */}
+              <FilterAllProductos
+                onNewInput={onAddProductoRequisicionLoteProduccion}
+              />
+            </div>
+            {/* AGREGAR AREA */}
+            <div className="col-md-2">
+              <label className="form-label">Área Destino</label>
+              <FilterAreaEncargada
+                onNewInput={handleAreaIdProductoRequisicion}
+              />
+            </div>
+            {/* KILOGRAMOS DE LOTE ASIGNADOS */}
+            <div className="col-md-2">
+              <label className="form-label">Cantidad</label>
+              <TextField
+                size="small"
+                type="number"
+                name="cantidadRequisicion"
+                onChange={handleInputsProductosRequisicion}
+              />
+            </div>
+            {/* BOTON AGREGAR PRODUCTO */}
+            <div className="col-md-3 d-flex justify-content-end align-self-center ms-auto">
+              <button
+                onClick={handleAddProductoRequisicionLote}
+                className="btn btn-primary"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="bi bi-plus-circle-fill me-2"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+                </svg>
+                Agregar
+              </button>
+            </div>
+          </form>
+          {/* DETALLE DE ENVASADO */}
+          <div className="card text-bg-success d-flex mt-3">
+            <h6 className="card-header">Detalle Envasado</h6>
+            <div className="card-body">
               <Paper>
                 <TableContainer>
                   <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -607,17 +725,20 @@ const {
                         <TableCell align="left" width={20}>
                           <b>Prod-Asociado</b>
                         </TableCell>
-                        <TableCell align="left" width={200}>
+                        <TableCell align="left" width={230}>
                           <b>Nombre</b>
                         </TableCell>
                         <TableCell align="left" width={20}>
                           <b>U.M</b>
                         </TableCell>
-                        <TableCell align="left" width={150}>
-                          <b>Unidades</b>
+                        <TableCell align="left" width={20}>
+                          <b>Unidad</b>
                         </TableCell>
-                        <TableCell align="left" width={150}>
-                          <b>Peso Lote (kg)</b>
+                        <TableCell align="left" width={20}>
+                          <b>motivo</b>
+                        </TableCell>
+                        <TableCell align="left" width={120}>
+                          <b>Total</b>
                         </TableCell>
                         <TableCell align="left" width={150}>
                           <b>Acciones</b>
@@ -625,231 +746,104 @@ const {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {produccionLote.prodDetProdc.map((row, i) => {
-                        return (
-                          <RowEditDetalleProductosFinales
-                            key={row.idProdFin}
-                            detalle={row}
-                            onDeleteItemProductoFinal={
-                              handleDeleteDetalleProducto
-                            }
-                          />
-                        );
+                      {produccionLote.reqDetProdc.map((row, i) => {
+                        if (row.idAre === 5) {
+                          return (
+                            <RowEditDetalleRequisicionProduccion
+                              key={`${row.idProd}-${i}`}
+                              detalle={row}
+                              type="number"
+                              onDeleteItemRequisicion={
+                                handleDeleteItemRequisicionProduccion
+                              }
+                              onChangeItemDetalle={
+                                handleEditItemRequisicionProduccion
+                              }
+                              onValidate={onValidate}
+                              isAggregation={true}
+                              entradasNoDisponible={entradasNoDisponible}
+                            />
+                          );
+                        }
                       })}
                     </TableBody>
                   </Table>
                 </TableContainer>
               </Paper>
-              {/* DETALLES DE LA CANTIDAD */}
-              {/* 
-              
-              <div className="mt-4 d-flex justify-content-end align-items-center">
-                <p className="me-4 p-2 bg-dark-subtle">
-                  <b>Total Unidades: </b>
-                  {totalUnidadesLoteProduccion}
-                </p>
-                <p className="p-2 bg-danger-subtle">
-                  <b>Total Peso: </b>
-                  {klgTotalLoteProduccion} / {klgDisponibleLoteProduccion}
-                </p>
-              </div>
-              
-              
-              */}
-              
             </div>
           </div>
-          {/* DATOS DEL DETALLE */}
-          <div className="card d-flex mt-4">
-            <h6 className="card-header">Detalle de las Requisiciones</h6>
+          {/* DETALLE DE ENCAJONADO */}
+          <div className="card text-bg-warning d-flex mt-3">
+            <h6 className="card-header">Detalle Encajado</h6>
             <div className="card-body">
-              {/* AÑADIR PRODUCTOS ADICICONALES */}
-              <form className="row mb-4 mt-4 d-flex flex-row justify-content-start align-items-end">
-                {/* AGREGAR PRODUCTO */}
-                <div className="col-md-5">
-                  <label className="form-label">
-                    Envases, Embalajes u otros Materiales
-                  </label>
-                  {/* <FilterAllProductos onNewInput={onProductoId} /> */}
-                  <FilterAllProductos
-                    onNewInput={onAddProductoRequisicionLoteProduccion}
-                  />
-                </div>
-                {/* AGREGAR AREA */}
-                <div className="col-md-2">
-                  <label className="form-label">Área Destino</label>
-                  <FilterAreaEncargada
-                    onNewInput={handleAreaIdProductoRequisicion}
-                  />
-                </div>
-                {/* KILOGRAMOS DE LOTE ASIGNADOS */}
-                <div className="col-md-2">
-                  <label className="form-label">Cantidad</label>
-                  <TextField
-                    size="small"
-                    type="number"
-                    name="cantidadRequisicion"
-                    onChange={handleInputsProductosRequisicion}
-                  />
-                </div>
-                {/* BOTON AGREGAR PRODUCTO */}
-                <div className="col-md-3 d-flex justify-content-end align-self-center ms-auto">
-                  <button
-                    onClick={handleAddProductoRequisicionLote}
-                    className="btn btn-primary"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      className="bi bi-plus-circle-fill me-2"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
-                    </svg>
-                    Agregar
-                  </button>
-                </div>
-              </form>
-              {/* DETALLE DE ENVASADO */}
-              <div className="card text-bg-success d-flex mt-3">
-                <h6 className="card-header">Detalle Envasado</h6>
-                <div className="card-body">
-                  <Paper>
-                    <TableContainer>
-                      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                          <TableRow
-                            sx={{
-                              "& th": {
-                                color: "rgba(96, 96, 96)",
-                                backgroundColor: "#f5f5f5",
-                              },
-                            }}
-                          >
-                            <TableCell align="left" width={20}>
-                              <b>Prod-Asociado</b>
-                            </TableCell>
-                            <TableCell align="left" width={230}>
-                              <b>Nombre</b>
-                            </TableCell>
-                            <TableCell align="left" width={20}>
-                              <b>U.M</b>
-                            </TableCell>
-                            <TableCell align="left" width={20}>
-                              <b>Unidad</b>
-                            </TableCell>
-                            <TableCell align="left" width={20}>
-                              <b>motivo</b>
-                            </TableCell>
-                            <TableCell align="left" width={120}>
-                              <b>Total</b>
-                            </TableCell>
-                            <TableCell align="left" width={150}>
-                              <b>Acciones</b>
-                            </TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {produccionLote.reqDetProdc.map((row, i) => {
-
-                            
-                            if (row.idAre === 5) {
-                              return (
-                                <RowEditDetalleRequisicionProduccion
-                                  key={`${row.idProd}-${i}`}
-                                  detalle={row}
-                                  type="number"
-                                  onDeleteItemRequisicion={
-                                    handleDeleteItemRequisicionProduccion
-                                  }
-                                  onChangeItemDetalle={
-                                    handleEditItemRequisicionProduccion
-                                  }
-                                  onValidate={onValidate}
-                                  isAggregation={true}
-                                  entradasNoDisponible={entradasNoDisponible} 
-
-                                />
-                              );
-                            }
-                          })}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </Paper>
-                </div>
-              </div>
-              {/* DETALLE DE ENCAJONADO */}
-              <div className="card text-bg-warning d-flex mt-3">
-                <h6 className="card-header">Detalle Encajado</h6>
-                <div className="card-body">
-                  <Paper>
-                    <TableContainer>
-                      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                          <TableRow
-                            sx={{
-                              "& th": {
-                                color: "rgba(96, 96, 96)",
-                                backgroundColor: "#f5f5f5",
-                              },
-                            }}
-                          >
-                            <TableCell align="left" width={20}>
-                              <b>Prod-Asociado</b>
-                            </TableCell>
-                            <TableCell align="left" width={230}>
-                              <b>Nombre</b>
-                            </TableCell>
-                            <TableCell align="left" width={20}>
-                              <b>U.M</b>
-                            </TableCell>
-                            <TableCell align="left" width={20}>
-                              <b>Unidad</b>
-                            </TableCell>
-                            <TableCell align="left" width={20}>
-                              <b>motivo</b>
-                            </TableCell>
-                            <TableCell align="left" width={120}>
-                              <b>Total</b>
-                            </TableCell>
-                            <TableCell align="left" width={150}>
-                              <b>Acciones</b>
-                            </TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                        {produccionLote.reqDetProdc.map((row, i) => {
-                            if (row.idAre === 6) {
-                              return (
-                                <RowEditDetalleRequisicionProduccion
-                                  key={`${row.idProd}-${i}`}
-                                  detalle={row}
-                                  onDeleteItemRequisicion={handleDeleteItemRequisicionProduccion}
-                                  onChangeItemDetalle={handleEditItemRequisicionProduccion}
-                                  onChangeMotivoAgregacion={
-                                    handleChangeMotivoAgregacionProductoAgregado
-                                  }
-                                  onValidate={onValidate}
-                                  isAggregation={true}
-                                  entradasNoDisponible={entradasNoDisponible} 
-
-                                />
-                              );
-                            }
-                          })}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </Paper>
-                </div>
-              </div>
+              <Paper>
+                <TableContainer>
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                      <TableRow
+                        sx={{
+                          "& th": {
+                            color: "rgba(96, 96, 96)",
+                            backgroundColor: "#f5f5f5",
+                          },
+                        }}
+                      >
+                        <TableCell align="left" width={20}>
+                          <b>Prod-Asociado</b>
+                        </TableCell>
+                        <TableCell align="left" width={230}>
+                          <b>Nombre</b>
+                        </TableCell>
+                        <TableCell align="left" width={20}>
+                          <b>U.M</b>
+                        </TableCell>
+                        <TableCell align="left" width={20}>
+                          <b>Unidad</b>
+                        </TableCell>
+                        <TableCell align="left" width={20}>
+                          <b>motivo</b>
+                        </TableCell>
+                        <TableCell align="left" width={120}>
+                          <b>Total</b>
+                        </TableCell>
+                        <TableCell align="left" width={150}>
+                          <b>Acciones</b>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {produccionLote.reqDetProdc.map((row, i) => {
+                        if (row.idAre === 6) {
+                          return (
+                            <RowEditDetalleRequisicionProduccion
+                              key={`${row.idProd}-${i}`}
+                              detalle={row}
+                              onDeleteItemRequisicion={
+                                handleDeleteItemRequisicionProduccion
+                              }
+                              onChangeItemDetalle={
+                                handleEditItemRequisicionProduccion
+                              }
+                              onChangeMotivoAgregacion={
+                                handleChangeMotivoAgregacionProductoAgregado
+                              }
+                              onValidate={onValidate}
+                              isAggregation={true}
+                              entradasNoDisponible={entradasNoDisponible}
+                            />
+                          );
+                        }
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* FEEDBACK AGREGAR MATERIA PRIMA */}
+      {/* FEEDBACK AGREGAR MATERIA PRIMA */}
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={feedbackCreate}
@@ -865,5 +859,5 @@ const {
         </Alert>
       </Snackbar>
     </>
-  )
+  );
 }
