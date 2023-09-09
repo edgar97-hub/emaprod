@@ -229,7 +229,10 @@ export const AgregarAgregacion = () => {
       );
       const { message_error, description_error, result } = resultPeticion;
       console.log(resultPeticion);
-
+      resultPeticion.result[0].detAgr.sort(function (a, b) {
+        return a.id - b.id;
+      });
+      
       if (message_error.length === 0) {
         setproduccionLote({
           ...produccionLote,

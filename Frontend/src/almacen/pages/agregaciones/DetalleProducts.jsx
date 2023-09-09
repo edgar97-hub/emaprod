@@ -28,8 +28,6 @@ export default function DetalleProducts({
   setEntradasNoDisponible,
 }) {
   function _parseInt(str) {
-    // console.log(str)
-
     if (str.canReqProdLot) {
       str.canReqDet = str.canReqProdLot;
     }
@@ -209,7 +207,6 @@ export default function DetalleProducts({
         });
         handleClickFeeback();
       } else {
-
         const resultPeticion = await getFormulaProductoDetalleByProducto(
           productoLoteProduccion.idProdFin
         );
@@ -292,7 +289,7 @@ export default function DetalleProducts({
             ];
 
             let detalleRequisicionesFormula = [];
-      
+
             reqDet.forEach((element) => {
               if (element.idAre === 5 || element.idAre === 6) {
                 detalleRequisicionesFormula.push({
@@ -306,7 +303,7 @@ export default function DetalleProducts({
                     (
                       parseFloat(element.canForProDet) * cantidadUnidades
                     ).toFixed(2)
-                  ), 
+                  ),
                 });
               } else {
                 return;
@@ -402,7 +399,7 @@ export default function DetalleProducts({
               nomProd: nomProd,
               simMed: simMed,
               canForProDet: 1,
-              canReqProdLot: productoRequisicionProduccion.cantidadRequisicion,  
+              canReqProdLot: productoRequisicionProduccion.cantidadRequisicion,
             };
 
             const dataDetalle = [

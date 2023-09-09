@@ -161,7 +161,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt = $pdo->query($sql);
             $lastInsertId = $stmt->fetchColumn();
 
-            // Genera el valor para numop
             //echo ( $canLotProd);
             $sql_insert_produccion =
                 "INSERT INTO
@@ -182,7 +181,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     numop)
                     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             try {
-                // PREPARAMOS LA CONSULTA
                 $stmt_insert_produccion = $pdo->prepare($sql_insert_produccion);
                 $stmt_insert_produccion->bindParam(1, $idProdt, PDO::PARAM_INT);
                 $stmt_insert_produccion->bindParam(2, $idProdEst, PDO::PARAM_INT);
@@ -208,7 +206,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($stmt_insert_produccion->rowCount() === 1) {
 
                     $idLastInsert = $pdo->lastInsertId(); // le asignamos el id de lote produccion
-
                     // ******* AHORA DEBEMOS AGREGAR LOS PRODUCTO FINALES ESPERADOS A UN LOTE DE PRODUCCION *****
 
                     $sql_insert_producto_lote_produccion = "";
@@ -225,12 +222,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             idProdcProdtFinEst,
                             idProdt,
                             canTotProgProdFin)
-                            VALUES (?,?,?,$canTotProgProdFin)";
+                            VALUES (?,?,?,?)";
 
                         $stmt_insert_producto_lote_produccion = $pdo->prepare($sql_insert_producto_lote_produccion);
                         $stmt_insert_producto_lote_produccion->bindParam(1, $idLastInsert, PDO::PARAM_INT);
                         $stmt_insert_producto_lote_produccion->bindParam(2, $idProdcProdtFinEst, PDO::PARAM_INT);
                         $stmt_insert_producto_lote_produccion->bindParam(3, $idProdtFinProdc, PDO::PARAM_INT);
+                        $stmt_insert_producto_lote_produccion->bindParam(4, $canTotProgProdFin, PDO::PARAM_INT);
                         $stmt_insert_producto_lote_produccion->execute();
 
 
@@ -239,6 +237,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         //die (json_encode($rowProdDet) );
 
                     }
+                    //die(json_encode("test"));
+
                     //unset($rowProdDet); 
                     //die (json_encode($prodDetProdc) );
                     //$idLastInsert = $pdo->lastInsertId(); // id de produccion_producto_final para detalle de requisicion
@@ -268,6 +268,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             array_push($reqDetMatPri, $value);
                         }
                     }
+
                     // die (json_encode($reqDetEnc) );
 
                     // AHORA CREAMOS LAS REQUISICIONES CORRESPONDIENTES
@@ -338,12 +339,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         "INSERT INTO
                                             requisicion_detalle
                                             (idProdt, idReq, idReqDetEst, canReqDet, idProdFin)
-                                            VALUES (?, ?, ?, $canReqDet, $idProdFinFlag)";
+                                            VALUES (?, ?, ?, ?, ?)";
 
                                     $stmt_insert_requisicion_materia_prima_detalle = $pdo->prepare($sql_insert_requisicion_materia_prima_detalle);
                                     $stmt_insert_requisicion_materia_prima_detalle->bindParam(1, $idProdtMatPri, PDO::PARAM_INT);
                                     $stmt_insert_requisicion_materia_prima_detalle->bindParam(2, $idLastInsertReqMatPri, PDO::PARAM_INT);
                                     $stmt_insert_requisicion_materia_prima_detalle->bindParam(3, $idReqDetEst, PDO::PARAM_INT);
+                                    $stmt_insert_requisicion_materia_prima_detalle->bindParam(4, $canReqDet, PDO::PARAM_STR);
+                                    $stmt_insert_requisicion_materia_prima_detalle->bindParam(5, $idProdFinFlag, PDO::PARAM_STR);
                                     $stmt_insert_requisicion_materia_prima_detalle->execute();
                                 }
                             } else {
@@ -500,8 +503,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $message_error = "ERROR INTERNO SERVER: fallo en insercion de maestro requisicion molienda";
                 $description_error = $e->getMessage();
             }
-            //}
-            /*********** END ELSE ***************** */
         } else {
             $message_error = "NO SE ENCONTRO NINGUNA FORMULA";
             $description_error = "No se encontro ninguna formula asociada al peso (kg) y subproducto elegido";

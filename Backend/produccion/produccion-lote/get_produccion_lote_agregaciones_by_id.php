@@ -63,6 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 pa.fechaInicio,
                 pa.fechaFin,
                 pa.flag
+
                 FROM produccion_agregacion as pa
                 JOIN producto as p ON p.id = pa.idProdt
                 JOIN medida as me ON me.id =  p.idMed
