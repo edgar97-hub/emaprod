@@ -24,15 +24,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $idProdt = $row["idProdt"]; // producto
             $canProdFin = $row["canProdFin"]; // cantidad total
             $fecVenEntProdFin = $row["fecVenEntProdFin"]; // fecha de vencimiento
+            $idProdFinal = $row["idProdFinal"]; // cantidad total
 
             $sql_consult_producto_final =
                 "SELECT * FROM produccion_producto_final
-            WHERE idProdc = ? AND idProdt = ?";
+            #WHERE idProdc = ? AND idProdt = ?
+            WHERE id = ?";
 
             try {
                 $stmt_consult_producto_final = $pdo->prepare($sql_consult_producto_final);
-                $stmt_consult_producto_final->bindParam(1, $idProdc, PDO::PARAM_INT);
-                $stmt_consult_producto_final->bindParam(2, $idProdt, PDO::PARAM_INT);
+                //$stmt_consult_producto_final->bindParam(1, $idProdc, PDO::PARAM_INT);
+                //$stmt_consult_producto_final->bindParam(2, $idProdt, PDO::PARAM_INT);
+                $stmt_consult_producto_final->bindParam(1, $idProdFinal, PDO::PARAM_INT);
                 $stmt_consult_producto_final->execute();
 
                 // si es un producto que ha sido programado
@@ -40,13 +43,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $sql_update_producto_final =
                         "UPDATE produccion_producto_final
                     SET canTotIngProdFin = canTotIngProdFin + $canProdFin, fecActProdcProdtFin = ?
-                    WHERE idProdc = ? AND idProdt = ?";
+                    #WHERE idProdc = ? AND idProdt = ?
+                    WHERE id = ?";
 
                     try {
                         $stmt_update_producto_final = $pdo->prepare($sql_update_producto_final);
                         $stmt_update_producto_final->bindParam(1, $fecha); // fecha de actualizacion
-                        $stmt_update_producto_final->bindParam(2, $idProdc, PDO::PARAM_INT);
-                        $stmt_update_producto_final->bindParam(3, $idProdt, PDO::PARAM_INT);
+                        //$stmt_update_producto_final->bindParam(2, $idProdc, PDO::PARAM_INT);
+                        //$stmt_update_producto_final->bindParam(3, $idProdt, PDO::PARAM_INT);
+                        $stmt_update_producto_final->bindParam(2, $idProdFinal, PDO::PARAM_INT);
                         $stmt_update_producto_final->execute();
                     } catch (PDOException $e) {
                         $message_error = "Error en la actualizacion de producto final";

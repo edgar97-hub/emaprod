@@ -5,10 +5,10 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { getAllProductos } from "./../../../helpers/Referenciales/producto/getAllProductos";
 import { useAuth } from "../../../hooks/useAuth";
 
-export const FilterAllProductos = ({ onNewInput, inputs,productos }) => {
+export const FilterAllProductos = ({ onNewInput, inputs, productos }) => {
   const [result, setResult] = useState([]);
   const [value, setValue] = useState({
-    label:""
+    label: "",
   });
 
   const { user } = useAuth();
@@ -19,28 +19,32 @@ export const FilterAllProductos = ({ onNewInput, inputs,productos }) => {
         value: element.codProd2 === null ? "000000" : element.codProd2,
         label: element.nomProd,
         id: element.id,
+        idProdFin: "", // only if products has records
       };
     });
-   //console.log(productos)
 
-    if(productos?.length){
-      productos = productos.map((obj)=> obj.idProdt)
-      //console.log(productos )
+    if (productos?.length) {
+      //console.log(productos);
+      //productos = productos.map((obj) => obj.idProdt);
       //resultPeticion.map((obj)=>{
       //  if(obj.nomProd == "AJI COLORADO PANCA PICANTE MOLIDO GIGANTE BATAN X 42 SBS"){
       //    console.log(obj)
       //  }
       //
       //})
-      formatSelect = formatSelect.filter((obj)=> productos.includes(obj.id))
-      //console.log(formatSelect)
+      var rows = [];
+      formatSelect.map((obj) => {
+        var producto = productos.find((val) => val.idProdt == obj.id);
+        if (producto) {
+          obj.idProdFin = producto.id;
+          rows.push(obj);
+        }
+      });
+      //formatSelect = formatSelect.filter((obj) => productos.includes(obj.id));
+      setResult(rows);
+    } else {
       setResult(formatSelect);
-    }else{
-    setResult(formatSelect);
-
     }
-
-    
   };
 
   useEffect(() => {
@@ -48,17 +52,14 @@ export const FilterAllProductos = ({ onNewInput, inputs,productos }) => {
   }, [productos]);
 
   useEffect(() => {
-
-
-    if(inputs?.producto){
+    if (inputs?.producto) {
       //console.log(inputs?.producto)
-      setValue(inputs?.producto)
+      setValue(inputs?.producto);
     }
   }, [inputs]);
 
-
   const handledChange = (event, value) => {
-    setValue(value)
+    setValue(value);
     onNewInput(value);
   };
 

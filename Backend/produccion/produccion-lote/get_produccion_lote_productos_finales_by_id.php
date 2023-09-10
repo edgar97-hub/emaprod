@@ -48,6 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $sql_detalle =
                     "SELECT
+                    DISTINCT
                 ppf.id,
                 ppf.idProdcProdtFinEst,
                 ppfe.desProProFinEst,
@@ -56,12 +57,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 me.simMed,
                 cl.desCla,
                 ppf.canTotProgProdFin,
-                ppf.canTotIngProdFin
+                ppf.canTotIngProdFin,
+                pa.idProdFin,
+                pd.codProd2,
+                CASE WHEN pa.idProdFin is null THEN false
+                ELSE true
+                END AS isAgregation
+
                 FROM produccion_producto_final ppf
                 JOIN producto as pd on pd.id = ppf.idProdt
                 JOIN medida as me on me.id = pd.idMed
                 JOIN clase as cl on cl.id = pd.idCla
                 JOIN produccion_producto_final_estado as ppfe on ppfe.id = ppf.idProdcProdtFinEst
+                LEFT JOIN produccion_agregacion as pa on pa.idProdFin = ppf.id
                 WHERE ppf.idProdc = ?
                 ";
                 try {

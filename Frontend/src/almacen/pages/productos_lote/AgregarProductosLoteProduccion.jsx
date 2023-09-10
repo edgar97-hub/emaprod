@@ -28,7 +28,7 @@ import {
   FormatDateTimeMYSQLNow,
   letraAnio,
 } from "../../../utils/functions/FormatDate";
-import { DetalleProductosFinales } from "./DetalleProductosFinales"
+import { DetalleProductosFinales } from "./DetalleProductosFinales";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -43,7 +43,7 @@ export const AgregarProductosLoteProduccion = () => {
   // ESTADOS DE LOS PRODUCTOS FINALES DE LA PRODUCCION
   const [proFinProd, setProFinProd] = useState({
     id: 0,
-    numop:"",
+    numop: "",
     canLotProd: 0,
     codLotProd: "",
     desEstPro: "",
@@ -85,7 +85,8 @@ export const AgregarProductosLoteProduccion = () => {
   const onAddProductoFinalSubProducto = (value) => {
     setproductoFinal({
       ...productoFinal,
-      idProdFin: value.id,
+      idProdFin: value.id, // id de producto de la tabla productos
+      idProdfinal: value.idProdFin, // id record de la tabla produccion_producto_final
     });
   };
 
@@ -158,6 +159,7 @@ export const AgregarProductosLoteProduccion = () => {
           } = result[0];
           // generamos nuestro detalle
           const detalle = {
+            idProdFinal: productoFinal.idProdfinal,
             idProdc: id, // lote de produccion asociado
             idProdt: idProd, // producto
             codProd: codProd, // codigo de producto
@@ -169,9 +171,7 @@ export const AgregarProductosLoteProduccion = () => {
             fecVenEntProdFin: fecVenLotProd, // fecha de vencimiento del lote
             canProdFin: cantidadIngresada, // cantidad devuelta
           };
-          //console.log(detalle);
 
-          // seteamos el detalle
           const dataDetalle = [...detalleProductosFinales, detalle];
           setdetalleProductosFinales(dataDetalle);
         } else {
@@ -229,8 +229,34 @@ export const AgregarProductosLoteProduccion = () => {
     const resultPeticion = await getProduccionWhitProductosFinales(idLotProdc);
 
     const { message_error, description_error, result } = resultPeticion;
-    //ProFinProd.proFinProdDet     
-    console.log(result)
+
+    var products = result[0].proFinProdDet;
+    var productsAutocomplete = products.filter((obj) => !obj.isAgregation);
+    var copyProducts = products.reduce((accumulator, currentValue) => {
+      if (accumulator.some((obj) => obj.idProdt === currentValue.idProdt)) {
+        accumulator.map((obj) => {
+          if (obj.idProdt === currentValue.idProdt) {
+            obj.canTotProgProdFin =
+              parseFloat(obj.canTotProgProdFin) +
+              parseFloat(currentValue.canTotProgProdFin);
+            currentValue.total = obj.canTotProgProdFin;
+            const clone = structuredClone(currentValue);
+            obj.detail.push(clone);
+          }
+        });
+      } else {
+        const clone = structuredClone(currentValue);
+        clone.total = clone.canTotProgProdFin;
+        currentValue.detail = [clone];
+        accumulator.push(currentValue);
+      }
+      return accumulator;
+    }, []);
+    result[0].proFinProdDet = copyProducts;
+    result[0].productsAutocomplete = productsAutocomplete;
+
+    //console.log(result[0]);
+
     if (message_error.length === 0) {
       setProFinProd(result[0]);
     } else {
@@ -254,8 +280,7 @@ export const AgregarProductosLoteProduccion = () => {
     };
     //console.log(detalleProductosFinales, idProdTip, dataEntrada);
 
-    //setdisableButton(false);
-    //return
+    //return;
     const resultPeticion = await createProductosFinalesLoteProduccion(
       detalleProductosFinales,
       idProdTip,
@@ -330,7 +355,6 @@ export const AgregarProductosLoteProduccion = () => {
                   />
                 </div>
 
-                
                 {/* PRODUCTO */}
                 <div className="col-md-4 me-4">
                   <label htmlFor="nombre" className="form-label">
@@ -442,7 +466,7 @@ export const AgregarProductosLoteProduccion = () => {
                         <TableCell align="left" width={120}>
                           <b>Cantidad ingresada</b>
                         </TableCell>
-                        <TableCell align="left" width={10} sx={{width:5}}>
+                        <TableCell align="left" width={10} sx={{ width: 5 }}>
                           <b>Action</b>
                         </TableCell>
                       </TableRow>
@@ -477,7 +501,7 @@ export const AgregarProductosLoteProduccion = () => {
                   </label>
                   <FilterAllProductos
                     onNewInput={onAddProductoFinalSubProducto}
-                    productos={proFinProd.proFinProdDet}
+                    productos={proFinProd.productsAutocomplete}
                   />
                 </div>
 
@@ -571,7 +595,7 @@ export const AgregarProductosLoteProduccion = () => {
             </button>
             <button
               type="submit"
-              disabled={disableButton}
+              //disabled={disableButton}
               onClick={handleSubmitProductosFinalesLoteProduccion}
               className="btn btn-primary"
             >
