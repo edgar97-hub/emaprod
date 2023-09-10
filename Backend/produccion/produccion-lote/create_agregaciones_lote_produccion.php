@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $fechaFin = $value["fechaFin"];
             $flag = $value["flag"];
             $indexProdFin2 = $value["indexProdFin"];
-            $cantidadklgLote = $value["cantidadklgLote"];
+            $cantUnidadesProdFin = $value["cantUnidadesProdFin"];
             $idProdFin = $value["idProdFin"];
 
             // primero consultamos la disponibilidad de stock
@@ -144,11 +144,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 idProdcProdtFinEst,
                                 idProdt,
                                 canTotProgProdFin)
-                                VALUES (?,?,?,$cantidadklgLote)";
+                                VALUES (?,?,?,?)";
                             $stmt_insert_producto_lote_produccion = $pdo->prepare($sql_insert_producto_lote_produccion);
                             $stmt_insert_producto_lote_produccion->bindParam(1, $idProdc, PDO::PARAM_INT);
                             $stmt_insert_producto_lote_produccion->bindParam(2, $idProdcProdtFinEst, PDO::PARAM_INT);
                             $stmt_insert_producto_lote_produccion->bindParam(3, $idProdFin, PDO::PARAM_INT);
+                            $stmt_insert_producto_lote_produccion->bindParam(4, $cantUnidadesProdFin, PDO::PARAM_INT);
                             $stmt_insert_producto_lote_produccion->execute();
                             $idProdcFinalForAgreg = $pdo->lastInsertId();
 
@@ -162,6 +163,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             //     $idProdcFinalForAgreg = $rowProdFinal["id"];
                             // }
                         }
+                        //die(json_encode($cantUnidadesProdFin));
 
                         $idLastInsert = 0;
                         //die(json_encode($flag));

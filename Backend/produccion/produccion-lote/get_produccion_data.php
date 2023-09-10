@@ -106,7 +106,8 @@ if (isset($_GET["id"])) {
             $result["produccion"] = $resultProduccion;
             $result["requisiciones"] = $resultRequisiciones;
             $result["agregaciones"] = getAgregations($pdo,$id);;
-            
+            $result["prodFinalWithAgreg"] = agregWithProdFinal($pdo,$id);;
+
         
         } catch (PDOException $e) {
             // Manejo de errores
@@ -155,6 +156,52 @@ function getAgregations($pdo,$idLotProdc){
             JOIN almacen as al ON al.id = pa.idAlm
             LEFT JOIN produccion_agregacion_motivo as pam ON pam.id = pa.idProdAgrMot
             WHERE pa.idProdc = ?";
+
+                $stmt_detalle_agregaciones_lote_produccion = $pdo->prepare($sql_detalle_agregaciones_lote_produccion);
+                $stmt_detalle_agregaciones_lote_produccion->bindParam(1, $idLotProdc, PDO::PARAM_INT);
+                $stmt_detalle_agregaciones_lote_produccion->execute();
+
+                while ($row_detalle_agregacion_lote_produccion = $stmt_detalle_agregaciones_lote_produccion->fetch(PDO::FETCH_ASSOC)) {
+                    array_push($row["detAgr"], $row_detalle_agregacion_lote_produccion);
+                }
+          
+         return $row;
+
+    } catch (PDOException $e) {
+        $description_error = $e->getMessage();
+        return $description_error;
+    }
+}
+
+
+function agregWithProdFinal($pdo,$idLotProdc){
+
+    try {
+            $row["detAgr"] = [];
+
+            $sql_detalle_agregaciones_lote_produccion =
+                "SELECT 
+            pa.id,
+            pa.idProdc,
+            pa.idProdt,
+            p.nomProd,
+            me.simMed,
+            pa.idAlm,
+            al.nomAlm,
+            pa.idProdAgrMot,
+            pam.desProdAgrMot,
+            pa.canProdAgr,
+            pa.fecCreProdAgr,
+            pa.fechaInicio,
+            pa.fechaFin,pa.flag,
+            pf.id as idProdFin
+            FROM produccion_agregacion as pa
+            JOIN producto as p ON p.id = pa.idProdt
+            JOIN medida as me ON me.id =  p.idMed
+            JOIN almacen as al ON al.id = pa.idAlm
+            LEFT JOIN produccion_agregacion_motivo as pam ON pam.id = pa.idProdAgrMot
+            RIGHT JOIN produccion_producto_final as pf ON pf.id = pa.idProdFin
+            WHERE pf.idProdc = ?";
 
                 $stmt_detalle_agregaciones_lote_produccion = $pdo->prepare($sql_detalle_agregaciones_lote_produccion);
                 $stmt_detalle_agregaciones_lote_produccion->bindParam(1, $idLotProdc, PDO::PARAM_INT);

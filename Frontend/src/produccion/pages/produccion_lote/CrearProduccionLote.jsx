@@ -408,33 +408,26 @@ export const CrearProduccionLote = () => {
           const { idProdFin, nomProd, simMed, reqDet } = result[0]; // obtenemos la requisicion
           let equivalenteKilogramos = 0;
           // buscamos la requisicion de materia prima
-          console.log("Complete Element -> ",reqDet);
+          //console.log("Complete Element -> ",reqDet);
 
-          //infinity en comino comino molido
-          //
           
           reqDet.forEach((element) => {
             if (element.idAre === 2 || element.idAre === 7 ) {
               equivalenteKilogramos = parseFloat(element.canForProDet);
-              console.log("elemento are:", element.desAre);
-              console.log("elemento value: ", equivalenteKilogramos);
+              //console.log("elemento are:", element.desAre);
+              //console.log("elemento value: ", equivalenteKilogramos);
             }
           });
 
-          // si se ingreso la cantidad de unidades esperadas
           let cantidadUnidades = 0;
           let cantidadklgLote = 0;
           if (parseFloat(cantidadDeLote) > 0.00000) {
-            // obtenemos el numero de unidades que podemos obtener (redondeado al entero)
-            //**********************************************************************************************no esta jalando bien cantidad de lote******************* */
-            console.log("OP:: ",parseFloat(cantidadDeLote),"  /",equivalenteKilogramos);
 
             cantidadUnidades = 
               parseFloat(cantidadDeLote) /equivalenteKilogramos;
             
            cantidadklgLote = parseFloat(parseFloat(cantidadDeLote).toFixed(5)); // redondeado a las centenas
           } else {
-            // simplemente le asignamos el valor de las unidades requeridas
             cantidadUnidades = Math.round(parseFloat(cantidadDeProducto));
             cantidadklgLote = parseFloat(
               (equivalenteKilogramos * parseFloat(cantidadDeProducto)).toFixed(

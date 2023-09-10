@@ -49,8 +49,8 @@ import iconReturns from "../../../../src/assets/easy_returns.svg";
 import ButtonPdf from "./ButtonPdf";
 import { getProduccionLoteWithAgregacionesById } from "./../../helpers/produccion_lote/getProduccionLoteWithAgregacionesById";
 import config from "../../../config";
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import BlockIcon from '@mui/icons-material/Block';
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import BlockIcon from "@mui/icons-material/Block";
 
 const domain = config.API_URL;
 
@@ -745,15 +745,14 @@ export const ListProduccionLote = () => {
   const [dataProduccionLoteTemp, setdataProduccionLoteTemp] = useState([]);
 
   const [inputs, setInputs] = useState({
-    producto: {label:""},
-    provedor: {label:""},
-    estado: {label:""},
-    tipoProduccion:{label:""},
-    estadoInicio:{label:""},
-    numeroOP:"",
-    lotePrduccion:"",
+    producto: { label: "" },
+    provedor: { label: "" },
+    estado: { label: "" },
+    tipoProduccion: { label: "" },
+    estadoInicio: { label: "" },
+    numeroOP: "",
+    lotePrduccion: "",
   });
-
 
   // ESTADOS PARA EL MODAL
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
@@ -846,11 +845,11 @@ export const ListProduccionLote = () => {
   };
 
   const onChangeProducto = (obj) => {
-     setInputs({
+    setInputs({
       ...inputs,
       producto: obj,
     });
-   };
+  };
 
   /************************************************** */
 
@@ -910,7 +909,6 @@ export const ListProduccionLote = () => {
   useEffect(() => {
     let resultSearch = [];
     dataProduccionLote.map((data) => {
-
       if (
         (inputs.estado.label.includes(data.desEstPro) ||
           inputs.estado.label.length == 0) &&
@@ -918,26 +916,20 @@ export const ListProduccionLote = () => {
           inputs.tipoProduccion.label.length == 0) &&
         (inputs.producto.label.includes(data.nomProd) ||
           inputs.producto.label.length == 0) &&
-          (inputs.estadoInicio.label.includes(data.desProdIniProgEst) ||
-          inputs.estadoInicio.label.length == 0) 
-          &&
-        (data.numop.includes(inputs.numeroOP) || 
-         inputs.numeroOP.length == 0) &&
+        (inputs.estadoInicio.label.includes(data.desProdIniProgEst) ||
+          inputs.estadoInicio.label.length == 0) &&
+        (data.numop.includes(inputs.numeroOP) || inputs.numeroOP.length == 0) &&
         (data.codLotProd?.includes(inputs.lotePrduccion) ||
-          inputs.lotePrduccion.length == 0) 
+          inputs.lotePrduccion.length == 0)
       ) {
         resultSearch.push({ ...data });
       }
     });
     setdataProduccionLoteTemp(resultSearch);
   }, [inputs, dataProduccionLote]);
-  
-
 
   // Funcion para filtrar la data
-  const filter = (terminoBusqueda, name) => {
-   
-  };
+  const filter = (terminoBusqueda, name) => {};
 
   // ******** ACTUALIZACION DE FECHAS ********
   const onUpdateDatesProduccion = async (id, body) => {
@@ -957,7 +949,6 @@ export const ListProduccionLote = () => {
     }
   };
 
-
   const getAgregationsByOrderProduccion = async (idLotProdc) => {
     try {
       let url;
@@ -973,31 +964,28 @@ export const ListProduccionLote = () => {
 
       const response = await axios.get(url);
       //console.log(response.data);
-      return response.data
+      return response.data;
     } catch (error) {
       console.error("Error al obtener los datos:", error);
-      return error
+      return error;
     }
   };
-
 
   //FUNCION PARA TRAER LA DATA DE REQUISICION MOLIENDA
   const obtenerDataProduccionLote = async (body = {}) => {
     const resultPeticion = await getProduccionLote(body);
     const { message_error, description_error, result } = resultPeticion;
 
-    
-
-    await Promise.all( result.map(async(obj)=>{
-
-      var resultPeticion = await getAgregationsByOrderProduccion(obj.id)
-      const {   result } = resultPeticion;
-      const { agregaciones, produccion } = result;
-      //console.log(agregaciones.detAgr)
-      obj.agregaciones = agregaciones.detAgr
-
-    }))
-    console.log(result)
+    await Promise.all(
+      result.map(async (obj) => {
+        var resultPeticion = await getAgregationsByOrderProduccion(obj.id);
+        const { result } = resultPeticion;
+        const { agregaciones, produccion } = result;
+        //console.log(agregaciones.detAgr)
+        obj.agregaciones = agregaciones.detAgr;
+      })
+    );
+    console.log(result);
 
     //return
 
@@ -1037,10 +1025,7 @@ export const ListProduccionLote = () => {
     obtenerDataProduccionLote();
   }, []);
 
- 
-
   const handleButtonClick = async (id, show) => {
-    console.log("id items: ", id);
     try {
       let url;
       if (
@@ -1054,7 +1039,17 @@ export const ListProduccionLote = () => {
       }
 
       const response = await axios.get(url);
-      console.log(response.data);
+      var productosFinal = response.data.result.prodFinalWithAgreg.detAgr.filter(
+        (obj) => obj.id == null
+      );
+      var productosFinal = productosFinal.map((obj) => obj.idProdFin);
+      //console.log(response.data.result.agregaciones.detAgr);
+      //console.log(productosFinal);
+      response.data.result.productos_finales =
+        response.data.result.productos_finales.filter((obj) => productosFinal.includes(obj.id));
+      //console.log(response.data.result.productos_finales);
+
+      //return;
       generatePDF(response.data, show);
     } catch (error) {
       console.error("Error al obtener los datos:", error);
@@ -1064,17 +1059,15 @@ export const ListProduccionLote = () => {
   const resetData = () => {
     setdataProduccionLoteTemp(dataProduccionLote);
     setInputs({
-      producto: {label:""},
-      provedor: {label:""},
-      estado: {label:""},
-      tipoProduccion:{label:""},
-      estadoInicio:{label:""},
-      numeroOP:"",
-      lotePrduccion:"",
+      producto: { label: "" },
+      provedor: { label: "" },
+      estado: { label: "" },
+      tipoProduccion: { label: "" },
+      estadoInicio: { label: "" },
+      numeroOP: "",
+      lotePrduccion: "",
     });
-
   };
-
 
   return (
     <>
@@ -1110,7 +1103,6 @@ export const ListProduccionLote = () => {
                   </svg>
                 </button>
               </div>
-
             </div>
           </div>
           <div className="col-6 d-flex justify-content-end align-items-center">
@@ -1206,7 +1198,7 @@ export const ListProduccionLote = () => {
                         name="numeroOP"
                         value={inputs.numeroOP}
                         onChange={handleFormFilter}
-                        type="text"  
+                        type="text"
                         size="small"
                         autoComplete="off"
                         InputProps={{
@@ -1225,8 +1217,10 @@ export const ListProduccionLote = () => {
 
                     <TableCell align="left" width={140}>
                       <b>Producto</b>
-                      <FilterProductoProduccion onNewInput={onChangeProducto} 
-                      inputs={inputs}/>
+                      <FilterProductoProduccion
+                        onNewInput={onChangeProducto}
+                        inputs={inputs}
+                      />
                     </TableCell>
 
                     <TableCell align="left" width={100}>
@@ -1245,23 +1239,19 @@ export const ListProduccionLote = () => {
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Inicio</b>
-                     {
-                      /**
+                      {/**
                         <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaIniciado}
                       />
-                       */
-                     }
+                       */}
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Inicio Programado</b>
-                      {
-                        /**
+                      {/**
                          <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaIniciadoProgramado}
                       />
-                         */
-                      }
+                         */}
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Estado Inicio</b>
@@ -1770,31 +1760,37 @@ export const ListProduccionLote = () => {
                             </Dialog>
                           </div>
 
-                         
-
                           <div className="btn-toolbar">
                             <Link
-                              to={ row.agregaciones.length ? `/produccion/produccion-lote/produccion-agregacion?idLotProdc=${row.id}` : ""}
+                              to={
+                                row.agregaciones.length
+                                  ? `/produccion/produccion-lote/produccion-agregacion?idLotProdc=${row.id}`
+                                  : ""
+                              }
                               className="btn btn-primary me-2 btn"
                             >
-                              {row.agregaciones.length ? <FormatListBulletedIcon /> : <BlockIcon/>  }
+                              {row.agregaciones.length ? (
+                                <FormatListBulletedIcon />
+                              ) : (
+                                <BlockIcon />
+                              )}
                             </Link>
                           </div>
 
                           <div>
                             <div className="btn-toolbar">
-                             {/**
+                              {/**
                                <ButtonPdf
                                 id={row.id}
                                 handleButtonClick={handleButtonClick}
                               />
                               */}
-                               <button
+                              <button
                                 onClick={() => {
                                   handleButtonClick(row.id, "detalleOrden");
                                 }}
                                 className="btn btn-primary me-2 btn"
-                                >
+                              >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="16"

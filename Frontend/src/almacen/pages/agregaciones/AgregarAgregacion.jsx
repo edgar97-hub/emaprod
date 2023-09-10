@@ -376,14 +376,15 @@ export const AgregarAgregacion = () => {
       obj.flag = flag;
     });
 
-   
-    
+    //console.log(detalleProductosAgregados)
+    //return
     const resultPeticion = await createAgregacionesLoteProduccion(
       detalleProductosAgregados
     );
 
-    //console.log( resultPeticion);
+    //console.log( detalleProductosAgregados, resultPeticion);
     //return;
+
     const { message_error, description_error, noDisponible } = resultPeticion;
 
     if (noDisponible?.length) {
@@ -397,8 +398,6 @@ export const AgregarAgregacion = () => {
     } else {
       setEntradasNoDisponible([]);
       if (message_error?.length === 0) {
-        // regresamos a la anterior vista
-        console.log("insert success");
         onNavigateBack();
       } else {
         setfeedbackMessages({
