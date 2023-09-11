@@ -275,7 +275,7 @@ export const AgregarAgregacion = () => {
         indexProdFin: obj.indexProdFin ? obj.indexProdFin : 0,
         cantUnidadesProdFin: obj.cantidadUnidades ? obj.cantidadUnidades : 0,
         cantidadklgLote: obj.cantidadklgLote,
-        idProdFin: obj.idProdFin,
+        idProdFin: obj.idProdFin ? obj.idProdFin: 0,
       });
     });
 

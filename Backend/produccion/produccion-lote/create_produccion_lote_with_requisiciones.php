@@ -328,7 +328,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     $canReqDet = $row_detalle["canMatPriFor"] * $canLotProd;
 
                                     /** test */
-                                    $idProdFinFlag = -1;
+                                    $idProdFinFlag = 0;
                                     if (isset($row_detalle["idProdFinFlag"])) {
                                         $idProdFinFlag  = intval($row_detalle["idProdFinFlag"]);
                                     }
@@ -395,7 +395,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         $canReqDet = $row_detalle["canReqProdLot"];
 
                                         /** test */
-                                        $idProdFinFlag = -1;
+                                        $idProdFinFlag = 0;
                                         if (isset($row_detalle["idProdFinFlag"])) {
                                             $idProdFinFlag  = intval($row_detalle["idProdFinFlag"]);
                                             //die (json_encode(  $idProdFinFlag) );
@@ -463,7 +463,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     $canReqDet = $row_detalle["canReqProdLot"];
 
                                     /** test */
-                                    $idProdFinFlag = -1;
+                                    $idProdFinFlag = 0;
                                     if (isset($row_detalle["idProdFinFlag"])) {
                                         $idProdFinFlag  = intval($row_detalle["idProdFinFlag"]);
                                     }

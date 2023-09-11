@@ -105,8 +105,9 @@ if (isset($_GET["id"])) {
             // Preparamos la respuesta con los datos de producción, las requisiciones con sus detalles y los productos finales
             $result["produccion"] = $resultProduccion;
             $result["requisiciones"] = $resultRequisiciones;
-            $result["agregaciones"] = getAgregations($pdo,$id);;
+            $result["agregaciones"] = getAgregationsByOrderProdc($pdo,$id);;
             $result["prodFinalWithAgreg"] = agregWithProdFinal($pdo,$id);;
+            //$result["AllAgregations"] = AllAgregations($pdo);
 
         
         } catch (PDOException $e) {
@@ -115,8 +116,7 @@ if (isset($_GET["id"])) {
             $description_error = $e->getMessage();
         }
     } else {
-        // Si el valor recibido no es un número válido, configuramos un mensaje de error
-        $message_error = "Error: El parámetro 'id' debe ser un número válido.";
+        $result["AllAgregations"] = AllAgregations($pdo);
     }
 } else {
     // Si no se ha enviado el parámetro "id", configuramos un mensaje de error
@@ -129,7 +129,57 @@ $return['description_error'] = $description_error;
 $return['result'] = $result;
 echo json_encode($return);
 
-function getAgregations($pdo,$idLotProdc){
+
+function AllAgregations($pdo){
+
+    try {
+    
+            $row["detAgr"] = [];
+
+            $sql_detalle_agregaciones_lote_produccion =
+                "SELECT 
+            pa.id,
+            pa.idProdc,
+            pa.idProdt,
+            p.nomProd,
+            me.simMed,
+            pa.idAlm,
+            al.nomAlm,
+            pa.idProdAgrMot,
+            pam.desProdAgrMot,
+            pa.canProdAgr,
+            pa.fecCreProdAgr,
+            pa.fechaInicio,
+            pa.fechaFin,
+            pa.flag, 
+            pd.id as idProdc , 
+            pd.numop,
+            concat(pd.numop, ' - ', pa.flag) as codigoAgreg
+
+            FROM produccion_agregacion as pa
+            JOIN producto as p ON p.id = pa.idProdt
+            JOIN medida as me ON me.id =  p.idMed
+            JOIN almacen as al ON al.id = pa.idAlm
+            JOIN produccion as pd ON pd.id = pa.idProdc
+            LEFT JOIN produccion_agregacion_motivo as pam ON pam.id = pa.idProdAgrMot
+            ORDER BY pa.id asc" ;
+
+                $stmt_detalle_agregaciones_lote_produccion = $pdo->prepare($sql_detalle_agregaciones_lote_produccion);
+                $stmt_detalle_agregaciones_lote_produccion->execute();
+
+                while ($row_detalle_agregacion_lote_produccion = $stmt_detalle_agregaciones_lote_produccion->fetch(PDO::FETCH_ASSOC)) {
+                    array_push($row["detAgr"], $row_detalle_agregacion_lote_produccion);
+                }
+          
+         return $row;
+
+    } catch (PDOException $e) {
+        $description_error = $e->getMessage();
+        return $description_error;
+    }
+}
+
+function getAgregationsByOrderProdc($pdo,$idLotProdc){
 
     try {
     

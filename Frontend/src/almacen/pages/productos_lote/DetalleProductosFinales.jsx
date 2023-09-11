@@ -17,6 +17,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { getEntradasStockByProdcFinal } from "./../../helpers/entradas-stock/getEntradasStockByProdcFinal";
+import CheckIcon from '@mui/icons-material/Check';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -117,7 +118,7 @@ function TableEntradas2({ row, idProdt }) {
             >
               <TableCell align="left">{row.id}</TableCell>
               <TableCell align="left">{row.codProd2}</TableCell>
-              <TableCell align="left">{row.isAgregation}</TableCell>
+              <TableCell align="left">{row.isAgregation ? <CheckIcon/>: <CloseIcon/>}</TableCell>
               <TableCell align="left">{row.nomProd}</TableCell>
               <TableCell align="left">{row.simMed}</TableCell>
               <TableCell align="left">{row.canTotProgProdFin}</TableCell>

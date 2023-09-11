@@ -44,6 +44,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $sql_detalle_devoluciones_lote_produccion = "";
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $row["detDev"] = [];
+                $row["requisiciones"] = [];
+
                 $sql_detalle_devoluciones_lote_produccion =
                     "SELECT 
                 pdv.id,
@@ -75,6 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $message_error = "ERROR INTERNO EN LA CONSULTA DE AGREGACIONES";
                     $description_error = $e->getMessage();
                 }
+                $row = getRequisiciones($pdo, $idLotProdc, $row);
                 array_push($result, $row);
             }
         } catch (PDOException $e) {
@@ -92,4 +95,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['description_error'] = $description_error;
     $return['result'] = $result;
     echo json_encode($return);
+}
+
+
+function getRequisiciones($pdo, $idLotProdc, $row){
+                $sql_detalle_devoluciones_lote_produccion =
+                    "SELECT 
+                    pc.id as idProdc,
+                    p.nomProd,
+                    p.id as idProdt
+                
+                FROM  producto as p 
+                JOIN produccion as pc ON pc.idProdt = p.id
+                JOIN requisicion as r ON r.idProdc = pc.id
+                RIGHT JOIN requisicion_detalle as rq ON rq.idReq = r.id
+                WHERE pc.id = ?";
+
+                try {
+                    $stmt_detalle_devoluciones_lote_produccion = $pdo->prepare($sql_detalle_devoluciones_lote_produccion);
+                    $stmt_detalle_devoluciones_lote_produccion->bindParam(1, $idLotProdc, PDO::PARAM_INT);
+                    $stmt_detalle_devoluciones_lote_produccion->execute();
+
+                    while ($row_detalle_agregacion_lote_produccion = $stmt_detalle_devoluciones_lote_produccion->fetch(PDO::FETCH_ASSOC)) {
+                        array_push($row["requisiciones"], $row_detalle_agregacion_lote_produccion);
+                    }
+                } catch (PDOException $e) {
+                    $message_error = "ERROR INTERNO EN LA CONSULTA DE AGREGACIONES";
+                    $description_error = $e->getMessage();
+                    $row["requisiciones"] = $description_error;
+                }
+                return $row;
 }

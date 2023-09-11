@@ -51,7 +51,15 @@ const NavAlmacen = () => {
                       className="dropdown-item"
                       to={"/almacen/lote-produccion"}
                     >
-                      Administrar
+                      Ordenes produccion
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="dropdown-item"
+                      to={"/almacen/produccion-agregaciones"}
+                    >
+                      Agregaciones
                     </Link>
                   </li>
                 </ul>

@@ -33,6 +33,7 @@ import { FilterAlmacen } from "./../../../components/ReferencialesFilters/Almace
 import FechaPickerDay from "./../../../components/Fechas/FechaPickerDay";
 import FechaPickerMonth from "./../../../components/Fechas/FechaPickerMonth";
 import ExportExcel from "../entradasStock/ExportExcel";
+import TypeEntrada from "./TypeEntrada";
 
 // CONFIGURACIONES DE ESTILOS
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
@@ -54,6 +55,7 @@ const ListEntradaStock = () => {
     seleccion: false,
     ingresado: "",
     disponible: "",
+    tipoEntrada: "TODO",
   });
 
   // ESTADOS PARA FILTROS GENERALES DE FECHA
@@ -144,7 +146,12 @@ const ListEntradaStock = () => {
       almacen: obj,
     });
   };
-
+  const onChangeTipoEntrada = (event) => {
+    setInputs({
+      ...inputs,
+      tipoEntrada: event.target.value,
+    });
+  };
   const onChangeDate = (newDate) => {
     const dateFilter = newDate.split(" ");
     filter(dateFilter[0], "filterFechaEntrada");
@@ -188,7 +195,21 @@ const ListEntradaStock = () => {
     // disponible: "",
 
     var total = 0
+    var entradas = []
     dataEntSto.map((data) => {
+      if( inputs.tipoEntrada  == "TODO"){
+        entradas.push(data)
+      }
+      //console.log(inputs.tipoEntrada, data)
+      if( inputs.tipoEntrada  == "COMPRAS" && data.referencia == 0){
+        entradas.push(data)
+      }
+      if( inputs.tipoEntrada  == "PRODT. FINAL" && data.referencia){
+        entradas.push(data)
+      }
+    })
+    //console.log(entradas)
+    entradas.map((data) => {
 
       if (
         (inputs.almacen.label.includes(data.nomAlm) ||
@@ -204,7 +225,7 @@ const ListEntradaStock = () => {
         (data.canTotDis.includes(inputs.disponible) ||
           inputs.disponible.length == 0)
       ) {
-        console.log(data.canTotDis)
+        //console.log(data.canTotDis)
         total += parseFloat(data.canTotDis)
         data.acumulado = total.toFixed(2)
         //data.canTotDis = parseFloat(data.canTotDis)
@@ -391,6 +412,10 @@ const ListEntradaStock = () => {
                 Hasta
                 <FechaPickerMonth onNewfecEntSto={onChangeDateEndData} />
               </div>
+              <div className="col-4">
+               <TypeEntrada inputs={inputs} onChangeTipoEntrada={onChangeTipoEntrada}/>
+
+              </div>
               <div className="col-2 d-flex align-items-end">
                 <button onClick={resetData} className="btn btn-success">
                   <svg
@@ -520,7 +545,8 @@ const ListEntradaStock = () => {
                       />
                     </TableCell>
                     <TableCell align="left" width={20}>
-                      <b>Seleccion</b>
+                       
+                         <b>Seleccion</b>
                       <div className="d-flex justify-content-center">
                         <Checkbox
                           {...label}
@@ -530,6 +556,9 @@ const ListEntradaStock = () => {
                           onChange={onChangeSeleccionado}
                         />
                       </div>
+                        
+                     
+
                     </TableCell>
                     <TableCell align="left" width={50}>
                       <b>Ingresado</b>

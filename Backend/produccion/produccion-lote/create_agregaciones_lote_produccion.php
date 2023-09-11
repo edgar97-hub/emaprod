@@ -128,11 +128,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $idAlmDes = $row_consult_almacen_destino["id"];
                         }
 
-
-
-
-
-
                         if ($indexProdFin1 != $indexProdFin2) {
                             $indexProdFin1 = $indexProdFin2;
 
@@ -163,10 +158,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             //     $idProdcFinalForAgreg = $rowProdFinal["id"];
                             // }
                         }
-                        //die(json_encode($cantUnidadesProdFin));
 
                         $idLastInsert = 0;
-                        //die(json_encode($flag));
                         
                         try {
                             $sql_insert_detalle_agregacion_lote_produccion =

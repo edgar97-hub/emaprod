@@ -1,10 +1,10 @@
-import { ListAgregaciones } from "./ListAgregaciones";
+import { ListAgregacion } from "./ListAgregacion";
 import { AgregarAgregacion } from "./AgregarAgregacion";
 
 export const RouterAlmacenAgregaciones = [
   {
     path: "",
-    element: <ListAgregaciones />,
+    element: <ListAgregacion />,
   },
   {
     path: "crear",

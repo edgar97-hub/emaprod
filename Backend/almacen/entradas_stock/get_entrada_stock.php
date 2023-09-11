@@ -44,7 +44,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         es.canTotEnt,
         es.canTotDis,
         es.fecEntSto,
-        DATE(es.fecVenEntSto) AS fecVenEntSto
+        DATE(es.fecVenEntSto) AS fecVenEntSto,
+        es.referencia
         FROM entrada_stock es
         JOIN producto p ON p.id = es.idProd
         JOIN proveedor pv ON pv.id = es.idProv

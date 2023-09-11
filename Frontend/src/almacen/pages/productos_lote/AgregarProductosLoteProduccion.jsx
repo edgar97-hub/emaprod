@@ -229,9 +229,10 @@ export const AgregarProductosLoteProduccion = () => {
     const resultPeticion = await getProduccionWhitProductosFinales(idLotProdc);
 
     const { message_error, description_error, result } = resultPeticion;
-
     var products = result[0].proFinProdDet;
-    var productsAutocomplete = products.filter((obj) => !obj.isAgregation);
+    //var productsAutocomplete = products.filter((obj) => !obj.isAgregation);
+    //console.log(result[0])
+
     var copyProducts = products.reduce((accumulator, currentValue) => {
       if (accumulator.some((obj) => obj.idProdt === currentValue.idProdt)) {
         accumulator.map((obj) => {
@@ -239,6 +240,11 @@ export const AgregarProductosLoteProduccion = () => {
             obj.canTotProgProdFin =
               parseFloat(obj.canTotProgProdFin) +
               parseFloat(currentValue.canTotProgProdFin);
+              obj.canTotProgProdFin = parseFloat(obj.canTotProgProdFin).toFixed(2)
+
+              obj.canTotIngProdFin = parseFloat(obj.canTotIngProdFin) +
+              parseFloat(currentValue.canTotIngProdFin);
+              obj.canTotIngProdFin = parseFloat(obj.canTotIngProdFin).toFixed(2)
             currentValue.total = obj.canTotProgProdFin;
             const clone = structuredClone(currentValue);
             obj.detail.push(clone);
@@ -253,9 +259,7 @@ export const AgregarProductosLoteProduccion = () => {
       return accumulator;
     }, []);
     result[0].proFinProdDet = copyProducts;
-    result[0].productsAutocomplete = productsAutocomplete;
-
-    //console.log(result[0]);
+    result[0].productsAutocomplete = products;
 
     if (message_error.length === 0) {
       setProFinProd(result[0]);
@@ -278,7 +282,7 @@ export const AgregarProductosLoteProduccion = () => {
       diaJulEntSto: DiaJuliano(fechaIngreso),
       fecEntSto: fechaIngreso,
     };
-    //console.log(detalleProductosFinales, idProdTip, dataEntrada);
+    console.log(detalleProductosFinales, idProdTip, dataEntrada);
 
     //return;
     const resultPeticion = await createProductosFinalesLoteProduccion(
