@@ -48,11 +48,10 @@ import ButtonPdf from "../ButtonPdf";
 import config from "../../../../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { FilterMotivoAgregacion } from "./../../../../components/ReferencialesFilters/MotivoAgregacion/FilterMotivoAgregacion";
 import { FilterAlmacen } from "./../../../../components/ReferencialesFilters/Almacen/FilterAlmacen";
 import { FilterAllProductos } from "./../../../../components/ReferencialesFilters/Producto/FilterAllProductos";
-
 
 const domain = config.API_URL;
 
@@ -226,18 +225,14 @@ function _parseInt(str) {
   return val;
 }
 
-const PDFExample = ({ data, show }) => {
-
-
-  var agregaciones = data.result.agregaciones.detAgr
-  //console.log(agregaciones)
-  var fecCreProdAgr = data.result.agregaciones.detAgr[0].fecCreProdAgr
-  var fechaInicio = data.result.agregaciones.detAgr[0].fechaInicio
-  var fechaFin = data.result.agregaciones.detAgr[0].fechaFin
-  var flag = data.result.agregaciones.detAgr[0].flag
-
-
-
+const PDFExample = ({ data }) => {
+  var agregaciones = data.result.agregaciones.detAgr;
+  var prodsFinal = data.result.agregaciones.prodsFinal;
+  //console.log(prodsFinal)
+  var fecCreProdAgr = data.result.agregaciones.detAgr[0]?.fecCreProdAgr;
+  var fechaInicio = data.result.agregaciones.detAgr[0]?.fechaInicio;
+  var fechaFin = data.result.agregaciones.detAgr[0]?.fechaFin;
+  var flag = data.result.agregaciones.detAgr[0]?.flag;
 
   return (
     <PDFViewer width="100%" height="100%">
@@ -283,8 +278,7 @@ const PDFExample = ({ data, show }) => {
                     marginLeft: 20,
                   }}
                 >
-                  Fecha de Inicio Programado:{" "}
-                  {fechaInicio}
+                  Fecha de Inicio Programado: {fechaInicio}
                 </Text>
                 ,
                 <Text
@@ -297,11 +291,9 @@ const PDFExample = ({ data, show }) => {
                     marginLeft: 20,
                   }}
                 >
-                  Fecha de Fin Programado:{" "}
-                  {fechaFin}
+                  Fecha de Fin Programado: {fechaFin}
                 </Text>
-                {
-                  /**
+                {/**
                    <Text
                   style={{
                     ...styles.content,
@@ -315,8 +307,7 @@ const PDFExample = ({ data, show }) => {
                   Fecha de Vencimiento Lt:{" "}
                   {data.result.produccion.fecVenLotProd}
                 </Text>
-                   */
-                }
+                   */}
                 <Text
                   style={{
                     ...styles.content,
@@ -374,7 +365,7 @@ const PDFExample = ({ data, show }) => {
                       marginRight: 20,
                     }}
                   >
-                    ORDEN DE AGREGACION 
+                    ORDEN DE AGREGACION
                   </Text>
                   <View
                     style={{
@@ -392,7 +383,7 @@ const PDFExample = ({ data, show }) => {
                         marginTop: 10,
                       }}
                     >
-                      {data.result.produccion.numop + " - "+  flag}
+                      {data.result.produccion.numop + " - " + flag}
                     </Text>
                   </View>
 
@@ -452,8 +443,8 @@ const PDFExample = ({ data, show }) => {
                 </View>
               </View>
             </View>
-
-             <Agregations data={data} />
+            {prodsFinal.length && <ProdsFinal rows={prodsFinal} />}
+            <Agregations data={data} />
           </View>
         </Page>
       </Document>
@@ -461,7 +452,7 @@ const PDFExample = ({ data, show }) => {
   );
 };
 
-const DetalleOrden = ({ data }) => {
+const ProdsFinal = ({ rows }) => {
   return (
     <>
       <View>
@@ -494,7 +485,7 @@ const DetalleOrden = ({ data }) => {
               <Text style={styles.gridTitle}>U.M</Text>
               <Text style={styles.gridTitle}>Cantidad</Text>
             </View>
-            {data.result.productos_finales?.map((producto, index) => (
+            {rows?.map((producto, index) => (
               <View
                 key={index}
                 style={[
@@ -529,143 +520,13 @@ const DetalleOrden = ({ data }) => {
             ))}
           </View>
         </View>
-
-        <Text
-          style={{
-            ...styles.title,
-            fontWeight: "bold",
-            fontSize: 7,
-            marginLeft: -440,
-            marginTop: -12,
-          }}
-        >
-          Detalle Envasado
-        </Text>
-        <View style={{ ...styles.section, marginTop: -25 }}>
-          <View style={styles.gridContainer}>
-            <View style={[styles.gridHeader, styles.green_]}>
-              <Text style={{ ...styles.gridTitle, flex: 0.7 }}> Cód Aso</Text>
-              <Text style={{ ...styles.gridTitle, flex: 0.7 }}>Cód Ref</Text>
-              <Text style={styles.gridTitle}>Código</Text>
-              <Text
-                style={{
-                  ...styles.gridTitle,
-                  flex: 4,
-                  textAlign: "center",
-                }}
-              >
-                Descripción de Item
-              </Text>
-              <Text style={styles.gridTitle}>U.M</Text>
-              <Text style={styles.gridTitle}>Cantidad</Text>
-            </View>
-            {data.result?.requisiciones
-              ?.find((req) => req.desAre === "Envasado")
-              ?.detalles?.map((detalle, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.gridRow,
-                    index % 2 === 0 ? { backgroundColor: "#a4a8b0" } : {},
-                  ]}
-                >
-                  <Text style={{ ...styles.gridContent_p, flex: 0.7 }}>
-                    {detalle.prodFCode}
-                  </Text>
-                  <Text style={{ ...styles.gridContent_p, flex: 0.7 }}>
-                    {detalle.codProd}
-                  </Text>
-                  <Text style={styles.gridContent_p}>{detalle.codProd2}</Text>
-                  <Text
-                    style={{
-                      ...styles.gridContent_p,
-                      flex: 4,
-                      textAlign: "left",
-                    }}
-                  >
-                    {detalle.nomProd}
-                  </Text>
-                  <Text style={styles.gridContent_p}>{detalle.simMed}</Text>
-                  {/** <Text style={styles.gridContent_num}>{detalle.canReqDet}</Text> */}
-                  <Text style={styles.gridContent_num}>
-                    {_parseInt(detalle)}
-                  </Text>
-                </View>
-              ))}
-          </View>
-        </View>
-
-        <Text
-          style={{
-            ...styles.title,
-            fontWeight: "bold",
-            fontSize: 7,
-            marginLeft: -440,
-            marginTop: -12,
-          }}
-        >
-          Detalle Encajado
-        </Text>
-        <View style={{ ...styles.section, marginTop: -25 }}>
-          <View style={styles.gridContainer}>
-            <View style={[styles.gridHeader, styles.yellow_]}>
-              <Text style={{ ...styles.gridTitle, flex: 0.7 }}>Cód Aso</Text>
-              <Text style={{ ...styles.gridTitle, flex: 0.7 }}>Cód Ref</Text>
-              <Text style={styles.gridTitle}>Código</Text>
-              <Text
-                style={{
-                  ...styles.gridTitle,
-                  flex: 4,
-                  textAlign: "center",
-                }}
-              >
-                Descripción de Item
-              </Text>
-              <Text style={styles.gridTitle}>U.M</Text>
-              <Text style={styles.gridTitle}>Cantidad</Text>
-            </View>
-            {data.result.requisiciones
-              .find((req) => req.desAre === "Encajado")
-              ?.detalles?.map((detalle, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.gridRow,
-                    index % 2 === 0 ? { backgroundColor: "#a4a8b0" } : {},
-                  ]}
-                >
-                  <Text style={{ ...styles.gridContent_p, flex: 0.7 }}>
-                    {detalle.prodFCode}
-                  </Text>
-                  <Text style={{ ...styles.gridContent_p, flex: 0.7 }}>
-                    {detalle.codProd}
-                  </Text>
-                  <Text style={styles.gridContent_p}>{detalle.codProd2}</Text>
-                  <Text
-                    style={{
-                      ...styles.gridContent_p,
-                      flex: 4,
-                      textAlign: "left",
-                    }}
-                  >
-                    {detalle.nomProd}
-                  </Text>
-                  <Text style={styles.gridContent_p}>{detalle.simMed}</Text>
-                  {/** <Text style={styles.gridContent_num}>{detalle.canReqDet}</Text> */}
-                  <Text style={styles.gridContent_num}>
-                    {_parseInt(detalle)}
-                  </Text>
-                </View>
-              ))}
-          </View>
-        </View>
       </View>
     </>
   );
 };
 
 const Agregations = ({ data }) => {
-   return (
+  return (
     <>
       <Text
         style={{
@@ -676,7 +537,7 @@ const Agregations = ({ data }) => {
           marginTop: 12,
         }}
       >
-        agregaciones
+        Agregaciones
       </Text>
       <View style={{ ...styles.section, marginTop: -25 }}>
         <View style={styles.gridContainer}>
@@ -701,7 +562,7 @@ const Agregations = ({ data }) => {
               ]}
             >
               <Text style={{ ...styles.gridContent_p, flex: 0.4 }}>
-                {detalle.id}
+                {detalle.idProdFin}
               </Text>
               <Text style={{ ...styles.gridContent_p, flex: 2 }}>
                 {detalle.nomProd}
@@ -737,28 +598,23 @@ const generatePDF = (data, show) => {
   );
 };
 
-
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 export const ListAgregacion = () => {
-
   const location = useLocation();
   const { idLotProdc = "" } = queryString.parse(location.search);
   const [ordenProduccion, setOrdenProduccion] = useState({});
 
-
-
   const [inputs, setInputs] = useState({
-    producto: {label:""},
-    motivo: {label:""},
-    almacen: {label:""},
-    codigoAgregacion:"",
-    cantidad:"",
+    producto: { label: "" },
+    motivo: { label: "" },
+    almacen: { label: "" },
+    codigoAgregacion: "",
+    cantidad: "",
   });
-
 
   // ESTADOS PARA LOS FILTROS PERSONALIZADOS
   const [dataProduccionLote, setdataProduccionLote] = useState([]);
@@ -916,9 +772,7 @@ export const ListAgregacion = () => {
   };
 
   // Funcion para filtrar la data
-  const filter = (terminoBusqueda, name) => {
-     
-  };
+  const filter = (terminoBusqueda, name) => {};
 
   // ******** ACTUALIZACION DE FECHAS ********
   const onUpdateDatesProduccion = async (id, body) => {
@@ -938,7 +792,6 @@ export const ListAgregacion = () => {
     }
   };
 
-
   const getAgregationsByOrderProduccion = async (idLotProdc) => {
     try {
       let url;
@@ -954,10 +807,10 @@ export const ListAgregacion = () => {
 
       const response = await axios.get(url);
       //console.log(response.data);
-      return response.data
+      return response.data;
     } catch (error) {
       console.error("Error al obtener los datos:", error);
-      return error
+      return error;
     }
   };
 
@@ -965,17 +818,17 @@ export const ListAgregacion = () => {
   const obtenerDataProduccionLote = async (body = {}) => {
     //console.log(idLotProdc)
     if (idLotProdc.length !== 0) {
-    var resultPeticion = await getAgregationsByOrderProduccion(idLotProdc)
-    const {   result } = resultPeticion;
-    const { agregaciones, produccion } = result;
+      var resultPeticion = await getAgregationsByOrderProduccion(idLotProdc);
+      const { result } = resultPeticion;
+      const { agregaciones, produccion } = result;
 
-    //console.log(agregaciones.detAgr)
-    agregaciones.detAgr.sort(function (a, b) {
-      return a.id - b.id;
-    });
-    setOrdenProduccion(produccion) 
-    setdataProduccionLote(agregaciones.detAgr);
-    setdataProduccionLoteTemp(agregaciones.detAgr);
+      //console.log(agregaciones.detAgr)
+      agregaciones.detAgr.sort(function (a, b) {
+        return a.id - b.id;
+      });
+      setOrdenProduccion(produccion);
+      setdataProduccionLote(agregaciones.detAgr);
+      setdataProduccionLoteTemp(agregaciones.detAgr);
     }
 
     //const resultPeticion = await getProduccionLote(body);
@@ -983,15 +836,15 @@ export const ListAgregacion = () => {
     //console.log(result)
 
     //if (message_error.length === 0) {
-      //console.log(result); // Imprimir los datos en la consola
-      //setdataProduccionLote(agregaciones.detAgr);
-      //setdataProduccionLoteTemp(result);
+    //console.log(result); // Imprimir los datos en la consola
+    //setdataProduccionLote(agregaciones.detAgr);
+    //setdataProduccionLoteTemp(result);
     //} else {
-      //setfeedbackMessages({
-      //  style_message: "error",
-      //  feedback_description_error: description_error,
-      //});
-      //handleClickFeeback();
+    //setfeedbackMessages({
+    //  style_message: "error",
+    //  feedback_description_error: description_error,
+    //});
+    //handleClickFeeback();
     //}
   };
 
@@ -1033,7 +886,31 @@ export const ListAgregacion = () => {
 
       const response = await axios.get(url);
 
-      response.data.result.agregaciones.detAgr = response.data.result?.agregaciones?.detAgr.filter((obj)=> obj.flag == flag)
+      response.data.result.agregaciones.prodsFinal = [];
+
+      response.data.result.agregaciones.detAgr =
+        response.data.result?.agregaciones?.detAgr.filter(
+          (obj) => obj.flag == flag
+        );
+
+      response.data.result.agregaciones.detAgr.map((obj) => {
+        var dd = response.data.result?.prodFinalWithAgreg?.detAgr.find(
+          (v) => v.id == obj.id
+        );
+        if (dd) {
+          obj.idProdFin = dd.idProdFin;
+        }
+      });
+
+      var ids = response.data.result.agregaciones.detAgr.map(
+        (obj) => obj.idProdFin
+      );
+
+      response.data.result.agregaciones.prodsFinal =
+        response.data.result.productos_finales.filter((obj) =>
+          ids.includes(obj.id)
+        );
+
       //console.log(response.data);
       generatePDF(response.data, show);
     } catch (error) {
@@ -1041,30 +918,28 @@ export const ListAgregacion = () => {
     }
   };
 
-
-
   useEffect(() => {
     let resultSearch = [];
     dataProduccionLote.map((data) => {
-
-    if (
+      if (
         (inputs.almacen.label.includes(data.nomAlm) ||
           inputs.almacen.label.length == 0) &&
         (inputs.motivo.label.includes(data.desProdAgrMot) ||
           inputs.motivo.label.length == 0) &&
         (inputs.producto.label.includes(data.nomProd) ||
           inputs.producto.label.length == 0) &&
-        (data.canProdAgr.includes(inputs.cantidad) || inputs.cantidad.length == 0) &&
-        (data.flag.toLowerCase().includes(inputs.codigoAgregacion.toLowerCase()) ||
-          inputs.codigoAgregacion.length == 0)  
-        
+        (data.canProdAgr.includes(inputs.cantidad) ||
+          inputs.cantidad.length == 0) &&
+        (data.flag
+          .toLowerCase()
+          .includes(inputs.codigoAgregacion.toLowerCase()) ||
+          inputs.codigoAgregacion.length == 0)
       ) {
         resultSearch.push({ ...data });
       }
     });
     setdataProduccionLoteTemp(resultSearch);
   }, [inputs, dataProduccionLote]);
-
 
   return (
     <>
@@ -1088,8 +963,7 @@ export const ListAgregacion = () => {
 
           <div className="col-6 d-flex justify-content-end align-items-center">
             <div className="row">
-            {
-              /**
+              {/**
                  <div className="col-6">
                 <Link
                   to={"/produccion/produccion-lote/crear"}
@@ -1108,10 +982,8 @@ export const ListAgregacion = () => {
                   Agregar
                 </Link>
               </div>
-               */
-            }
-            {
-              /*
+               */}
+              {/*
                 <div className="col-3">
                 <button className="btn btn-success">
                   <svg
@@ -1144,8 +1016,7 @@ export const ListAgregacion = () => {
                   </svg>
                 </button>
               </div>
-              */
-            }
+              */}
             </div>
           </div>
         </div>
@@ -1161,12 +1032,11 @@ export const ListAgregacion = () => {
                         color: "rgba(96, 96, 96)",
                         backgroundColor: "#f5f5f5",
                         //border:"1px solid black",
-                        width:"100%"
+                        width: "100%",
                       },
                     }}
                   >
-                  
-                    <TableCell align="left"  sx={{ width:"10% !important"}}>
+                    <TableCell align="left" sx={{ width: "10% !important" }}>
                       <b>Codigo</b>
                       <TextField
                         name="codigoAgregacion"
@@ -1183,62 +1053,56 @@ export const ListAgregacion = () => {
                       />
                     </TableCell>
 
-                    <TableCell align="left" sx={{ width:"30% !important"}}>
+                    <TableCell align="left" sx={{ width: "30% !important" }}>
                       <b>Producto</b>
-                      {
-                        /*
+                      {/*
                         <FilterProductoProduccion onNewInput={onChangeProducto} 
                       inputs={inputs}/>
-                        */
-                      }
+                        */}
 
-                       <FilterAllProductos
+                      <FilterAllProductos
                         onNewInput={onChangeProducto}
                         inputs={inputs}
                       />
-
                     </TableCell>
 
-                    <TableCell align="left" sx={{ width:"15% !important"}}>
+                    <TableCell align="left" sx={{ width: "15% !important" }}>
                       <b>Motivo</b>
-                    {/**
+                      {/**
                        <FilterEstadoProduccion
                         onNewInput={onChangeEstadoProduccion}
                          inputs={inputs}
                       />
                      */}
-                       <FilterMotivoAgregacion
-                          onNewInput={handleDetalleChangeMotivoAgregacion}
-                          inputs={inputs}
-                        />
-
+                      <FilterMotivoAgregacion
+                        onNewInput={handleDetalleChangeMotivoAgregacion}
+                        inputs={inputs}
+                      />
                     </TableCell>
-                    <TableCell align="left" sx={{ width:"15% !important"}}>
+                    <TableCell align="left" sx={{ width: "15% !important" }}>
                       <b>Almacen destino</b>
                       <FilterAlmacen
                         onNewInput={onChangeAlmacen}
                         inputs={inputs}
                       />
                     </TableCell>
-                    <TableCell align="left" sx={{ width:"15% !important"}}>
+                    <TableCell align="left" sx={{ width: "15% !important" }}>
                       <b>Fecha inicio</b>
-                      {
-                        /**
+                      {/**
                          <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaIniciado}
                       />
-                         */
-                      }
+                         */}
                     </TableCell>
-                    <TableCell align="left" sx={{ width:"15% !important"}}>
+                    <TableCell align="left" sx={{ width: "15% !important" }}>
                       <b>Fecha Finalización</b>
-                     {/**
+                      {/**
                        <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaIniciadoProgramado}
                       />
                       */}
                     </TableCell>
-                    <TableCell align="left" sx={{ width:"20% !important"}}>
+                    <TableCell align="left" sx={{ width: "20% !important" }}>
                       <b>Cantidad</b>
                       <TextField
                         name="cantidad"
@@ -1253,7 +1117,6 @@ export const ListAgregacion = () => {
                           },
                         }}
                       />
-                   
                     </TableCell>
                     <TableCell align="left" width={120}>
                       <b>Acciones</b>
@@ -1261,56 +1124,57 @@ export const ListAgregacion = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {dataProduccionLoteTemp
-                    .map((row, i) => (
-                      <TableRow
-                        key={row.id}
+                  {dataProduccionLoteTemp.map((row, i) => (
+                    <TableRow
+                      key={row.id}
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                        //border:"1px solid black"
+                      }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {ordenProduccion.numop + " - " + row.flag}
+                      </TableCell>
+                      {/* Empty cell for "Número OP" */}
+                      <TableCell align="left">{row.nomProd}</TableCell>
+                      <TableCell align="left">{row.desProdAgrMot}</TableCell>
+                      <TableCell align="left">{row.nomAlm}</TableCell>
+                      <TableCell align="center">{row.fechaInicio}</TableCell>
+                      <TableCell align="center">{row.fechaFin}</TableCell>
+                      <TableCell align="center">{row.canProdAgr}</TableCell>
+                      <TableCell
+                        align="left"
                         sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                          //border:"1px solid black"
-
+                          display: "flex",
+                          flexDirection: "row",
                         }}
                       >
-                        <TableCell component="th" scope="row">
-                          {ordenProduccion.numop + " - " + row.flag}
-                        </TableCell>
-                        {/* Empty cell for "Número OP" */}
-                        <TableCell align="left">{row.nomProd}</TableCell>
-                        <TableCell align="left">{row.desProdAgrMot}</TableCell>
-                        <TableCell align="left">{row.nomAlm}</TableCell>
-                        <TableCell align="center">{row.fechaInicio}</TableCell>
-                        <TableCell align="center">{row.fechaFin}</TableCell>
-                        <TableCell align="center">{row.canProdAgr}</TableCell>
-                        <TableCell
-                          align="left"
-                          sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                          }}
-                        >
-                          <div>
-                            <div className="btn-toolbar">
-                              ´{/**
+                        <div>
+                          <div className="btn-toolbar">
+                            ´
+                            {/**
                                <ButtonPdf
                                 id={row.id}
                                 handleButtonClick={handleButtonClick}
                               />
                                */}
-                             <button
-                                onClick={() => {
-                                  handleButtonClick(idLotProdc, "agregaciones", row.flag);
-
-                                }}
-                                className="btn btn-primary me-2 btn"
-                              >
-                                
-                                <PictureAsPdfIcon/>
-                              </button>
-                            </div>
+                            <button
+                              onClick={() => {
+                                handleButtonClick(
+                                  idLotProdc,
+                                  "agregaciones",
+                                  row.flag
+                                );
+                              }}
+                              className="btn btn-primary me-2 btn"
+                            >
+                              <PictureAsPdfIcon />
+                            </button>
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </TableContainer>
