@@ -16,7 +16,6 @@ import { FilterAreaEncargada } from "./../../../../src/produccion/components/Fil
 //import { FilterAreaEncargada } from "./../../components/FilterAreaEncargada";
 import { RowEditDetalleRequisicionProduccion } from "./../../../../src/produccion/components/componentes-lote-produccion/RowEditDetalleRequisicionProduccion";
 import { getFormulaProductoDetalleByProducto } from "../../../../src/produccion/helpers/formula_producto/getFormulaProductoDetalleByProducto";
-//helpers/formula_producto/getFormulaProductoDetalleByProducto
 import { getMateriaPrimaById } from "./../../../helpers/Referenciales/producto/getMateriaPrimaById";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";

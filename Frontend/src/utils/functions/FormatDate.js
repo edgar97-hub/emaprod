@@ -18,6 +18,43 @@ const esBisiesto = (year) => {
             yearValue % 4 === 0;
 }
 
+ 
+
+function _parseInt(str, property) {
+
+    if(str.canTotIngProdFin){
+        str.canReqDet = str.canTotIngProdFin;
+    }
+    if(str.canTotProgProdFin){
+        str.canReqDet = str.canTotProgProdFin;
+    }
+    if (str.canProdAgr) {
+        str.canReqDet = str.canProdAgr;
+      }
+      if (str.canReqProdLot) {
+        str.canReqDet = str.canReqProdLot;
+      }
+  
+      if (str.canTotProgProdFin) {
+        str.canReqDet = str.canTotProgProdFin;
+      }
+
+
+      if(property){
+        str.canReqDet = str[property] 
+      }
+      str.canReqDet = parseFloat(str.canReqDet).toFixed(2);
+      let index = str.canReqDet.toString().indexOf(".");
+      let result = str.canReqDet.toString().substring(index + 1);
+      let val =
+        parseInt(result) >= 1 && str.simMed !== "KGM"
+          ? Math.trunc(str.canReqDet) + 1
+          : str.canReqDet;
+      return val;
+  }
+
+
+
 const letraAnio = (fecha) => {
     const fechaExtraida = fecha.split(" ", 1)[0].split("-");
     const anio = parseInt(fechaExtraida[0]);
@@ -86,4 +123,4 @@ const DiaJuliano = (fecha) => {
 
 }
 
-export { FormatDateTimeMYSQL, FormatDateTimeMYSQLNow, DiaJuliano, letraAnio };
+export { FormatDateTimeMYSQL, FormatDateTimeMYSQLNow, DiaJuliano, letraAnio, _parseInt };

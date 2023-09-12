@@ -42,7 +42,7 @@ export function DetalleProductosFinales({ row, idProduccion }) {
   React.useEffect(() => {
     if (open && idProduccion) {
       //detail
-      console.log(row, idProduccion);
+      //console.log(row, idProduccion);
       getEntradas({ idProduccion: idProduccion });
     }
   }, [row, idProduccion, open]);
@@ -71,7 +71,7 @@ export function DetalleProductosFinales({ row, idProduccion }) {
         open={open}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          #
+          Detalle productos finales
         </DialogTitle>
 
         <DialogContent dividers>
@@ -96,18 +96,18 @@ function TableEntradas2({ row, idProdt }) {
   return (
     <TableContainer component={Paper}>
       <br />
-      <Typography gutterBottom>Productos finales</Typography>
+      <Typography gutterBottom>Productos programados</Typography>
       <br />
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
-            <TableCell align="left">Cod Aso.</TableCell>
+            <TableCell align="right">Cod Aso.</TableCell>
             <TableCell align="left">Codigo</TableCell>
-            <TableCell align="left">Agreg.</TableCell>
+            <TableCell align="left">Orden Prodc.</TableCell>
             <TableCell align="left">Descripción</TableCell>
             <TableCell align="left">U.M</TableCell>
-            <TableCell align="left">Cantidad</TableCell>
-            <TableCell align="left">Acumulado</TableCell>
+            <TableCell align="right">Cantidad</TableCell>
+            <TableCell align="right">Acumulado</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -116,13 +116,13 @@ function TableEntradas2({ row, idProdt }) {
               key={index}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-              <TableCell align="left">{row.id}</TableCell>
+              <TableCell align="right">{row.id}</TableCell>
               <TableCell align="left">{row.codProd2}</TableCell>
-              <TableCell align="left">{row.isAgregation ? <CheckIcon/>: <CloseIcon/>}</TableCell>
+              <TableCell align="left">{!row.isAgregation ? <CheckIcon/>: <CloseIcon/>}</TableCell>
               <TableCell align="left">{row.nomProd}</TableCell>
               <TableCell align="left">{row.simMed}</TableCell>
-              <TableCell align="left">{row.canTotProgProdFin}</TableCell>
-              <TableCell align="left">{row.total}</TableCell>
+              <TableCell align="right">{row.canTotProgProdFin}</TableCell>
+              <TableCell align="right">{row.total}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -153,7 +153,7 @@ function TableEntradas({ rows, idProdt }) {
   return (
     <TableContainer component={Paper}>
       <br />
-      <Typography gutterBottom>Entradas</Typography>
+      <Typography gutterBottom>Productos ingresados</Typography>
       <br />
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
@@ -164,10 +164,10 @@ function TableEntradas({ rows, idProdt }) {
             <TableCell align="left">Almacen</TableCell>
             <TableCell align="left">Codigo</TableCell>
             <TableCell align="left">Seleccion</TableCell>
-            <TableCell align="left">Ingresado</TableCell>
-            <TableCell align="left">Disponible</TableCell>
+            <TableCell align="right">Ingresado</TableCell>
+            <TableCell align="right">Disponible</TableCell>
             <TableCell align="left">Fecha entrada</TableCell>
-            <TableCell align="left">Acumulado</TableCell>
+            <TableCell align="right">Acumulado</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -182,10 +182,10 @@ function TableEntradas({ rows, idProdt }) {
               <TableCell align="left">{row.nomAlm}</TableCell>
               <TableCell align="left">{row.codEntSto}</TableCell>
               <TableCell align="left">{row.esSel}</TableCell>
-              <TableCell align="left">{row.canTotEnt}</TableCell>
-              <TableCell align="left">{row.canTotDis}</TableCell>
+              <TableCell align="right">{row.canTotEnt}</TableCell>
+              <TableCell align="right">{row.canTotDis}</TableCell>
               <TableCell align="left">{row.fecEntSto}</TableCell>
-              <TableCell align="left">{row.acumulado}</TableCell>
+              <TableCell align="right">{row.acumulado}</TableCell>
             </TableRow>
           ))}
         </TableBody>

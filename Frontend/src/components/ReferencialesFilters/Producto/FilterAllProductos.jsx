@@ -5,7 +5,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { getAllProductos } from "./../../../helpers/Referenciales/producto/getAllProductos";
 import { useAuth } from "../../../hooks/useAuth";
 
-export const FilterAllProductos = ({ onNewInput, inputs, productos }) => {
+export const FilterAllProductos = ({ onNewInput, inputs, productos, mostrarCodigo }) => {
   const [result, setResult] = useState([]);
   const [value, setValue] = useState({
     label: "",
@@ -68,10 +68,16 @@ export const FilterAllProductos = ({ onNewInput, inputs, productos }) => {
       <Autocomplete
         options={result}
         disableClearable
+        autoHighlight={true}
+        getOptionLabel={(option) =>
+          typeof option === "string"
+            ? option
+            : ( mostrarCodigo  && option.value ? (option.value + " - ") : "") + option.label
+        }
         renderOption={(props, option) => {
           return (
             <li {...props} key={option.id}>
-              {option.label}
+              {(mostrarCodigo   ? (option.value + " - ") : "" )+ (option.label)}
             </li>
           );
         }}

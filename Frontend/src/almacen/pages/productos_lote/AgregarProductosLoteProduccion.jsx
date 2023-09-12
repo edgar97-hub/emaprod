@@ -26,7 +26,7 @@ import { createProductosFinalesLoteProduccion } from "./../../helpers/producto-p
 import {
   DiaJuliano,
   FormatDateTimeMYSQLNow,
-  letraAnio,
+  letraAnio, _parseInt
 } from "../../../utils/functions/FormatDate";
 import { DetalleProductosFinales } from "./DetalleProductosFinales";
 
@@ -240,18 +240,24 @@ export const AgregarProductosLoteProduccion = () => {
             obj.canTotProgProdFin =
               parseFloat(obj.canTotProgProdFin) +
               parseFloat(currentValue.canTotProgProdFin);
-              obj.canTotProgProdFin = parseFloat(obj.canTotProgProdFin).toFixed(2)
+
+              obj.canTotProgProdFin = _parseInt(obj).toFixed(2)
+
+              //console.log(obj)
 
               obj.canTotIngProdFin = parseFloat(obj.canTotIngProdFin) +
               parseFloat(currentValue.canTotIngProdFin);
               obj.canTotIngProdFin = parseFloat(obj.canTotIngProdFin).toFixed(2)
+
             currentValue.total = obj.canTotProgProdFin;
+            currentValue.canTotProgProdFin =   _parseInt(currentValue, "canTotProgProdFin").toFixed(2)
             const clone = structuredClone(currentValue);
             obj.detail.push(clone);
           }
         });
       } else {
         const clone = structuredClone(currentValue);
+        clone.canTotProgProdFin =   _parseInt(currentValue, "canTotProgProdFin").toFixed(2)
         clone.total = clone.canTotProgProdFin;
         currentValue.detail = [clone];
         accumulator.push(currentValue);
@@ -260,6 +266,10 @@ export const AgregarProductosLoteProduccion = () => {
     }, []);
     result[0].proFinProdDet = copyProducts;
     result[0].productsAutocomplete = products;
+    console.log(result[0])
+
+
+
 
     if (message_error.length === 0) {
       setProFinProd(result[0]);

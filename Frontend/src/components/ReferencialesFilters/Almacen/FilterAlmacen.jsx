@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getAlmacenes } from "./../../../helpers/Referenciales/almacen/getAlmacenes";
 
-export const FilterAlmacen = ({ onNewInput, disabled, inputs }) => {
+export const FilterAlmacen = ({ onNewInput, disabled, inputs, mostrarCodigo }) => {
   const [result, setResult] = useState([]);
 
   const getDataAlmacenes = async () => {
@@ -36,9 +36,23 @@ export const FilterAlmacen = ({ onNewInput, disabled, inputs }) => {
         disabled={disabled}
         options={result}
         disableClearable
+        autoHighlight={true}
+
         //value={inputs.almacen}
         {...d}
-        getOptionLabel={(option) => option.label}
+        //getOptionLabel={(option) => option.label}
+        getOptionLabel={(option) =>
+          typeof option === "string"
+            ? option
+            : ( mostrarCodigo  && option.value ? (option.value + " - ") : "") + option.label
+        }
+        renderOption={(props, option) => {
+          return (
+            <li {...props} key={option.id}>
+              {(mostrarCodigo   ? (option.value + " - ") : "" )+ (option.label)}
+            </li>
+          );
+        }}
         onChange={handledChange}
         onInputChange={(event, value, reason) => {
           if (reason == "input" && value == "") {

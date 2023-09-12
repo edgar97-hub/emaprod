@@ -26,7 +26,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { FilterPresentacionFinal } from "../../../components/ReferencialesFilters/Producto/FilterPresentacionFinal";
 import DetalleProducts from "./DetalleProducts";
-import { FormatDateTimeMYSQLNow } from "../../../utils/functions/FormatDate";
+import { FormatDateTimeMYSQLNow, _parseInt } from "../../../utils/functions/FormatDate";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -38,27 +38,6 @@ export const AgregarAgregacion = () => {
   const { idLotProdc = "" } = queryString.parse(location.search);
 
   const [entradasNoDisponible, setEntradasNoDisponible] = useState([]);
-
-  function _parseInt(str) {
-    if (str.canProdAgr) {
-      str.canReqDet = str.canProdAgr;
-    }
-    if (str.canReqProdLot) {
-      str.canReqDet = str.canReqProdLot;
-    }
-
-    if (str.canTotProgProdFin) {
-      str.canReqDet = str.canTotProgProdFin;
-    }
-    str.canReqDet = parseFloat(str.canReqDet).toFixed(2);
-    let index = str.canReqDet.toString().indexOf(".");
-    let result = str.canReqDet.toString().substring(index + 1);
-    let val =
-      parseInt(result) >= 1 && str.simMed !== "KGM"
-        ? Math.trunc(str.canReqDet) + 1
-        : str.canReqDet;
-    return val;
-  }
 
   // ESTADO PARA LOS DATOS DE PRODUCCION LOTE
   const [produccionLote, setproduccionLote] = useState({

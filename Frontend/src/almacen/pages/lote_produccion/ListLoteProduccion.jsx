@@ -446,7 +446,9 @@ export const ListLoteProduccion = () => {
                         <TableCell align="left">
                           {row.desProdIniProgEst}
                         </TableCell>
-                        <TableCell align="left">
+                        <TableCell align="left" sx={{
+                          display:"flex"
+                        }}>
                           <div className="btn-toolbar">
                             <Link
                               to={`/almacen/lote-produccion/view/${row.id}`}
@@ -465,6 +467,17 @@ export const ListLoteProduccion = () => {
                               </svg>
                             </Link>
                           </div>
+
+                             <div className="btn-toolbar">
+                            <Link
+                              to={`/almacen/lote-produccion/view/${row.id}`}
+                              className="btn btn-primary me-2 btn"
+                            >
+                             TEST
+
+                            </Link>
+                          </div>
+
                         </TableCell>
                       </TableRow>
                     ))}

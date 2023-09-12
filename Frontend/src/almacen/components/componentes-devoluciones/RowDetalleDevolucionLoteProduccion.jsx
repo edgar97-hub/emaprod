@@ -10,6 +10,11 @@ export const RowDetalleDevolucionLoteProduccion = ({ detalle }) => {
       <TableCell>{detalle.nomAlm}</TableCell>
       <TableCell>{detalle.desProdDevMot}</TableCell>
       <TableCell>{detalle.canProdDev}</TableCell>
+      {/**
+         <TableCell>{detalle.acumulado}</TableCell>
+       */}
+      <TableCell>{detalle.cantDev}</TableCell>
+
     </TableRow>
   );
 };

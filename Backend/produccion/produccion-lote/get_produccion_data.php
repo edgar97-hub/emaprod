@@ -116,6 +116,7 @@ if (isset($_GET["id"])) {
             $description_error = $e->getMessage();
         }
     } else {
+        
         $result["AllAgregations"] = AllAgregations($pdo);
     }
 } else {

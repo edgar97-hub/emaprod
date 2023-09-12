@@ -379,7 +379,7 @@ export const CrearProduccionLote = () => {
   const handleAddProductoProduccionLote = async (e) => {
     e.preventDefault();
 
-    if (idProdFin !== 0 && (cantidadDeLote > 0.0 || cantidadDeProducto > 0)) {
+    if (true || idProdFin !== 0 && (cantidadDeLote > 0.0 || cantidadDeProducto > 0)) {
 
       const itemFound = prodDetProdc.find(
         (element) => element.idProdFin === idProdFin
@@ -445,7 +445,7 @@ export const CrearProduccionLote = () => {
             totalUnidadesLoteProduccion + cantidadUnidades
           );
 
-          if (cantidadTotalDelLoteProduccion > klgDisponibleLoteProduccion) {
+          if (false && cantidadTotalDelLoteProduccion > klgDisponibleLoteProduccion) {
             setfeedbackMessages({
               style_message: "warning",
               feedback_description_error:
@@ -833,6 +833,8 @@ export const CrearProduccionLote = () => {
                 
                 
                 {/* CANTIDAD DE PRRODUCTOS FINALES ESPERADOS 
+              */}
+
                 <div className="col-md-2">
                   <label className="form-label">Cantidad Producto</label>
                   <TextField
@@ -843,7 +845,6 @@ export const CrearProduccionLote = () => {
                     onChange={handleInputsProductosFinales}
                   />
                 </div>
-              */}
 
                 {/* BOTON AGREGAR PRODUCTO */}
                 <div className="col-md-3 d-flex justify-content-end align-self-center ms-auto">

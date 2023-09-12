@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
-// IMPORTACIONES PARA EL FEEDBACK
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import FechaPicker from "../../../components/Fechas/FechaPicker";
-// IMPORTACIONES PARA TABLE
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -13,8 +11,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-
-// HELPERS
 import { getProduccionLoteWithDevolucionesById } from "./../../../produccion/helpers/produccion_lote/getProduccionLoteWithDevolucionesById";
 import { RowDetalleDevolucionLoteProduccion } from "./../../components/componentes-devoluciones/RowDetalleDevolucionLoteProduccion";
 import { FilterAllProductos } from "./../../../components/ReferencialesFilters/Producto/FilterAllProductos";
@@ -22,8 +18,11 @@ import { TextField } from "@mui/material";
 import { getMateriaPrimaById } from "./../../../helpers/Referenciales/producto/getMateriaPrimaById";
 import { RowDetalleDevolucionLoteProduccionEdit } from "../../components/componentes-devoluciones/RowDetalleDevolucionLoteProduccionEdit";
 import { createDevolucionesLoteProduccion } from "./../../helpers/devoluciones-lote-produccion/createDevolucionesLoteProduccion";
+import { getProduccionWhitProductosFinales } from "./../../helpers/producto-produccion/getProduccionWhitProductosFinales";
+import { getFormulaProductoDetalleByProducto } from "../../../../src/produccion/helpers/formula_producto/getFormulaProductoDetalleByProducto";
+import { _parseInt } from "../../../utils/functions/FormatDate";
 
-// CONFIGURACION DE FEEDBACK
+
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -31,6 +30,9 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 export const AgregarDevolucion = () => {
   const location = useLocation();
   const { idLotProdc = "" } = queryString.parse(location.search);
+
+ 
+
 
   // ESTADOS PARA LA DATA DE DEVOLUCIONES
   const [devolucionesProduccionLote, setdevolucionesProduccionLote] = useState({
@@ -244,14 +246,295 @@ export const AgregarDevolucion = () => {
     setdetalleProductosDevueltos(dataDetalleProductosDevueltos);
   };
 
-  // FUNCION PARA TRAES DATOS DE PRODUCCION LOTE
+
+  async function handleAddProductoProduccionLote(detalleRequisiciones,idProdFin, cantidadDeProducto) {
+
+   // var productoLoteProduccion = { idProdFin : 1}
+    if (idProdFin !== 0
+    ) {
+      
+   
+        const resultPeticion = await getFormulaProductoDetalleByProducto(
+          idProdFin
+        );
+        const { message_error, description_error, result } = resultPeticion;
+        //console.log(result);
+        //return
+
+        if (message_error.length === 0) {
+          const { idProdFin, nomProd, simMed, reqDet } = result[0];  
+          let equivalenteKilogramos = 0;
+          //buscamos la requisicion de materia prima
+          //console.log("Complete Element -> ",reqDet);
+
+          reqDet.forEach((element) => {
+            if (element.idAre === 2 || element.idAre === 7) {
+              equivalenteKilogramos = parseFloat(element.canForProDet);
+              //console.log("elemento are:", element.desAre);
+              //console.log("elemento value: ", equivalenteKilogramos);
+            }
+          });
+
+          let cantidadUnidades = 0;
+          let cantidadklgLote = 0;
+          //if (parseFloat(productoLoteProduccion.cantidadDeLote) > 0.0) {
+
+          //cantidadUnidades =
+          //  parseFloat(productoLoteProduccion.cantidadDeLote) /
+          //  equivalenteKilogramos;
+          //cantidadklgLote = parseFloat(
+          //  productoLoteProduccion.cantidadDeLote
+         // ).toFixed(2);
+
+
+          //} else {
+          cantidadUnidades = Math.round(
+            parseFloat(cantidadDeProducto)
+          );
+          cantidadklgLote = parseFloat(
+            (
+              equivalenteKilogramos *
+              parseFloat(cantidadDeProducto)
+            ).toFixed(2)
+          );
+
+          //const cantidadTotalDelLoteProduccion = parseFloat(
+          //  klgTotalLoteProduccion + cantidadklgLote
+          //);
+
+          //const cantidadTotalUnidadesDelLoteProduccion = parseInt(
+          //  totalUnidadesLoteProduccion + cantidadUnidades
+          //);
+
+          //setcantidadLoteProduccion({
+          //  ...cantidadLoteProduccion,
+          //  klgTotalLoteProduccion: cantidadTotalDelLoteProduccion,
+          //  totalUnidadesLoteProduccion:
+          //    cantidadTotalUnidadesDelLoteProduccion,
+          //});
+
+          //const nextIndex = produccionLote.prodDetProdc.length + 1;
+          //const detalleProductosFinales = [
+          //  ...produccionLote.prodDetProdc,
+          //  {
+          //    idProdFin,
+          //    index: nextIndex,
+          //    nomProd,
+          //    simMed,
+          //    canUnd: cantidadUnidades,
+          //    canKlg: cantidadklgLote,
+          //  },
+          //];
+
+
+          reqDet.forEach((element) => {
+            if (element.idAre === 5 || element.idAre === 6) {
+              detalleRequisiciones.push({
+                ...element,
+                //indexProdFin: nextIndex,
+                idProdFin: idProdFin,
+                idProdAgrMot: 1,
+                cantidadUnidades,
+                cantidadklgLote,
+                canReqProdLot: parseFloat(
+                  (
+                    parseFloat(element.canForProDet) * cantidadUnidades
+                  ).toFixed(2)
+                ),
+              });
+            } else {
+              return;
+            }
+          });
+
+          //console.log(detalleRequisicionesFormula)
+          detalleRequisiciones.map((obj) => {
+            obj.canReqProdLot = _parseInt(obj);
+          });
+          
+        }
+      }
+
+      return detalleRequisiciones
+  };
+
+
+  async function getProductToDev(idLotProdc){
+    const resultPeticion = await getProduccionWhitProductosFinales(idLotProdc);
+    const { message_error, description_error, result } = resultPeticion;
+    var products = result[0].proFinProdDet;
+    //var productsAutocomplete = products.filter((obj) => !obj.isAgregation);
+    //console.log(result[0])
+
+    var copyProducts = products.reduce((accumulator, currentValue) => {
+      if (accumulator.some((obj) => obj.idProdt === currentValue.idProdt)) {
+        accumulator.map((obj) => {
+          if (obj.idProdt === currentValue.idProdt) {
+            obj.canTotProgProdFin =
+              parseFloat(obj.canTotProgProdFin) +
+              parseFloat(currentValue.canTotProgProdFin);
+              obj.canTotProgProdFin = parseFloat(obj.canTotProgProdFin).toFixed(2)
+
+              obj.canTotIngProdFin = parseFloat(obj.canTotIngProdFin) +
+              parseFloat(currentValue.canTotIngProdFin);
+              obj.canTotIngProdFin = parseFloat(obj.canTotIngProdFin).toFixed(2)
+            currentValue.total = obj.canTotProgProdFin;
+
+            var ss = parseFloat(obj.canTotProgProdFin) - parseFloat(obj.canTotIngProdFin)
+
+            if(ss > 0){
+              obj.cantDev = parseFloat(obj.canTotProgProdFin) - parseFloat(obj.canTotIngProdFin)
+              obj.cantDev = obj.cantDev.toFixed(2)
+            }else{
+              obj.cantDev = 0
+            }
+          }
+        });
+      } else {
+        currentValue.cantDev = parseFloat(currentValue.canTotProgProdFin) - parseFloat(currentValue.canTotIngProdFin)
+        accumulator.push(currentValue);
+      }
+      return accumulator;
+    }, []);
+
+    return copyProducts
+
+  }
+
+
+  function getDev(){
+
+  }
   const traerDatosProduccionLoteWithDevoluciones = async () => {
     if (idLotProdc.length !== 0) {
       const resultPeticion = await getProduccionLoteWithDevolucionesById(
         idLotProdc
       );
-      console.log(resultPeticion);
+    var productos = await getProductToDev(idLotProdc)
+    console.log(productos);
+
+
+
+    //canProdDev: "1"
+    //codProd: null
+    //desCla: "Envase y Embalaje"
+    //desSubCla: undefined
+    //idMed: 7
+    //idProdDevMot: 1
+    //idProdc: 44
+    //idProdt: 244
+    //nomProd: "DISPLAY - EL VERDE SAZONADOR MOLIDO GIGANTE BATAN X 42 SBS"
+    //simMed: "UND"
+
+    var devoluciones = []
+    await Promise.all(productos.map(async(obj)=>{
+
+     // if(obj.id == 69){
+        var nomProdFin = obj.nomProd
+        var detalleRequisiciones = []
+        detalleRequisiciones = await handleAddProductoProduccionLote(detalleRequisiciones, obj.idProdt, obj.cantDev) 
+        console.log(detalleRequisiciones)
+        detalleRequisiciones.map((obj)=>{
+          devoluciones.push({
+            nomProdFin:nomProdFin,
+           canProdDev:obj.canReqProdLot,
+           codProd: "",
+           desCla: obj.desAre,
+           desSubCla: "",
+           idMed: 7,
+           idProdDevMot: 1,
+           idProdc: idLotProdc,
+           idProdt: obj.idProd,
+           nomProd: obj.nomProd,
+           simMed: obj.simMed,
+         })
+        })
+    
+      //}
+      
+    }))
+
+    
+
+
+    var devoluciones = devoluciones.reduce((accumulator, currentValue) => {
+      if (accumulator.some((obj) => obj.idProdt == currentValue.idProdt)) {
+        accumulator.map((obj) => {
+          if (obj.idProdt == currentValue.idProdt) {
+            obj.canProdDev =
+              parseFloat(obj.canProdDev) +
+              parseFloat(currentValue.canProdDev);
+              obj.canProdDev = parseFloat(obj.canProdDev).toFixed(2)
+          }
+        });
+      } else {
+        currentValue.canProdDev = parseFloat(currentValue.canProdDev).toFixed(2)
+        accumulator.push(currentValue);
+      }
+      return accumulator;
+    }, []);
+
+   
       const { message_error, description_error, result } = resultPeticion;
+      console.log( result[0])
+
+      result[0].detDev =  result[0].detDev.reduce((accumulator, currentValue) => {
+        if (accumulator.some((obj) => obj.idProdt == currentValue.idProdt)) {
+          accumulator.map((obj) => {
+            if (obj.idProdt == currentValue.idProdt) {
+              obj.canProdDev =
+                parseFloat(obj.canProdDev) +
+                parseFloat(currentValue.canProdDev);
+                obj.canProdDev = parseFloat(obj.canProdDev).toFixed(2)
+            }
+          });
+        } else {
+          currentValue.canProdDev = parseFloat(currentValue.canProdDev).toFixed(2)
+          accumulator.push(currentValue);
+        }
+        return accumulator;
+      }, []);
+
+
+      var total = 0
+      result[0].detDev.map((obj)=>{
+        total = parseFloat(total) + parseFloat(obj.canProdDev)
+        obj.acumulado = total
+        function getVal(){
+          var cantDev = 0
+          devoluciones.map((prod)=> {
+            if(prod.idProdt == obj.idProdt){
+              obj.cantDev = prod.canProdDev
+            }
+          } )
+          return cantDev
+        }
+        getVal()
+       
+      })
+
+      devoluciones.map((obj)=>{
+
+        result[0].detDev.map((prod)=> {
+         // console.log(prod.idProdt , obj.idProdt , prod.idProdt  == obj.idProdt, prod.canProdDev + " - " + obj.canProdDev, parseFloat(prod.canProdDev) - parseFloat(obj.canProdDev) )
+          if(prod.idProdt == obj.idProdt){
+            //if(obj.cantDev > 0){
+              obj.canProdDev =  (parseFloat(obj.canProdDev) - parseFloat(prod.canProdDev)).toFixed(2)
+            //}
+          }
+        } )
+
+        
+
+
+      })
+      console.log(productos)
+
+      console.log(result[0].detDev)
+
+      const dataDetalle = [...detalleProductosDevueltos, ...devoluciones];
+      setdetalleProductosDevueltos(dataDetalle);
+      // console.log(devoluciones)
 
       if (message_error.length === 0) {
         setdevolucionesProduccionLote(result[0]);
@@ -266,14 +549,13 @@ export const AgregarDevolucion = () => {
   };
 
   const crearDevolucionesLoteProduccion = async () => {
-    console.log(detalleProductosDevueltos);
-
-
-    return
     const resultPeticion = await createDevolucionesLoteProduccion(
       detalleProductosDevueltos
     );
     console.log(resultPeticion);
+
+    return
+
     const { message_error, description_error } = resultPeticion;
 
     if (message_error.length === 0) {
@@ -440,6 +722,8 @@ export const AgregarDevolucion = () => {
                             },
                           }}
                         >
+                    
+
                           <TableCell align="left" width={200}>
                             <b>Nombre</b>
                           </TableCell>
@@ -452,9 +736,21 @@ export const AgregarDevolucion = () => {
                           <TableCell align="left" width={150}>
                             <b>Motivo devolucion</b>
                           </TableCell>
-                          <TableCell align="left" width={150}>
+                          <TableCell align="left" width={20}>
                             <b>Cantidad</b>
                           </TableCell>
+
+                         {/**
+                           <TableCell align="left" width={20}>
+                            <b>Acumulado</b>
+                          </TableCell>
+                          */}
+
+                          <TableCell align="left" width={20}>
+                            <b>Cantidad estimada a devolver</b>
+                          </TableCell>
+
+
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -480,7 +776,7 @@ export const AgregarDevolucion = () => {
                 {/* AGREGAR PRODUCTO */}
                 <div className="col-md-5">
                   <label className="form-label">Producto devuelto</label>
-                  <FilterAllProductos onNewInput={onAddProductoDevuelto} />
+                  <FilterAllProductos onNewInput={onAddProductoDevuelto} productos={devolucionesProduccionLote.requisiciones}/>
                 </div>
                 {/* CANTIDAD DE PRRODUCTOS FINALES ESPERADOS */}
                 <div className="col-md-2">
@@ -526,6 +822,13 @@ export const AgregarDevolucion = () => {
                             },
                           }}
                         >
+                         {
+                          /**
+                            <TableCell align="left" width={20}>
+                            <b>Prod Fin</b>
+                          </TableCell>
+                          */
+                         }
                           <TableCell align="left" width={200}>
                             <b>Nombre</b>
                           </TableCell>
@@ -541,6 +844,7 @@ export const AgregarDevolucion = () => {
                           <TableCell align="left" width={120}>
                             <b>Cantidad</b>
                           </TableCell>
+                          
                           <TableCell align="left" width={120}>
                             <b>Acciones</b>
                           </TableCell>
@@ -580,7 +884,7 @@ export const AgregarDevolucion = () => {
             </button>
             <button
               type="submit"
-              disabled={disableButton}
+              //disabled={disableButton}
               onClick={handleSubmitDevolucionesLoteProduccion}
               className="btn btn-primary"
             >

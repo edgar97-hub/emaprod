@@ -56,6 +56,7 @@ const ListEntradaStock = () => {
     ingresado: "",
     disponible: "",
     tipoEntrada: "TODO",
+    documento:""
   });
 
   // ESTADOS PARA FILTROS GENERALES DE FECHA
@@ -166,7 +167,6 @@ const ListEntradaStock = () => {
   const onChangeDateStartData = (newDate) => {
     let dateFormat = newDate.split(" ")[0];
     setFormState({ ...formState, fecEntIniSto: dateFormat });
-    // realizamos una promesa
     let body = {
       ...formState,
       fecEntIniSto: dateFormat,
@@ -208,7 +208,7 @@ const ListEntradaStock = () => {
         entradas.push(data)
       }
     })
-    //console.log(entradas)
+    console.log(dataEntSto)
     entradas.map((data) => {
 
       if (
@@ -216,9 +216,10 @@ const ListEntradaStock = () => {
           inputs.almacen.label.length == 0) &&
         (inputs.provedor.label.includes(data.nomProv) ||
           inputs.provedor.label.length == 0) &&
-        (inputs.producto.label.includes(data.nomProd) ||
+        (inputs.producto.label == data.nomProd ||
           inputs.producto.label.length == 0) &&
         (data.codEntSto.includes(inputs.codigo) || inputs.codigo.length == 0) &&
+        (data.docEntSto.includes(inputs.documento) || inputs.documento.length == 0) &&
         // inputs.seleccion == data.esSel &&
         (data.canTotEnt.includes(inputs.ingresado) ||
           inputs.ingresado.length == 0) &&
@@ -237,148 +238,8 @@ const ListEntradaStock = () => {
   }, [inputs, dataEntSto]);
 
   function filter() {}
-  // Funcion para filtrar la data
-  const filter2 = (terminoBusqueda, name) => {
-    let resultSearch = [];
-    dataEntSto.map((data) => {
-      if (
-        (inputs.almacen.label.includes(data.nomAlm) ||
-          inputs.almacen.label.length == 0) &&
-        (inputs.provedor.label.includes(data.nomProv) ||
-          inputs.provedor.label.length == 0)
-      ) {
-        resultSearch.push({ ...data });
-      }
-    });
-    switch (name) {
-      case "filterProducto":
-        resultSearch = dataEntSto.filter((element) => {
-          if (
-            element.nomProd
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataEntStoTmp(resultSearch);
-        break;
-      case "filterProveedor":
-        console.log(dataEntSto);
-        resultSearch = dataEntSto.filter((element) => {
-          if (
-            element.nomProv
-              ?.toString()
-              ?.toLowerCase()
-              ?.includes(terminoBusqueda?.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataEntStoTmp(resultSearch);
-        break;
-      case "filterAlmacen":
-        resultSearch = dataEntSto.filter((element) => {
-          if (
-            element.nomAlm
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return true;
-          }
-        });
-        setdataEntStoTmp(resultSearch);
-        break;
-      case "filterCodigo":
-        resultSearch = dataEntSto.filter((element) => {
-          if (
-            element.codEntSto
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataEntStoTmp(resultSearch);
-        break;
-      case "filterEsSeleccion":
-        resultSearch = dataEntSto.filter((element) => {
-          if (
-            element.esSel
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataEntStoTmp(resultSearch);
-        break;
-      case "filterCantidadTotal":
-        resultSearch = dataEntSto.filter((element) => {
-          if (
-            element.canTotEnt
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataEntStoTmp(resultSearch);
-        break;
-      case "filterCantidadDisponible":
-        resultSearch = dataEntSto.filter((element) => {
-          if (
-            element.canTotDis
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataEntStoTmp(resultSearch);
-        break;
-      case "filterFechaEntrada":
-        resultSearch = dataEntSto.filter((element) => {
-          let aux = element.fecEntSto.split(" ");
-          if (
-            aux[0]
-              .toString()
-              .toLowerCase()
-              .includes(terminoBusqueda.toLowerCase())
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setdataEntStoTmp(resultSearch);
-        break;
-      default:
-        break;
-    }
-  };
+  
 
-  // RESET FILTERS
   const resetData = () => {
     setdataEntStoTmp(dataEntSto);
     setInputs({
@@ -400,7 +261,6 @@ const ListEntradaStock = () => {
   return (
     <>
       <div className="container-fluid">
-        {/* FILTROS Y EXPORTACION */}
         <div className="row d-flex mt-4">
           <div className="col-6">
             <div className="row">
@@ -470,7 +330,7 @@ const ListEntradaStock = () => {
                     <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64z" />
                   </svg>
                 </button> */}
-                <ExportExcel exelData={dataEntSto} />
+                <ExportExcel exelData={dataEntStoTmp} />
               </div>
               <div className="col-3">
                 {/* <button className="btn btn-danger">
@@ -544,6 +404,24 @@ const ListEntradaStock = () => {
                         }}
                       />
                     </TableCell>
+
+                    <TableCell align="left" width={80}>
+                      <b>Doc.</b>
+                      <TextField
+                        name="documento"
+                        onChange={handleFormFilter}
+                        size="small"
+                        value={inputs.documento}
+                        autoComplete="off"
+                        InputProps={{
+                          style: {
+                            color: "black",
+                            background: "white",
+                          },
+                        }}
+                      />
+                    </TableCell>
+
                     <TableCell align="left" width={20}>
                        
                          <b>Seleccion</b>
@@ -622,6 +500,7 @@ const ListEntradaStock = () => {
                         <TableCell align="left">{row.nomProv}</TableCell>
                         <TableCell align="left">{row.nomAlm}</TableCell>
                         <TableCell align="left">{row.codEntSto}</TableCell>
+                        <TableCell align="left">{row.docEntSto}</TableCell>
                         <TableCell align="center">
                           {row.esSel === 1 ? (
                             <svg

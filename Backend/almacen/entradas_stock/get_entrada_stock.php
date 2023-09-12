@@ -45,10 +45,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         es.canTotDis,
         es.fecEntSto,
         DATE(es.fecVenEntSto) AS fecVenEntSto,
-        es.referencia
+        es.referencia,
+        es.docEntSto
         FROM entrada_stock es
         JOIN producto p ON p.id = es.idProd
-        JOIN proveedor pv ON pv.id = es.idProv
+        left JOIN proveedor pv ON pv.id = es.idProv
         JOIN entrada_stock_estado ese ON ese.id = es.idEntStoEst
         JOIN almacen a ON a.id = es.idAlm
         WHERE DATE(fecEntSto) BETWEEN '$fechaInicio' AND '$fechaFin'

@@ -99,17 +99,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 function getRequisiciones($pdo, $idLotProdc, $row){
+
+
+                    #SELECT 
+                    #pc.id as idProdc,
+                    #p.nomProd,
+                    #p.id as idProdt
+                    #FROM  producto as p 
+                    #JOIN produccion as pc ON pc.idProdt = p.id
+                    #JOIN requisicion as r ON r.idProdc = pc.id
+                    #RIGHT JOIN requisicion_detalle as rq ON rq.idReq = r.id
+                    #WHERE pc.id = ?
                 $sql_detalle_devoluciones_lote_produccion =
                     "SELECT 
-                    pc.id as idProdc,
-                    p.nomProd,
-                    p.id as idProdt
-                
-                FROM  producto as p 
-                JOIN produccion as pc ON pc.idProdt = p.id
-                JOIN requisicion as r ON r.idProdc = pc.id
-                RIGHT JOIN requisicion_detalle as rq ON rq.idReq = r.id
-                WHERE pc.id = ?";
+                DISTINCT
+                r.idProdc ,
+                r.idAre,
+                rd.id as idReq,
+                p.id,
+                rd.idProdt,
+                rd.idReq,
+                rd.idReqDetEst,
+                rd.canReqDet,
+                rd.fecCreReqDet,
+                rd.fecActReqDet,
+                rd.estReg,
+                rd.idProdFin,
+                p.nomProd FROM requisicion r 
+                join `requisicion_detalle` as rd on r.id = rd.idReq 
+                join producto p ON rd.idProdt = p.id 
+                join produccion_agregacion pa on pa.idProdc = r.idProdc
+                where r.idProdc  =  ?  and r.idAre != 2 ORDER BY rd.id DESC";
 
                 try {
                     $stmt_detalle_devoluciones_lote_produccion = $pdo->prepare($sql_detalle_devoluciones_lote_produccion);

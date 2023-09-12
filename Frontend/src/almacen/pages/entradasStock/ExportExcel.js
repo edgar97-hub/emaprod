@@ -5,6 +5,13 @@ import * as XLSX from "xlsx";
 import { Tooltip } from "@mui/material";
 
 const ExportExcel = ({ exelData }) => {
+
+
+  exelData.map((row)=>{
+    row.codProd = row.codEntSto.slice(0, 6) 
+    delete row.id;
+  })
+
   const exportExcel = async () => {
     const workbook = XLSX.utils.book_new();
     var worksheet = XLSX.utils.json_to_sheet(exelData, { origin: 1 });

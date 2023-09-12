@@ -163,8 +163,9 @@ const AgregarEntradaStock = () => {
       idAlm === 0 ||
       docEntSto.length === 0 ||
       canTotEnt <= 0 ||
-      canTotCom <= 0 ||
-      fecVenEntSto.length === 0
+      canTotCom <= 0 
+      // ||
+      //fecVenEntSto.length === 0
     ) {
       if (idProd === 0) {
         advertenciaFormularioIncompleto +=
@@ -246,7 +247,7 @@ const AgregarEntradaStock = () => {
             </div>
             {/* SEARCH NAME PRODUCTO */}
             <div className="col-md-8">
-              <FilterAllProductos onNewInput={onAddCodProd} />
+              <FilterAllProductos onNewInput={onAddCodProd} mostrarCodigo={true} />
             </div>
             {/* <div className="col-md-3 form-check d-flex justify-content-start align-items-center">
               <label className="form-check-label">Para seleccionar</label>
@@ -273,7 +274,7 @@ const AgregarEntradaStock = () => {
             </div>
             {/* SEARCH NAME PROVEEDOR */}
             <div className="col-md-8">
-              <FilterProveedor onNewInput={onAddCodProv} />
+              <FilterProveedor onNewInput={onAddCodProv} mostrarCodigo={true}/>
             </div>
           </div>
 
@@ -292,7 +293,7 @@ const AgregarEntradaStock = () => {
             </div>
             {/* SEARCH NAME PROVEEDOR */}
             <div className="col-md-6">
-              <FilterAlmacen onNewInput={onAddCodAlm} />
+              <FilterAlmacen onNewInput={onAddCodAlm}  mostrarCodigo={true} />
             </div>
           </div>
 
