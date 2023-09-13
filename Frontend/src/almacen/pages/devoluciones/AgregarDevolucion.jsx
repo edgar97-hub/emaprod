@@ -60,6 +60,7 @@ export const AgregarDevolucion = () => {
     klgLotProd,
     nomProd,
     detDev,
+    numop,
   } = devolucionesProduccionLote;
 
   const [detalleProductosDevueltos, setdetalleProductosDevueltos] = useState(
@@ -411,7 +412,7 @@ export const AgregarDevolucion = () => {
         idLotProdc
       );
     var productos = await getProductToDev(idLotProdc)
-    console.log(productos);
+    console.log(resultPeticion);
 
 
 
@@ -433,7 +434,7 @@ export const AgregarDevolucion = () => {
         var nomProdFin = obj.nomProd
         var detalleRequisiciones = []
         detalleRequisiciones = await handleAddProductoProduccionLote(detalleRequisiciones, obj.idProdt, obj.cantDev) 
-        console.log(detalleRequisiciones)
+        //console.log(detalleRequisiciones)
         detalleRequisiciones.map((obj)=>{
           devoluciones.push({
             nomProdFin:nomProdFin,
@@ -476,7 +477,7 @@ export const AgregarDevolucion = () => {
 
    
       const { message_error, description_error, result } = resultPeticion;
-      console.log( result[0])
+     // console.log( result[0])
 
       result[0].detDev =  result[0].detDev.reduce((accumulator, currentValue) => {
         if (accumulator.some((obj) => obj.idProdt == currentValue.idProdt)) {
@@ -549,12 +550,17 @@ export const AgregarDevolucion = () => {
   };
 
   const crearDevolucionesLoteProduccion = async () => {
-    const resultPeticion = await createDevolucionesLoteProduccion(
-      detalleProductosDevueltos
-    );
-    console.log(resultPeticion);
 
-    return
+
+   var productos = detalleProductosDevueltos?.filter((obj)=> parseFloat(obj.canProdDev) > 0)
+    //console.log(productos)
+    //return
+    const resultPeticion = await createDevolucionesLoteProduccion(
+      productos
+    );
+
+    //console.log(resultPeticion);
+    //return
 
     const { message_error, description_error } = resultPeticion;
 
@@ -627,6 +633,19 @@ export const AgregarDevolucion = () => {
                     className="form-control"
                   />
                 </div>
+
+                <div className="col-md-2">
+                  <label htmlFor="nombre" className="form-label">
+                    <b>Numero OP</b>
+                  </label>
+                  <input
+                    type="text"
+                    disabled={true}
+                    value={numop}
+                    className="form-control"
+                  />
+                </div>
+
                 {/* PRODUCTO */}
                 <div className="col-md-4 me-4">
                   <label htmlFor="nombre" className="form-label">
@@ -737,7 +756,7 @@ export const AgregarDevolucion = () => {
                             <b>Motivo devolucion</b>
                           </TableCell>
                           <TableCell align="left" width={20}>
-                            <b>Cantidad</b>
+                            <b>Cantidad devuelta</b>
                           </TableCell>
 
                          {/**

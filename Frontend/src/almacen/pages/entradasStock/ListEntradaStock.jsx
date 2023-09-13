@@ -34,6 +34,10 @@ import FechaPickerDay from "./../../../components/Fechas/FechaPickerDay";
 import FechaPickerMonth from "./../../../components/Fechas/FechaPickerMonth";
 import ExportExcel from "../entradasStock/ExportExcel";
 import TypeEntrada from "./TypeEntrada";
+import { DetalleDevoluciones } from "./DetalleDevoluciones";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import IconButton from "@mui/material/IconButton";
+import BlockIcon from "@mui/icons-material/Block";
 
 // CONFIGURACIONES DE ESTILOS
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
@@ -207,8 +211,10 @@ const ListEntradaStock = () => {
       if( inputs.tipoEntrada  == "PRODT. FINAL" && data.referencia){
         entradas.push(data)
       }
+      if( inputs.tipoEntrada  == "DEVOLUCIONES" && data.devoluciones.length){
+        entradas.push(data)
+      }
     })
-    console.log(dataEntSto)
     entradas.map((data) => {
 
       if (
@@ -234,6 +240,7 @@ const ListEntradaStock = () => {
         resultSearch.push({ ...data });
       }
     });
+    console.log(resultSearch)
     setdataEntStoTmp(resultSearch);
   }, [inputs, dataEntSto]);
 
@@ -251,7 +258,6 @@ const ListEntradaStock = () => {
       ingresado: "",
       disponible: "",
     })
-
   };
 
   useEffect(() => {
@@ -262,41 +268,44 @@ const ListEntradaStock = () => {
     <>
       <div className="container-fluid">
         <div className="row d-flex mt-4">
-          <div className="col-6">
-            <div className="row">
-              <div className="col-4">
+          <div className="col-9">
+            <div className="row" style={{border:"0px solid black" }}>
+              <div className="col-2" style={{border:"0px solid black" , display:"flex",justifyContent:"center", alignItems:"center" }}>
                 Desde
                 <FechaPickerMonth onNewfecEntSto={onChangeDateStartData} />
               </div>
-              <div className="col-4">
+              <div className="col-2" style={{ display:"flex",justifyContent:"center", alignItems:"center"  }} >
                 Hasta
                 <FechaPickerMonth onNewfecEntSto={onChangeDateEndData} />
               </div>
-              <div className="col-4">
+
+              <div className="col-2" style={{ display:"flex",justifyContent:"center", alignItems:"center" }}>
                <TypeEntrada inputs={inputs} onChangeTipoEntrada={onChangeTipoEntrada}/>
+              </div>
+
+              <div className="col-2" style={{  display:"flex",justifyContent:"center", alignItems:"center"  }}>
+
+              <Button
+                variant="contained"
+                size="small"
+                sx={{ width: 150, margin: 0.5, cursor: "pointer" }}
+                onClick={(e) =>{
+                  //exportExcel()
+                }}
+              >
+                PROCESAR
+              </Button>
 
               </div>
-              <div className="col-2 d-flex align-items-end">
+
+              <div className="col-2" style={{ display:"flex",justifyContent:"center", alignItems:"center"  }}>
                 <button onClick={resetData} className="btn btn-success">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-arrow-clockwise"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"
-                    />
-                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
-                  </svg>
+                 reset
                 </button>
               </div>
             </div>
           </div>
-          <div className="col-6 d-flex justify-content-end align-items-center">
+          <div className="col-3 d-flex justify-content-end align-items-center"  >
             <div className="row">
               {/* BOTON AGREGAR MATERIA PRIMA */}
               <div className="col-6">
@@ -479,7 +488,7 @@ const ListEntradaStock = () => {
                     <TableCell align="left" width={160}>
                       <b>Acumulado</b>
                     </TableCell>
-                    <TableCell align="left" width={50}>
+                    <TableCell align="center" width={50}>
                       <b>Acciones</b>
                     </TableCell>
                   </TableRow>
@@ -532,28 +541,37 @@ const ListEntradaStock = () => {
                         <TableCell align="left">{row.canTotDis}</TableCell>
                         <TableCell align="left">{row.fecEntSto}</TableCell>
                         <TableCell align="left">{row.acumulado}</TableCell>
-                        <TableCell align="left">
-                          <div className="btn-toolbar">
-                            <Link
-                              // onClick={() => {
-                              //   showFormulaDetalle(i);
-                              // }}
-                              to={`/almacen/entradas-stock/view/${row.id}`}
-                              className="btn btn-primary me-2 btn"
+                        <TableCell align="left" sx={{
+                          display:"flex", justifyContent:"space-around", alignItems:"center"  
+                        }}>
+                          <div className="btn-toolbar" style={{backgroundColor:"#0E80E5",borderRadius:"9px"}}>
+                          
+                          {row.devoluciones.length ? (
+                             <DetalleDevoluciones row={row} idProduccion={1} idEntStock={row.idEntStock}/>
+                            ) : (
+
+                              <IconButton
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-eye-fill"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
-                                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
-                              </svg>
+                              <BlockIcon fontSize="medium" sx={{color:"white"}}/>
+                            </IconButton>
+
+                            )}
+                            
+                            
+                          </div>
+
+                          <div className="btn-toolbar" style={{backgroundColor:"#0E80E5",borderRadius:"9px"}}>
+                            <Link
+                              to={`/almacen/entradas-stock/view/${row.idEntStock}`}
+                            >
+                                <IconButton 
+                                    >
+                                <VisibilityIcon fontSize="medium" sx={{color:"white"}}/>
+                                </IconButton>
+
                             </Link>
                           </div>
+
                         </TableCell>
                       </TableRow>
                     ))}

@@ -29,7 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             pd.codLotProd,
             pd.klgLotProd,
             pd.canLotProd,
-            pd.fecVenLotProd
+            pd.fecVenLotProd,
+            pd.numop
         FROM produccion pd
         JOIN producto as p ON p.id = pd.idProdt
         JOIN produccion_estado as pe ON pe.id = pd.idProdEst
@@ -100,6 +101,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $message_error = "No se encontro el lote de produccion";
                 $description_error = "No se encontro el lote de produccion con el id proporcionado";
             }
+
+
+
+
+
+
+
+
+
+            
         } catch (PDOException $e) {
             $message_error = "ERROR INTERNO EN LA CONSULTA DE ENTRADAS";
             $description_error = $e->getMessage();

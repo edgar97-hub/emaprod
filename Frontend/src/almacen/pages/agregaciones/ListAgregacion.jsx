@@ -926,6 +926,8 @@ export const ListAgregacion = () => {
 
   useEffect(() => {
     let resultSearch = [];
+
+    console.log(dataProduccionLote)
     dataProduccionLote.map((data) => {
       if (
         (inputs.almacen.label.includes(data.nomAlm) ||
@@ -1154,15 +1156,8 @@ export const ListAgregacion = () => {
                           flexDirection: "row",
                         }}
                       >
-                        <div>
+                        <div style={{display:"flex"}}>
                           <div className="btn-toolbar">
-                            ´
-                            {/**
-                               <ButtonPdf
-                                id={row.id}
-                                handleButtonClick={handleButtonClick}
-                              />
-                               */}
                             <button
                               onClick={() => {
                                 handleButtonClick(
@@ -1176,6 +1171,17 @@ export const ListAgregacion = () => {
                               <PictureAsPdfIcon />
                             </button>
                           </div>
+
+
+                          <div className="btn-toolbar">
+                            <Link
+                              to={`/almacen/produccion-agregaciones/assist-agregation/${row.idProdc}/${row.flag}`}
+                              className="btn btn-primary me-2 btn"
+                            >
+                             TEST
+                            </Link>
+                          </div>
+
                         </div>
                       </TableCell>
                     </TableRow>

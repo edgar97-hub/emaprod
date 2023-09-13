@@ -48,14 +48,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $array_entradas_disponibles = [];
         $sql_consult_entradas_disponibles =
             "SELECT
-        es.id,
-        es.codEntSto,
-        es.refNumIngEntSto,
-        DATE(es.fecEntSto) AS fecEntSto,
-        es.canTotDis 
-    FROM entrada_stock AS es
-    WHERE idProd = ? AND idEntStoEst = ? AND canTotDis <> 0.000
-    ORDER BY es.fecEntSto ASC";
+                es.id,
+                es.codEntSto,
+                es.refNumIngEntSto,
+                DATE(es.fecEntSto) AS fecEntSto,
+                es.canTotDis 
+            FROM entrada_stock AS es
+            WHERE idProd = ? AND idEntStoEst = ? AND canTotDis <> 0.000
+            ORDER BY es.fecEntSto ASC";
 
         try {
             $stmt_consult_entradas_disponibles = $pdo->prepare($sql_consult_entradas_disponibles);
@@ -94,14 +94,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 )
                             );
 
-                            // $cantidad_acumulada += $cantidad_faltante;
                             $cantidad_faltante = 0;
 
                             break; // termina el flujo
                         } else {
-                            // $cantidad_acumulada += $canDisEnt;
                             $cantidad_faltante -= $canDisEnt;
-                            //añadimos a entradas utilizadas
                             array_push(
                                 $entradasUtilizadas,
                                 array(

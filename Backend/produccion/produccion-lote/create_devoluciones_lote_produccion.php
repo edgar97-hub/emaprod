@@ -73,12 +73,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_salidas_empleadas_requisicion_detalle->bindParam(2, $idProdc, PDO::PARAM_INT);
                     $stmt_salidas_empleadas_requisicion_detalle->execute();
 
-                    while ($row_salidas_empleadas = $stmt_salidas_empleadas_requisicion_detalle->fetch(PDO::FETCH_ASSOC)) {
-                        array_push($salidasEmpleadas, $row_salidas_empleadas);
-                        $totalRequisicionProducto += $row_salidas_empleadas["canSalStoReq"];
-                    }
-
+                    //while ($row_salidas_empleadas = $stmt_salidas_empleadas_requisicion_detalle->fetch(PDO::FETCH_ASSOC)) {
+                    //    array_push($salidasEmpleadas, $row_salidas_empleadas);
+                    //    $totalRequisicionProducto += $row_salidas_empleadas["canSalStoReq"];
+                    //}
                     //die(json_encode($salidasEmpleadas));
+                    
 
                     if ($stmt_salidas_empleadas_requisicion_detalle->rowCount() != 0) {
 
@@ -86,10 +86,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             array_push($salidasEmpleadas, $row_salidas_empleadas);
                             $totalRequisicionProducto += $row_salidas_empleadas["canSalStoReq"];
                         }
+
                        // die(json_encode($salidasEmpleadas));
 
 
-                        // creamos el detalle de produccion devolucion
                         $idLastInsertion = 0;
                         $sql_insert_detalle_devolucion_lote_produccion =
                             "INSERT INTO produccion_devolucion

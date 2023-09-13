@@ -7,7 +7,7 @@ import Select from '@mui/material/Select';
 
 export default function TypeEntrada({inputs , onChangeTipoEntrada}) {
   return (
-    <Box sx={{ width: 120 }}>
+    <Box sx={{ width: 150 }}>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Tipo E.</InputLabel>
         <Select

@@ -30,7 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $sql =
             "SELECT
-        es.id,
         es.idProd,
         p.nomProd,
         es.idProv,
@@ -46,7 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         es.fecEntSto,
         DATE(es.fecVenEntSto) AS fecVenEntSto,
         es.referencia,
-        es.docEntSto
+        es.docEntSto,
+        es.id as idEntStock
         FROM entrada_stock es
         JOIN producto p ON p.id = es.idProd
         left JOIN proveedor pv ON pv.id = es.idProv
@@ -60,6 +60,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->execute(); // ejecutamos
             // Recorremos los resultados
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+                $row["devoluciones"] = [];
+                $idEntStock = $row["idEntStock"];
+                $row = getDevoluciones($pdo, $idEntStock, $row);
                 array_push($result, $row);
             }
         } catch (PDOException $e) {
@@ -77,4 +81,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['description_error'] = $description_error;
     $return['result'] = $result;
     echo json_encode($return);
+}
+
+
+function getDevoluciones($pdo, $idEntStock, $row){
+
+
+  
+    $sql_detalle_devoluciones =
+        "SELECT es.id as idEntStock , es.canTotDis, pdt.idProdDev, pdt.idEntSto, pdt.canProdDevTra , p.nomProd, pdt.fecCreProdDevTra
+        FROM entrada_stock  as es 
+        join producto_devolucion_trazabilidad as pdt  
+        on pdt.idEntSto = es.id
+        JOIN produccion_devolucion pd ON pd.id = pdt.idProdDev
+        JOIN producto p ON p.id = pd.idProdt
+        WHERE es.id = ?";
+
+    try {
+        $stmt_detalle_devoluciones = $pdo->prepare($sql_detalle_devoluciones);
+        $stmt_detalle_devoluciones->bindParam(1, $idEntStock, PDO::PARAM_INT);
+        $stmt_detalle_devoluciones->execute();
+
+        while ($row_devolucion = $stmt_detalle_devoluciones->fetch(PDO::FETCH_ASSOC)) {
+            array_push($row["devoluciones"], $row_devolucion);
+        }
+    } catch (PDOException $e) {
+        $description_error = $e->getMessage();
+        $row["devoluciones"] = $description_error;
+    }
+    return $row;
 }

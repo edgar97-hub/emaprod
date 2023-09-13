@@ -55,6 +55,7 @@ export const ViewLoteProduccion = () => {
     canLotProd,
     fecVenLotProd,
     prodLotReq,
+    numop
   } = produccionRequisicionDetalle;
 
 
@@ -248,6 +249,19 @@ export const ViewLoteProduccion = () => {
                     className="form-control"
                   />
                 </div>
+
+                <div className="col-md-2">
+                  <label htmlFor="nombre" className="form-label">
+                    <b>Número OP</b>
+                  </label>
+                  <input
+                    type="text"
+                    disabled={true}
+                    value={numop}
+                    className="form-control"
+                  />
+                </div>
+
                 {/* PRODUCTO */}
                 <div className="col-md-4 me-4">
                   <label htmlFor="nombre" className="form-label">

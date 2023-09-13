@@ -468,9 +468,12 @@ export const ListLoteProduccion = () => {
                             </Link>
                           </div>
 
-                             <div className="btn-toolbar">
+                         {
+                          /**
+                            
+                          <div className="btn-toolbar">
                             <Link
-                              to={`/almacen/lote-produccion/view/${row.id}`}
+                              to={`/almacen/lote-produccion/assist-agregation/${row.id}`}
                               className="btn btn-primary me-2 btn"
                             >
                              TEST
@@ -478,6 +481,9 @@ export const ListLoteProduccion = () => {
                             </Link>
                           </div>
 
+
+                           */
+                         }
                         </TableCell>
                       </TableRow>
                     ))}

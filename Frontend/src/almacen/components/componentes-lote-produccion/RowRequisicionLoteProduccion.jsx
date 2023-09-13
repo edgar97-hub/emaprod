@@ -129,7 +129,7 @@ export const RowRequisicionLoteProduccion = ({
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {requisicion.reqDet.map((row, i) => {
+                    {requisicion?.reqDet?.map((row, i) => {
                       return (
                         <RowRequisicionDetalleLoteProduccion
                           key={row.id}

@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
 // IMPORTACIONES DE HELPER
 import { RowRequisicionLoteProduccion } from "../../components/componentes-lote-produccion/RowRequisicionLoteProduccion";
-import { viewProduccionRequisicionDetalleById } from "./../../helpers/lote-produccion/viewProduccionRequisicionDetalleById";
+import { viewProduccionAgregacionById } from "./../../helpers/lote-produccion/viewProduccionAgregacionById";
 // IMPORTACIONES PARA EL FEEDBACK
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
@@ -18,7 +18,7 @@ import {
   CircularProgress,
   TextField,
 } from "@mui/material";
-import { createSalidasStockAutomaticas } from "./../../helpers/lote-produccion/createSalidasStockAutomaticas";
+import { createSalidasStockAgregacion } from "./../../helpers/lote-produccion/createSalidasStockAgregacion";
 import { DialogUpdateDetalleRequisicion } from "../../components/componentes-lote-produccion/DialogUpdateDetalleRequisicion";
 import { updateProduccionDetalleRequisicion } from "../../helpers/lote-produccion/updateProduccionDetalleRequisicion";
 import { useAuth } from "../../../hooks/useAuth";
@@ -30,7 +30,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 export const AtenderAgregaciones = () => {
 
-  const { id } = useParams();
+  const { id, codAgre } = useParams();
   const [produccionRequisicionDetalle, setproduccionRequisicionDetalle] =
     useState({
       idProdt: 0,
@@ -45,17 +45,6 @@ export const AtenderAgregaciones = () => {
       fecVenLotProd: "",
       prodLotReq: [],
     });
-
-  const {
-    nomProd,
-    desEstPro,
-    desProdTip,
-    codLotProd,
-    klgLotProd,
-    canLotProd,
-    fecVenLotProd,
-    prodLotReq,
-  } = produccionRequisicionDetalle;
 
 
   const { user } = useAuth();
@@ -101,28 +90,27 @@ export const AtenderAgregaciones = () => {
 
   // crear salidas correspondientes
   const onCreateSalidasStock = async (requisicion_detalle) => {
-    // abrimos el loader
+
+    console.log(requisicion_detalle)
+
+    return
     openLoader();
-    const resultPeticion = await createSalidasStockAutomaticas(
+
+    const resultPeticion = await createSalidasStockAgregacion(
       requisicion_detalle
     );
 
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
-      // volvemos a consultar la data
       obtenerDataProduccionRequisicionesDetalle();
-      // cerramos modal
       closeLoader();
-      // mostramos el feedback
       setfeedbackMessages({
         style_message: "success",
         feedback_description_error: "Se cumplio la requisicion exitosamente",
       });
       handleClickFeeback();
     } else {
-      // cerramos el modal
       closeLoader();
-      // mostramos el feedback
       setfeedbackMessages({
         style_message: "error",
         feedback_description_error: description_error,
@@ -131,11 +119,8 @@ export const AtenderAgregaciones = () => {
     }
   };
 
-  // mostrar y setear dialog update de detalle de requisicion
   const showAndSetDialogUpdateDetalleRequisicion = (item) => {
-    // establecemos los valores
     setItemSeleccionado(item);
-    // abrimos el modal
     setshowDialogUpdate(true);
   };
 
@@ -144,7 +129,6 @@ export const AtenderAgregaciones = () => {
     setItemSeleccionado(null);
   };
 
-  // actualizar detalle de requisicion
   const updateDetalleRequisicion = async (itemUpdate, cantidadNueva) => {
     const { id } = itemUpdate;
     let body = {
@@ -154,11 +138,8 @@ export const AtenderAgregaciones = () => {
     const resultPeticion = await updateProduccionDetalleRequisicion(body);
     const { message_error, description_error } = resultPeticion;
     if (message_error.length === 0) {
-      // actualizamos la cantidad
       obtenerDataProduccionRequisicionesDetalle();
-      // cerramos el modal
       closeDialogUpdateDetalleRequisicion();
-      // mostramos el feedback
       setfeedbackMessages({
         style_message: "success",
         feedback_description_error:
@@ -166,9 +147,7 @@ export const AtenderAgregaciones = () => {
       });
       handleClickFeeback();
     } else {
-      // cerramos el modal
       closeDialogUpdateDetalleRequisicion();
-      // mostramos el feedback
       setfeedbackMessages({
         style_message: "error",
         feedback_description_error: description_error,
@@ -179,10 +158,12 @@ export const AtenderAgregaciones = () => {
 
   // funcion para obtener la produccion con sus requisiciones y su detalle
   const obtenerDataProduccionRequisicionesDetalle = async () => {
-    const resultPeticion = await viewProduccionRequisicionDetalleById(id);
+    const resultPeticion = await viewProduccionAgregacionById(id);
     
-    console.log(resultPeticion)
+    console.log(resultPeticion, codAgre)
+
     const { message_error, description_error, result } = resultPeticion;
+
     if (message_error.length === 0) {
       setproduccionRequisicionDetalle(result[0]);
     } else {
@@ -216,10 +197,23 @@ export const AtenderAgregaciones = () => {
                   <input
                     type="text"
                     disabled={true}
-                    value={codLotProd}
+                    value={produccionRequisicionDetalle.codLotProd}
                     className="form-control"
                   />
                 </div>
+
+                <div className="col-md-2">
+                  <label htmlFor="nombre" className="form-label">
+                    <b>Codigo Agre.</b>
+                  </label>
+                  <input
+                    type="text"
+                    disabled={true}
+                    value={produccionRequisicionDetalle.numop + " - " + codAgre}
+                    className="form-control"
+                  />
+                </div>
+
                 {/* PRODUCTO */}
                 <div className="col-md-4 me-4">
                   <label htmlFor="nombre" className="form-label">
@@ -228,7 +222,7 @@ export const AtenderAgregaciones = () => {
                   <input
                     disabled={true}
                     type="text"
-                    value={nomProd}
+                    value={produccionRequisicionDetalle.nomProd}
                     className="form-control"
                   />
                 </div>
@@ -242,7 +236,7 @@ export const AtenderAgregaciones = () => {
                   <input
                     type="number"
                     disabled={true}
-                    value={klgLotProd}
+                    value={produccionRequisicionDetalle.klgLotProd}
                     className="form-control"
                   />
                 </div>
@@ -256,7 +250,7 @@ export const AtenderAgregaciones = () => {
                   <input
                     type="number"
                     disabled={true}
-                    value={canLotProd}
+                    value={produccionRequisicionDetalle.canLotProd}
                     className="form-control"
                   />
                 </div>
@@ -302,7 +296,7 @@ export const AtenderAgregaciones = () => {
                   <input
                     type="text"
                     disabled={true}
-                    value={desProdTip}
+                    value={produccionRequisicionDetalle.desProdTip}
                     className="form-control"
                   />
                 </div>
@@ -314,12 +308,14 @@ export const AtenderAgregaciones = () => {
                   <input
                     type="text"
                     disabled={true}
-                    value={desEstPro}
+                    value={produccionRequisicionDetalle.desEstPro}
                     className="form-control"
                   />
                 </div>
-                {/* FECHA DE VENCIMIENTO */}
-                <div className="col-md-4">
+
+                {
+                  /**
+                     <div className="col-md-4">
                   <label htmlFor="nombre" className="form-label">
                     <b>Fecha vencimiento lote</b>
                   </label>
@@ -330,6 +326,8 @@ export const AtenderAgregaciones = () => {
                     className="form-control"
                   />
                 </div>
+                   */
+                }
               </div>
             </div>
           </div>
@@ -337,7 +335,7 @@ export const AtenderAgregaciones = () => {
           <div className="card d-flex mt-4">
             <h6 className="card-header">Requisiciones</h6>
             <div className="card-body">
-              {prodLotReq.map((element) => {
+              {produccionRequisicionDetalle?.prodLotReq?.map((element) => {
 
                {/**  
                if(user.idAre === 4 && element.idAre == 2){
