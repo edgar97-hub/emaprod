@@ -5,7 +5,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import IconButton from "@mui/material/IconButton";  
+import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import Table from "@mui/material/Table";
@@ -16,9 +16,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { getEntradasStockByProdcFinal } from "./../../helpers/entradas-stock/getEntradasStockByProdcFinal";
-import CheckIcon from '@mui/icons-material/Check';
-import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn';
-
+import CheckIcon from "@mui/icons-material/Check";
+import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -40,16 +39,10 @@ export function DetalleDevoluciones({ row, idProduccion }) {
     setOpen(false);
   };
 
- 
-
- 
-
   return (
     <div>
-      <IconButton
-        onClick={handleClickOpen}
-      >
-        <AssignmentReturnIcon fontSize="medium" sx={{color:"white"}}/>
+      <IconButton onClick={handleClickOpen}>
+        <AssignmentReturnIcon fontSize="medium" sx={{ color: "white" }} />
       </IconButton>
 
       <BootstrapDialog
@@ -76,30 +69,25 @@ export function DetalleDevoluciones({ row, idProduccion }) {
 }
 
 function TableEntradas2({ row, idProdt }) {
-
   const [entrada, setEntrada] = React.useState([]);
 
-  
   React.useEffect(() => {
+    var totalCantidadDev = 0;
+    row.devoluciones.map((obj) => {
+      totalCantidadDev = totalCantidadDev + parseFloat(obj.canProdDevTra);
+    });
 
-    var totalCantidadDev = 0
-    row.devoluciones.map((obj)=>{
-      totalCantidadDev = totalCantidadDev + parseFloat(obj.canProdDevTra)
-    })
+    row.devoluciones.map((obj) => {
+      obj.canTotDis = parseFloat(totalCantidadDev) - parseFloat(row.canTotDis);
+    });
 
-    row.devoluciones.map((obj)=>{
-      obj.canTotDis = parseFloat(totalCantidadDev) - parseFloat(row.canTotDis)
-    })
-
-
-    var total = 0
-    row.devoluciones.map((obj)=>{
-      console.log(obj)
-      total = total + parseFloat(obj.canProdDevTra)
-      obj.acumulado = total
-
-    })
-    setEntrada(row)
+    var total = 0;
+    row.devoluciones.map((obj) => {
+      console.log(obj);
+      total = total + parseFloat(obj.canProdDevTra);
+      obj.acumulado = total;
+    });
+    setEntrada(row);
   }, [row, idProdt]);
 
   return (
@@ -122,7 +110,9 @@ function TableEntradas2({ row, idProdt }) {
             >
               <TableCell align="right">{row.codProd}</TableCell>
               <TableCell align="left">{item.nomProd}</TableCell>
-              <TableCell align="left">{ parseFloat(item.acumulado) - parseFloat(item.canTotDis)}</TableCell>
+              <TableCell align="left">
+                {parseFloat(item.acumulado) - parseFloat(item.canTotDis)}
+              </TableCell>
               <TableCell align="left">{item.canProdDevTra}</TableCell>
               <TableCell align="right">{item.fecCreProdDevTra}</TableCell>
             </TableRow>
@@ -132,4 +122,3 @@ function TableEntradas2({ row, idProdt }) {
     </TableContainer>
   );
 }
- 

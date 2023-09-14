@@ -126,9 +126,9 @@ export const RowRequisicionLoteProduccion = ({
                           key={row.id}
                           detalle={{ ...row, idAre: requisicion.idAre }}
                           onCreateSalidasStock={onCreateSalidasStock}
-                          onUpdateDetalleRequisicion={
-                            onUpdateDetalleRequisicion
-                          }
+                          //onUpdateDetalleRequisicion={
+                          //  onUpdateDetalleRequisicion
+                         // }
                         />
                       );
                     })}

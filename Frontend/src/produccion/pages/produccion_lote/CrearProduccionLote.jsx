@@ -35,11 +35,10 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 export const CrearProduccionLote = () => {
-
   function onValidate(e) {
     var t = e.value;
     e.value = t.indexOf(".") >= 0 ? t.slice(0, t.indexOf(".") + 3) : t;
-    return e.value
+    return e.value;
   }
 
   function _parseInt(str) {
@@ -60,7 +59,6 @@ export const CrearProduccionLote = () => {
         : str.canReqDet;
     return val;
   }
-
 
   // ESTADO PARA LINEA DE PROGRESO
   const [showLinearProgress, setshowLinearProgress] = useState(false);
@@ -112,7 +110,8 @@ export const CrearProduccionLote = () => {
     setcantidadLoteProduccion({
       ...cantidadLoteProduccion,
       klgLotProd: parseFloat(klgLotProd),
-      klgDisponibleLoteProduccion: parseFloat(klgLotProd) * parseFloat(canLotProd),
+      klgDisponibleLoteProduccion:
+        parseFloat(klgLotProd) * parseFloat(canLotProd),
     });
   }, [klgLotProd, canLotProd]);
 
@@ -358,7 +357,7 @@ export const CrearProduccionLote = () => {
   // editar un detalle
   const handleEditItemRequisicionProduccion = ({ target }, idItem, index) => {
     const { value } = target;
-    console.log("test " , value)
+    console.log("test ", value);
     const editFormDetalle = reqDetProdc.map((element) => {
       if (element.idProd === idItem && element.indexProdFin === index) {
         return {
@@ -379,8 +378,10 @@ export const CrearProduccionLote = () => {
   const handleAddProductoProduccionLote = async (e) => {
     e.preventDefault();
 
-    if (true || idProdFin !== 0 && (cantidadDeLote > 0.0 || cantidadDeProducto > 0)) {
-
+    if (
+      true ||
+      (idProdFin !== 0 && (cantidadDeLote > 0.0 || cantidadDeProducto > 0))
+    ) {
       const itemFound = prodDetProdc.find(
         (element) => element.idProdFin === idProdFin
       );
@@ -391,7 +392,6 @@ export const CrearProduccionLote = () => {
           feedback_description_error: "Ya se agrego este producto a la orden",
         });
         handleClickFeeback();
-        
       } else {
         //console.log("idPRODFIN: ",idProdFin);
         // buscamos su formulación de producto
@@ -400,9 +400,8 @@ export const CrearProduccionLote = () => {
         );
 
         const { message_error, description_error, result } = resultPeticion;
-        console.log(idProdFin)
+        console.log(idProdFin);
         //return
-
 
         if (message_error.length === 0) {
           const { idProdFin, nomProd, simMed, reqDet } = result[0]; // obtenemos la requisicion
@@ -410,9 +409,8 @@ export const CrearProduccionLote = () => {
           // buscamos la requisicion de materia prima
           //console.log("Complete Element -> ",reqDet);
 
-          
           reqDet.forEach((element) => {
-            if (element.idAre === 2 || element.idAre === 7 ) {
+            if (element.idAre === 2 || element.idAre === 7) {
               equivalenteKilogramos = parseFloat(element.canForProDet);
               //console.log("elemento are:", element.desAre);
               //console.log("elemento value: ", equivalenteKilogramos);
@@ -421,12 +419,11 @@ export const CrearProduccionLote = () => {
 
           let cantidadUnidades = 0;
           let cantidadklgLote = 0;
-          if (parseFloat(cantidadDeLote) > 0.00000) {
+          if (parseFloat(cantidadDeLote) > 0.0) {
+            cantidadUnidades =
+              parseFloat(cantidadDeLote) / equivalenteKilogramos;
 
-            cantidadUnidades = 
-              parseFloat(cantidadDeLote) /equivalenteKilogramos;
-            
-           cantidadklgLote = parseFloat(parseFloat(cantidadDeLote).toFixed(5)); // redondeado a las centenas
+            cantidadklgLote = parseFloat(parseFloat(cantidadDeLote).toFixed(5)); // redondeado a las centenas
           } else {
             cantidadUnidades = Math.round(parseFloat(cantidadDeProducto));
             cantidadklgLote = parseFloat(
@@ -445,7 +442,10 @@ export const CrearProduccionLote = () => {
             totalUnidadesLoteProduccion + cantidadUnidades
           );
 
-          if (false && cantidadTotalDelLoteProduccion > klgDisponibleLoteProduccion) {
+          if (
+            false &&
+            cantidadTotalDelLoteProduccion > klgDisponibleLoteProduccion
+          ) {
             setfeedbackMessages({
               style_message: "warning",
               feedback_description_error:
@@ -584,7 +584,6 @@ export const CrearProduccionLote = () => {
 
   // CREAR LOTE DE PRODUCCION
   const crearProduccionLote = async () => {
-
     //console.log(produccionLote)
     const resultPeticion = await createProduccionLoteWithRequisiciones(
       produccionLote
@@ -733,8 +732,8 @@ export const CrearProduccionLote = () => {
                       className="form-control"
                     />
                   </div>
-                    {/* KILOGRAMOS DE LOTE */}
-                    <div className="col-md-1">
+                  {/* KILOGRAMOS DE LOTE */}
+                  <div className="col-md-1">
                     <label htmlFor="nombre" className="form-label">
                       <b>Cantidad</b>
                     </label>
@@ -830,10 +829,9 @@ export const CrearProduccionLote = () => {
                     onChange={handleInputsProductosFinales}
                   />
                 </div>
-                
-                
-                {/* CANTIDAD DE PRRODUCTOS FINALES ESPERADOS 
-              */}
+
+                {/* CANTIDAD DE PRRODUCTOS FINALES ESPERADOS
+                 */}
 
                 <div className="col-md-2">
                   <label className="form-label">Cantidad Producto</label>
@@ -1019,8 +1017,6 @@ export const CrearProduccionLote = () => {
                         </TableHead>
                         <TableBody>
                           {reqDetProdc.map((row, i) => {
-
-                            
                             if (row.idAre === 5) {
                               return (
                                 <RowEditDetalleRequisicionProduccion
@@ -1034,7 +1030,6 @@ export const CrearProduccionLote = () => {
                                     handleEditItemRequisicionProduccion
                                   }
                                   onValidate={onValidate}
-
                                 />
                               );
                             }
@@ -1082,16 +1077,19 @@ export const CrearProduccionLote = () => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                        {reqDetProdc.map((row, i) => {
+                          {reqDetProdc.map((row, i) => {
                             if (row.idAre === 6) {
                               return (
                                 <RowEditDetalleRequisicionProduccion
                                   key={`${row.idProd}-${i}`}
                                   detalle={row}
-                                  onDeleteItemRequisicion={handleDeleteItemRequisicionProduccion}
-                                  onChangeItemDetalle={handleEditItemRequisicionProduccion}
+                                  onDeleteItemRequisicion={
+                                    handleDeleteItemRequisicionProduccion
+                                  }
+                                  onChangeItemDetalle={
+                                    handleEditItemRequisicionProduccion
+                                  }
                                   onValidate={onValidate}
-
                                 />
                               );
                             }

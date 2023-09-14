@@ -88,14 +88,15 @@ export const AtenderAgregaciones = () => {
 
   // crear salidas correspondientes
   const onCreateSalidasStock = async (requisicion_detalle) => {
+
+    //return;
+    //openLoader();
     console.log(requisicion_detalle);
-
-    return;
-    openLoader();
-
+return 
     const resultPeticion = await createSalidasStockAgregacion(
       requisicion_detalle
     );
+    console.log(requisicion_detalle, resultPeticion);
 
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
@@ -163,14 +164,16 @@ export const AtenderAgregaciones = () => {
     result[0].agregaciones.map((obj) => {
       sss.push({
         canReqDet: obj.canProdAgr,
-        desReqDetEst: obj.desReqEst ? obj.desReqEst : "requerido",
-        id: obj.idAgre,
+        desReqDetEst: obj.desReqDetEst ? obj.desReqDetEst : "requerido",
+        id: "",
         idProdt: obj.idProdt,
-        idReq: obj.idAgre,
+        idReq: "",
         idAgre: obj.idAgre,
+        numop: result[0].numop + " - " +codAgre,
         idReqDetEst: obj.idReqDetEst ? obj.idReqDetEst : 1,
         nomProd: obj.nomProd,
         simMed: obj.simMed,
+        idAlmDes:obj.idAlm
       });
     });
 

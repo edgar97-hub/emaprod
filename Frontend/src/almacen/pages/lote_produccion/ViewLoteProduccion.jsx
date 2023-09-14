@@ -55,9 +55,8 @@ export const ViewLoteProduccion = () => {
     canLotProd,
     fecVenLotProd,
     prodLotReq,
-    numop
+    numop,
   } = produccionRequisicionDetalle;
-
 
   const { user } = useAuth();
 
@@ -183,11 +182,19 @@ export const ViewLoteProduccion = () => {
   // funcion para obtener la produccion con sus requisiciones y su detalle
   const obtenerDataProduccionRequisicionesDetalle = async () => {
     const resultPeticion = await viewProduccionRequisicionDetalleById(id);
-    
-    //console.log("RESSULT PETICIONES: ",resultPeticion);
 
+    //numop
 
     const { message_error, description_error, result } = resultPeticion;
+
+   // console.log(result[0].prodLotReq);
+
+    result[0].prodLotReq.map((obj) => {
+      obj.reqDet.map((obj) => {
+        obj.numop = result[0].numop;
+      });
+    });
+
     if (message_error.length === 0) {
       setproduccionRequisicionDetalle(result[0]);
     } else {
@@ -275,9 +282,8 @@ export const ViewLoteProduccion = () => {
                   />
                 </div>
 
-
-                { /* CANTIDAD DE LOTE      swap [catidad,pesolote]******************************/}
-                  <div className="col-md-2">
+                {/* CANTIDAD DE LOTE      swap [catidad,pesolote]******************************/}
+                <div className="col-md-2">
                   <label htmlFor="nombre" className="form-label">
                     <b>Cantidad</b>
                   </label>
@@ -288,8 +294,7 @@ export const ViewLoteProduccion = () => {
                     className="form-control"
                   />
                 </div>
-                
-                
+
                 {/* KILOGRAMOS DE LOTE */}
                 <div className="col-md-2">
                   <label htmlFor="nombre" className="form-label">
@@ -302,9 +307,6 @@ export const ViewLoteProduccion = () => {
                     className="form-control"
                   />
                 </div>
-
-
-
 
                 {/* KILOGRAMOS DE LOTE 
                 <div className="col-md-2">
@@ -330,10 +332,6 @@ export const ViewLoteProduccion = () => {
                     className="form-control"
                   />
                 </div>*/}
-
-
-
-
               </div>
               <div className="mb-3 row d-flex align-items-center">
                 {/* TIPO DE PRODUCCION */}
@@ -380,10 +378,11 @@ export const ViewLoteProduccion = () => {
             <h6 className="card-header">Requisiciones</h6>
             <div className="card-body">
               {prodLotReq.map((element) => {
-
-               {/**  
+                {
+                  /**  
                if(user.idAre === 4 && element.idAre == 2){
-                } */} 
+                } */
+                }
                 return (
                   <RowRequisicionLoteProduccion
                     key={element.id}

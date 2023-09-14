@@ -140,19 +140,23 @@ export const EntradaStock = () => {
   const repartirEntradaRequisicionSeleccion = () => {
     if (canReqSelEnt > 0) {
       // parseamos el valor de la cantidad de ingreso de la requisicion
-      const cantidadRequisicion = parseInt(canReqSelDet, 10);
+      //const cantidadRequisicion = parseInt(canReqSelDet, 10);
+      const cantidadRequisicion = parseFloat(canReqSelDet);
+
       // recorremos las salidas y las actualizamos segun la regla de 3 simple
       const salidasRequisicionSeleccion = salidasDisponibles.map((element) => {
-        const canEntStoReqSel = Math.round(
-          (element.canSalStoReqSel * canReqSelEnt) / cantidadRequisicion
-        );
+        const canEntStoReqSel =
+          (element.canSalStoReqSel * canReqSelEnt) / cantidadRequisicion;
         return {
           ...element,
-          canEntStoReqSel: canEntStoReqSel,
-          merReqSel: Math.round(element.canSalStoReqSel - canEntStoReqSel),
+          canEntStoReqSel: parseFloat(canEntStoReqSel).toFixed(3),
+          merReqSel: parseFloat(
+            element.canSalStoReqSel - canEntStoReqSel
+          ).toFixed(3),
         };
       });
-      // actualizamos
+
+      console.log(salidasRequisicionSeleccion);
       setsalidasDisponibles(salidasRequisicionSeleccion);
     } else {
       setfeedbackMessages({
@@ -296,9 +300,9 @@ export const EntradaStock = () => {
           break;
         } else {
           let canPlusMer =
-            parseInt(element.canEntStoReqSel, 10) +
-            parseInt(element.merReqSel, 10);
-          if (canPlusMer != element.canSalStoReqSel) {
+            parseFloat(element.canEntStoReqSel) + parseFloat(element.merReqSel);
+
+          if (parseFloat(canPlusMer) != parseFloat(element.canSalStoReqSel)) {
             message_error = `En la salida de: ${element.canSalStoReqSel} no coinciden la cantidad entrada y la merma`;
             break;
           }

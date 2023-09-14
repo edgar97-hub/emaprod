@@ -23,7 +23,6 @@ import { FilterTipoProduccion } from "./../../../components/ReferencialesFilters
 import { FilterEstadoInicioProgramadoProduccion } from "./../../../components/ReferencialesFilters/Produccion/FilterEstadoInicioProgramadoProduccion";
 import { getProduccionLote } from "../../../produccion/helpers/produccion_lote/getProduccionLote";
 
-
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -62,17 +61,15 @@ export const ListLoteProduccion = () => {
   });
   const { style_message, feedback_description_error } = feedbackMessages;
 
-
   const [inputs, setInputs] = useState({
-    producto: {label:""},
-    provedor: {label:""},
-    estado: {label:""},
-    tipoProduccion:{label:""},
-    estadoInicio:{label:""},
-    numeroOP:"",
-    lotePrduccion:"",
+    producto: { label: "" },
+    provedor: { label: "" },
+    estado: { label: "" },
+    tipoProduccion: { label: "" },
+    estadoInicio: { label: "" },
+    numeroOP: "",
+    lotePrduccion: "",
   });
-
 
   // MANEJADORES DE FEEDBACK
   const handleClickFeeback = () => {
@@ -168,16 +165,14 @@ export const ListLoteProduccion = () => {
     obtenerDataProduccionLote(body);
   };
 
-  const filter = (terminoBusqueda, name) => {
-    
-  };
+  const filter = (terminoBusqueda, name) => {};
 
   //FUNCION PARA TRAER LA DATA DE REQUISICION MOLIENDA
   const obtenerDataProduccionLote = async (body = {}) => {
     const resultPeticion = await getProduccionLote(body);
     const { message_error, description_error, result } = resultPeticion;
 
-    console.log(result)
+    console.log(result);
     if (message_error.length === 0) {
       setdataProduccionLote(result);
       setdataProduccionLoteTemp(result);
@@ -204,11 +199,9 @@ export const ListLoteProduccion = () => {
     obtenerDataProduccionLote();
   }, []);
 
-  
   useEffect(() => {
     let resultSearch = [];
     dataProduccionLote.map((data) => {
-
       if (
         (inputs.estado.label.includes(data.desEstPro) ||
           inputs.estado.label.length == 0) &&
@@ -216,13 +209,11 @@ export const ListLoteProduccion = () => {
           inputs.tipoProduccion.label.length == 0) &&
         (inputs.producto.label.includes(data.nomProd) ||
           inputs.producto.label.length == 0) &&
-          (inputs.estadoInicio.label.includes(data.desProdIniProgEst) ||
-          inputs.estadoInicio.label.length == 0) 
-          &&
-        (data.numop.includes(inputs.numeroOP) || 
-         inputs.numeroOP.length == 0) &&
+        (inputs.estadoInicio.label.includes(data.desProdIniProgEst) ||
+          inputs.estadoInicio.label.length == 0) &&
+        (data.numop.includes(inputs.numeroOP) || inputs.numeroOP.length == 0) &&
         (data.codLotProd?.includes(inputs.lotePrduccion) ||
-          inputs.lotePrduccion.length == 0) 
+          inputs.lotePrduccion.length == 0)
       ) {
         resultSearch.push({ ...data });
       }
@@ -230,21 +221,18 @@ export const ListLoteProduccion = () => {
     setdataProduccionLoteTemp(resultSearch);
   }, [inputs, dataProduccionLote]);
 
-
   const resetData = () => {
     setdataProduccionLoteTemp(dataProduccionLote);
     setInputs({
-      producto: {label:""},
-      provedor: {label:""},
-      estado: {label:""},
-      tipoProduccion:{label:""},
-      estadoInicio:{label:""},
-      numeroOP:"",
-      lotePrduccion:"",
+      producto: { label: "" },
+      provedor: { label: "" },
+      estado: { label: "" },
+      tipoProduccion: { label: "" },
+      estadoInicio: { label: "" },
+      numeroOP: "",
+      lotePrduccion: "",
     });
-
   };
-
 
   return (
     <>
@@ -280,7 +268,6 @@ export const ListLoteProduccion = () => {
                   </svg>
                 </button>
               </div>
-
             </div>
           </div>
           <div className="col-6 d-flex justify-content-end align-items-center">
@@ -359,7 +346,7 @@ export const ListLoteProduccion = () => {
                         name="numeroOP"
                         value={inputs.numeroOP}
                         onChange={handleFormFilter}
-                        type="text"  
+                        type="text"
                         size="small"
                         autoComplete="off"
                         InputProps={{
@@ -374,7 +361,10 @@ export const ListLoteProduccion = () => {
 
                     <TableCell align="left" width={140}>
                       <b>Producto</b>
-                      <FilterProductoProduccion onNewInput={onChangeProducto}  inputs={inputs} />
+                      <FilterProductoProduccion
+                        onNewInput={onChangeProducto}
+                        inputs={inputs}
+                      />
                     </TableCell>
                     <TableCell align="left" width={100}>
                       <b>Estado</b>
@@ -392,23 +382,19 @@ export const ListLoteProduccion = () => {
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Inicio</b>
-                      {
-                        /**
+                      {/**
                          <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaIniciado}
                       />
-                         */
-                      }
+                         */}
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Inicio programado</b>
-                      {
-                        /**
+                      {/**
                          <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaIniciadoProgramado}
                       />
-                         */
-                      }
+                         */}
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Estado Inicio</b>
@@ -446,9 +432,12 @@ export const ListLoteProduccion = () => {
                         <TableCell align="left">
                           {row.desProdIniProgEst}
                         </TableCell>
-                        <TableCell align="left" sx={{
-                          display:"flex"
-                        }}>
+                        <TableCell
+                          align="left"
+                          sx={{
+                            display: "flex",
+                          }}
+                        >
                           <div className="btn-toolbar">
                             <Link
                               to={`/almacen/lote-produccion/view/${row.id}`}
@@ -468,8 +457,7 @@ export const ListLoteProduccion = () => {
                             </Link>
                           </div>
 
-                         {
-                          /**
+                          {/**
                             
                           <div className="btn-toolbar">
                             <Link
@@ -482,8 +470,7 @@ export const ListLoteProduccion = () => {
                           </div>
 
 
-                           */
-                         }
+                           */}
                         </TableCell>
                       </TableRow>
                     ))}

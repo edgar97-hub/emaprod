@@ -1,11 +1,11 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
-export default function TypeEntrada({inputs , onChangeTipoEntrada}) {
+export default function TypeEntrada({ inputs, onChangeTipoEntrada }) {
   return (
     <Box sx={{ width: 150 }}>
       <FormControl fullWidth>
@@ -15,7 +15,7 @@ export default function TypeEntrada({inputs , onChangeTipoEntrada}) {
           id="demo-simple-select"
           value={inputs.tipoEntrada}
           label="Tipo E."
-          size='small'
+          size="small"
           onChange={onChangeTipoEntrada}
         >
           <MenuItem value={"TODO"}>TODO</MenuItem>
