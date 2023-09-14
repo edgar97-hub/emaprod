@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 //IMPORTACIONES PARA DIALOG DELETE
 import Button from "@mui/material/Button";
 // IMPORTACIONES DE HELPER
-import { RowRequisicionLoteProduccion } from "../../components/componentes-lote-produccion/RowRequisicionLoteProduccion";
+import { RowRequisicionLoteProduccion } from "./RowRequisicionLoteProduccion";
 import { viewProduccionAgregacionById } from "./../../helpers/lote-produccion/viewProduccionAgregacionById";
 // IMPORTACIONES PARA EL FEEDBACK
 import Snackbar from "@mui/material/Snackbar";
@@ -29,7 +29,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 export const AtenderAgregaciones = () => {
-
   const { id, codAgre } = useParams();
   const [produccionRequisicionDetalle, setproduccionRequisicionDetalle] =
     useState({
@@ -45,7 +44,6 @@ export const AtenderAgregaciones = () => {
       fecVenLotProd: "",
       prodLotReq: [],
     });
-
 
   const { user } = useAuth();
 
@@ -90,10 +88,9 @@ export const AtenderAgregaciones = () => {
 
   // crear salidas correspondientes
   const onCreateSalidasStock = async (requisicion_detalle) => {
+    console.log(requisicion_detalle);
 
-    console.log(requisicion_detalle)
-
-    return
+    return;
     openLoader();
 
     const resultPeticion = await createSalidasStockAgregacion(
@@ -158,12 +155,42 @@ export const AtenderAgregaciones = () => {
 
   // funcion para obtener la produccion con sus requisiciones y su detalle
   const obtenerDataProduccionRequisicionesDetalle = async () => {
-    const resultPeticion = await viewProduccionAgregacionById(id);
-    
-    console.log(resultPeticion, codAgre)
+    const resultPeticion = await viewProduccionAgregacionById(id, codAgre);
 
     const { message_error, description_error, result } = resultPeticion;
 
+    var sss = [];
+    result[0].agregaciones.map((obj) => {
+      sss.push({
+        canReqDet: obj.canProdAgr,
+        desReqDetEst: obj.desReqEst ? obj.desReqEst : "requerido",
+        id: obj.idAgre,
+        idProdt: obj.idProdt,
+        idReq: obj.idAgre,
+        idAgre: obj.idAgre,
+        idReqDetEst: obj.idReqDetEst ? obj.idReqDetEst : 1,
+        nomProd: obj.nomProd,
+        simMed: obj.simMed,
+      });
+    });
+
+    console.log(resultPeticion);
+    //console.log(sss);
+
+    var ddd = {};
+    ddd.desAre = "";
+    ddd.desReqEst = "";
+    ddd.fecEntReq = "";
+    ddd.fecPedReq = "";
+    ddd.id = "";
+    ddd.idAre = "";
+    ddd.idProdc = "";
+    ddd.idReqEst = "";
+
+    ddd.reqDet = sss;
+    result[0].agregaciones2 = [];
+    result[0].agregaciones2[0] = ddd;
+    
     if (message_error.length === 0) {
       setproduccionRequisicionDetalle(result[0]);
     } else {
@@ -184,7 +211,6 @@ export const AtenderAgregaciones = () => {
       <div className="container-fluid mx-3">
         <h1 className="mt-4 text-center">Orden de agregacion</h1>
         <div className="row mt-4 mx-4">
-          
           <div className="card d-flex">
             <h6 className="card-header">Datos de Producción</h6>
             <div className="card-body">
@@ -227,9 +253,7 @@ export const AtenderAgregaciones = () => {
                   />
                 </div>
 
-
-                { /* CANTIDAD DE LOTE      swap [catidad,pesolote]******************************/}
-                  <div className="col-md-2">
+                <div className="col-md-2">
                   <label htmlFor="nombre" className="form-label">
                     <b>Cantidad</b>
                   </label>
@@ -240,8 +264,7 @@ export const AtenderAgregaciones = () => {
                     className="form-control"
                   />
                 </div>
-                
-                
+
                 {/* KILOGRAMOS DE LOTE */}
                 <div className="col-md-2">
                   <label htmlFor="nombre" className="form-label">
@@ -254,9 +277,6 @@ export const AtenderAgregaciones = () => {
                     className="form-control"
                   />
                 </div>
-
-
-
 
                 {/* KILOGRAMOS DE LOTE 
                 <div className="col-md-2">
@@ -282,10 +302,6 @@ export const AtenderAgregaciones = () => {
                     className="form-control"
                   />
                 </div>*/}
-
-
-
-
               </div>
               <div className="mb-3 row d-flex align-items-center">
                 {/* TIPO DE PRODUCCION */}
@@ -300,8 +316,8 @@ export const AtenderAgregaciones = () => {
                     className="form-control"
                   />
                 </div>
-                {/* ESTADO DE PRODUCCION */}
-                <div className="col-md-4">
+                {/**
+                  <div className="col-md-4">
                   <label htmlFor="nombre" className="form-label">
                     <b>Estado de Producción</b>
                   </label>
@@ -312,9 +328,9 @@ export const AtenderAgregaciones = () => {
                     className="form-control"
                   />
                 </div>
+                 */}
 
-                {
-                  /**
+                {/**
                      <div className="col-md-4">
                   <label htmlFor="nombre" className="form-label">
                     <b>Fecha vencimiento lote</b>
@@ -326,8 +342,7 @@ export const AtenderAgregaciones = () => {
                     className="form-control"
                   />
                 </div>
-                   */
-                }
+                   */}
               </div>
             </div>
           </div>
@@ -335,11 +350,12 @@ export const AtenderAgregaciones = () => {
           <div className="card d-flex mt-4">
             <h6 className="card-header">Requisiciones</h6>
             <div className="card-body">
-              {produccionRequisicionDetalle?.prodLotReq?.map((element) => {
-
-               {/**  
+              {produccionRequisicionDetalle?.agregaciones2?.map((element) => {
+                {
+                  /**  
                if(user.idAre === 4 && element.idAre == 2){
-                } */} 
+                } */
+                }
                 return (
                   <RowRequisicionLoteProduccion
                     key={element.id}

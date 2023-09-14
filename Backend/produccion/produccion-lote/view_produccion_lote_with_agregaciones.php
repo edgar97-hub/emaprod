@@ -16,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $data = json_decode($json, true);
 
         $idProdLot = $data["id"];
+        $codAgre = $data["codAgre"];
 
         $sql =
             "SELECT
@@ -47,7 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($stmt->rowCount() == 1) {
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $row["prodLotReq"] = [];
-
                     $row["agregaciones"] = [];
 
                     $sql_requisicion =
@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_requisicion->execute();
 
                     while ($row_requisicion = $stmt_requisicion->fetch(PDO::FETCH_ASSOC)) {
-                        $idReq = $row_requisicion["id"]; // requisicion
+                        $idReq = $row_requisicion["id"];  
                         $row_requisicion["reqDet"] = [];
                         $sql_requisicion_detalle =
                             "SELECT
@@ -96,7 +96,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             array_push($row_requisicion["reqDet"], $row_requisicion_detalle);
                         }
                         array_push($row["prodLotReq"], $row_requisicion);
-
                     }
 
                     /** detalle agregaciones */
@@ -133,25 +132,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 function getAgregaciones($pdo, $idProdLot, $row){
 
+    
     $sql_requisicion =
         "SELECT
-    pa.id,
-    pa.idProdc,
-    pa.idReqEst,
-    re.desReqEst,
-    #r.idAre,
-    #ar.desAre,
-    pa.fecCreProdAgr,
-    pa.fechaInicio,
-    pa.flag
-    FROM produccion_agregacion pa
-    LEFT JOIN requisicion_estado as re on re.id = pa.idReqEst
-    #JOIN area as ar on ar.id = r.idAre
-
-    JOIN producto as p on p.id = pa.idProdt
-    JOIN medida as me on me.id = p.idMed
-
-    WHERE pa.idProdc = ?  and pa.flag = 'A' ORDER BY id ASC";
+        pa.id as idAgre,
+        pa.idProdc,
+        pa.idReqDetEst,
+        re.desReqDetEst,
+        #r.idAre,
+        #ar.desAre,
+        pa.fecCreProdAgr,
+        pa.fechaInicio,
+        pa.flag,
+        p.nomProd,
+        pa.canProdAgr,
+        me.simMed,
+        pa.idProdt,
+        pa.idAlm,
+        a.nomAlm
+        FROM produccion_agregacion pa
+        LEFT JOIN requisicion_detalle_estado as re on re.id = pa.idReqDetEst
+        JOIN almacen as a on a.id = pa.idAlm
+    
+        JOIN producto as p on p.id = pa.idProdt
+        JOIN medida as me on me.id = p.idMed
+    
+        WHERE pa.idProdc = ?  and pa.flag = 'A' ";
 
     $stmt_requisicion = $pdo->prepare($sql_requisicion);
     $stmt_requisicion->bindParam(1, $idProdLot, PDO::PARAM_INT);
