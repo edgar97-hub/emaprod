@@ -88,11 +88,9 @@ export const AtenderAgregaciones = () => {
 
   // crear salidas correspondientes
   const onCreateSalidasStock = async (requisicion_detalle) => {
-
     //return;
     //openLoader();
     console.log(requisicion_detalle);
-return 
     const resultPeticion = await createSalidasStockAgregacion(
       requisicion_detalle
     );
@@ -169,11 +167,11 @@ return
         idProdt: obj.idProdt,
         idReq: "",
         idAgre: obj.idAgre,
-        numop: result[0].numop + " - " +codAgre,
+        numop: result[0].numop + " - " + codAgre,
         idReqDetEst: obj.idReqDetEst ? obj.idReqDetEst : 1,
         nomProd: obj.nomProd,
         simMed: obj.simMed,
-        idAlmDes:obj.idAlm
+        idAlmDes: obj.idAlm,
       });
     });
 
@@ -193,7 +191,7 @@ return
     ddd.reqDet = sss;
     result[0].agregaciones2 = [];
     result[0].agregaciones2[0] = ddd;
-    
+
     if (message_error.length === 0) {
       setproduccionRequisicionDetalle(result[0]);
     } else {

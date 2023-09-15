@@ -1039,14 +1039,17 @@ export const ListProduccionLote = () => {
       }
 
       const response = await axios.get(url);
-      var productosFinal = response.data.result.prodFinalWithAgreg.detAgr.filter(
-        (obj) => obj.id == null
-      );
+      var productosFinal =
+        response.data.result.prodFinalWithAgreg.detAgr.filter(
+          (obj) => obj.id == null
+        );
       var productosFinal = productosFinal.map((obj) => obj.idProdFin);
       //console.log(response.data.result.agregaciones.detAgr);
       //console.log(productosFinal);
       response.data.result.productos_finales =
-        response.data.result.productos_finales.filter((obj) => productosFinal.includes(obj.id));
+        response.data.result.productos_finales.filter((obj) =>
+          productosFinal.includes(obj.id)
+        );
       //console.log(response.data.result.productos_finales);
 
       //return;
@@ -1760,21 +1763,22 @@ export const ListProduccionLote = () => {
                             </Dialog>
                           </div>
 
-                          <div className="btn-toolbar">
-                            <Link
-                              to={
-                                row.agregaciones.length
-                                  ? `/produccion/produccion-lote/produccion-agregacion?idLotProdc=${row.id}`
-                                  : ""
+                          <div
+                            className="btn btn-primary me-2 btn"
+                            onClick={() => {
+                              if (row.agregaciones?.length) {
+                                window.open(
+                                  `/produccion/produccion-lote/produccion-agregacion?idLotProdc=${row.id}`,
+                                  "_blank"
+                                );
                               }
-                              className="btn btn-primary me-2 btn"
-                            >
-                              {row.agregaciones.length ? (
-                                <FormatListBulletedIcon />
-                              ) : (
-                                <BlockIcon />
-                              )}
-                            </Link>
+                            }}
+                          >
+                            {row.agregaciones.length ? (
+                              <FormatListBulletedIcon />
+                            ) : (
+                              <BlockIcon />
+                            )}
                           </div>
 
                           <div>
@@ -1816,22 +1820,28 @@ export const ListProduccionLote = () => {
                             </div>
                              */}
 
-                          <div className="btn-toolbar">
-                            <Link
-                              to={`/almacen/produccion-devoluciones/crear?idLotProdc=${row.id}`}
-                              className="btn btn-primary me-2 btn"
-                            >
-                              <img src={iconReturns} height={22} width={22} />
-                            </Link>
+                          <div
+                            className="btn btn-primary me-2 btn"
+                            onClick={() => {
+                              window.open(
+                                `/almacen/produccion-devoluciones/crear?idLotProdc=${row.id}`,
+                                "_blank"
+                              );
+                            }}
+                          >
+                            <img src={iconReturns} height={22} width={22} />
                           </div>
 
-                          <div className="btn-toolbar">
-                            <Link
-                              to={`/almacen/produccion-agregaciones/crear?idLotProdc=${row.id}`}
-                              className="btn btn-primary me-2 btn"
-                            >
-                              <img src={iconAddFile} height={22} width={22} />
-                            </Link>
+                          <div
+                            className="btn btn-primary me-2 btn"
+                            onClick={() => {
+                              window.open(
+                                `/almacen/produccion-agregaciones/crear?idLotProdc=${row.id}`,
+                                "_blank"
+                              );
+                            }}
+                          >
+                            <img src={iconAddFile} height={22} width={22} />
                           </div>
                         </TableCell>
                       </TableRow>

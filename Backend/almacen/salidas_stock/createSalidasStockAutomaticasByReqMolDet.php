@@ -22,6 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $idAlmDes = 0; // almacen destino
     $canReqDet = floatval($data["canReqDet"]); // cantidad de requisicion detalle
     $idEstSalSto = 1; // estado de completado
+    $numop = $data["numop"]; // area
+
 
     if ($pdo) {
         // PRIMERO OBTENEMOS LA LISTA DE ENTRADAS DISPONIBLES
@@ -174,8 +176,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $sql =
                                 "INSERT
                             salida_stock
-                            (idEntSto, idReq, idProdt, idAlm, idEstSalSto, canSalStoReq, merSalStoReq)
-                            VALUES (?, ?, ?, ?, ?, $canSalStoReq, $merSalStoReq)";
+                            (idEntSto, idReq, idProdt, idAlm, idEstSalSto, canSalStoReq, merSalStoReq, numop)
+                            VALUES (?, ?, ?, ?, ?, $canSalStoReq, $merSalStoReq, ?)";
 
                             $stmt = $pdo->prepare($sql);
                             $stmt->bindParam(1, $idEntSto, PDO::PARAM_INT);
@@ -183,6 +185,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $stmt->bindParam(3, $idProdt, PDO::PARAM_INT);
                             $stmt->bindParam(4, $idAlmDes, PDO::PARAM_INT);
                             $stmt->bindParam(5, $idEstSalSto, PDO::PARAM_INT);
+                            $stmt->bindParam(6, $numop, PDO::PARAM_INT);
 
                             // EJECUTAMOS LA CREACION DE UNA SALIDA
                             $stmt->execute();

@@ -5,7 +5,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { FormatDateTimeMYSQL } from "../../utils/functions/FormatDate";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
-const FechaPickerYear = ({ onNewfecEntSto }) => {
+const FechaPickerYear = ({ onNewfecEntSto, date }) => {
   const [value, setValue] = useState(null);
 
   const formatFechaMYSQL = (newValue) => {

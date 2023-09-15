@@ -1,6 +1,6 @@
 ; <?php exit; ?>
-MYSQL_DATABASE_NAME = "emaprod"
+MYSQL_DATABASE_NAME = "emaprod5"
 //emaran
 //emaprod2
 MYSQL_USER = "root"
-MYSQL_PASSWORD = "qwerty123"
+MYSQL_PASSWORD = ""

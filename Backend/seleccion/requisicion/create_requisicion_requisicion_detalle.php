@@ -16,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $canReqSel = 1; // cantidad de 1
     $reqSelDet = $data["reqSelDet"]; // requisicion detalle
     $idLastInsertion = 0;
+    $fecPedReqSel = $data["fecPedReqSel"];
 
     if ($pdo) {
         // PARA COMPLETAR EL CODIGO NUMERICO PRIMERO DEBEMOS CONSULTAR LA ULTIMA INSERCION
@@ -40,14 +41,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql =
             "INSERT INTO
                 requisicion_seleccion
-                (idReqSelEst, codLotSel, canReqSel, codReqSel)
-                VALUES (?,?,$canReqSel,?);
+                (idReqSelEst, codLotSel, canReqSel, codReqSel, fecPedReqSel)
+                VALUES (?,?,$canReqSel,?, ?);
                 ";
         // PREPARAMOS LA CONSULTA
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(1, $idReqSelEst, PDO::PARAM_INT);
         $stmt->bindParam(2, $codLotSel, PDO::PARAM_INT);
         $stmt->bindParam(3, $codReqSel, PDO::PARAM_STR);
+        $stmt->bindParam(4, $fecPedReqSel);
 
         try {
             $pdo->beginTransaction();

@@ -62,8 +62,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                 $row["devoluciones"] = [];
+                $row["salidasStock"] = [];
                 $idEntStock = $row["idEntStock"];
                 $row = getDevoluciones($pdo, $idEntStock, $row);
+                $row = getSalidasStock($pdo, $idEntStock, $row);
                 array_push($result, $row);
             }
         } catch (PDOException $e) {
@@ -82,12 +84,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['result'] = $result;
     echo json_encode($return);
 }
+function getSalidasStock($pdo, $idEntStock, $row)
+{
+    $sql_salida_stock =
+        "SELECT st.id, es.id , es.codEntSto,  st.idReq, st.idAgre, st.numop,  es.idProd, es.idAlm, st.idEntSto, st.idProdt, codProd2, st.idAlm, al.nomAlm, p.nomProd, st.canSalStoReq, st.fecSalStoReq
+        FROM entrada_stock as es
+        join salida_stock st on st.idEntSto =  es.id
+        join almacen al on al.id = st.idAlm
+        join producto p on p.id = st.idProdt
+        WHERE es.id = ?";
+
+    try {
+        $stmt = $pdo->prepare($sql_salida_stock);
+        $stmt->bindParam(1, $idEntStock, PDO::PARAM_INT);
+        $stmt->execute();
+
+        while ($row_salida_stock = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            array_push($row["salidasStock"], $row_salida_stock);
+        }
+    } catch (PDOException $e) {
+        $description_error = $e->getMessage();
+        $row["salidasStock"] = $description_error;
+    }
+    return $row;
+}
 
 
-function getDevoluciones($pdo, $idEntStock, $row){
-
-
-  
+function getDevoluciones($pdo, $idEntStock, $row)
+{
     $sql_detalle_devoluciones =
         "SELECT es.id as idEntStock , es.canTotDis, pdt.idProdDev, pdt.idEntSto, pdt.canProdDevTra , p.nomProd, pdt.fecCreProdDevTra
         FROM entrada_stock  as es 

@@ -16,7 +16,8 @@ import { createRequisicionSeleccionWithDetalle } from "./../../helpers/requisici
 import { getMateriaPrimaById } from "./../../../helpers/Referenciales/producto/getMateriaPrimaById";
 import { RowDetalleRequisicionSeleccion } from "../../components/RowDetalleRequisicionSeleccion";
 import { FilterAllProductos } from "../../../components/ReferencialesFilters/Producto/FilterAllProductos";
-
+import FechaPicker from "../../../../src/components/Fechas/FechaPicker";
+import { FormatDateTimeMYSQLNow } from "../../../utils/functions/FormatDate";
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -25,6 +26,7 @@ export const AgregarRequisicionSeleccion = () => {
   // ESTADOS PARA LOS DATOS DE REQUISICION
   const [requisicion, setRequisicion] = useState({
     codLotSel: "",
+    fecPedReqSel: FormatDateTimeMYSQLNow(),
     reqSelDet: [], // DETALLE DE REQUISICION MOLIENDA
   });
   const { codLotSel, reqSelDet } = requisicion;
@@ -144,9 +146,10 @@ export const AgregarRequisicionSeleccion = () => {
 
   // FUNCION ASINCRONA PARA CREAR LA REQUISICION CON SU DETALLE
   const crearRequisicion = async () => {
-    const { message_error, description_error } =
+    const { message_error, description_error, result } =
       await createRequisicionSeleccionWithDetalle(requisicion);
 
+     // console.log(requisicion, result)
     if (message_error.length === 0) {
       // retornamos a la anterior vista
       onNavigateBack();
@@ -237,6 +240,15 @@ export const AgregarRequisicionSeleccion = () => {
     }
   };
 
+  const onAddFecReq = (newfecEntSto) => {
+    //setdatosEntrada({ ...datosEntrada, fecVenEntSto: newfecEntSto });
+
+    console.log(newfecEntSto);
+    setRequisicion({
+      ...requisicion,
+      fecPedReqSel: newfecEntSto,
+    });
+  };
   return (
     <>
       <div className="container-fluid mx-3">
@@ -245,22 +257,38 @@ export const AgregarRequisicionSeleccion = () => {
         <div className="row mt-4 mx-4">
           <div className="card d-flex">
             <h6 className="card-header">Datos de la requisicion</h6>
-            <div className="card-body d-flex justify-content-between align-items-center">
-              <div className="col-md-5">
-                <form>
-                  <label htmlFor="nombre" className="col-form-label">
-                    Numero de Lote
-                  </label>
-                  <div className="col-md-3">
-                    <input
-                      type="text"
-                      name="codLotSel"
-                      onChange={handledForm}
-                      value={codLotSel}
-                      className="form-control"
-                    />
-                  </div>
-                </form>
+            <div className="card-body d-flex align-items-center">
+              <div className="col-md-2" style={{
+                //border:"1px solid black"
+                }}>
+                <label htmlFor="nombre" className="col-form-label" style={{
+                  //border:"1px solid black"
+                  }}>
+                  Numero de Lote
+                </label>
+                <div className="col-md-5" style={{
+                  //border:"1px solid black"
+                }
+                  }>
+                  <input
+                    type="text"
+                    name="codLotSel"
+                    onChange={handledForm}
+                    value={codLotSel}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-5" style={{
+                //border:"1px solid black"
+                }}>
+                <label htmlFor="nombre" className="col-form-label">
+                  Fecha de requerimiento
+                </label>
+                <div className="col-md-5">
+                  <FechaPicker onNewfecEntSto={onAddFecReq} />
+                </div>
               </div>
             </div>
           </div>

@@ -28,6 +28,7 @@ import { createProduccionLoteWithRequisiciones } from "./../../helpers/produccio
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import { FilterPresentacionFinal } from "../../../components/ReferencialesFilters/Producto/FilterPresentacionFinal";
+import { getAreaEncargada } from "../../helpers/area-encargada/getAreaEncargada";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -122,8 +123,8 @@ export const CrearProduccionLote = () => {
     cantidadDeProducto: 0,
   });
 
-  const { idProdFin, cantidadDeLote, cantidadDeProducto } =
-    productoLoteProduccion;
+  //const { idProdFin, cantidadDeLote, cantidadDeProducto } =
+  //  productoLoteProduccion;
 
   // STATE PARA CONTROLAR LOS PRODUCTOS ADITIVOS A LAS REQUISICIONES DEL LOTE
   const [productoRequisicionProduccion, setproductoRequisicionProduccion] =
@@ -216,17 +217,73 @@ export const CrearProduccionLote = () => {
     });
   };
 
-  const handleInputsProductosFinales = ({ target }) => {
-    const { value, name } = target;
+  const handleInputsProductoFinalLote = async ({ target }) => {
+    var { value, name } = target;
+
+    const resultPeticion = await getFormulaProductoDetalleByProducto(
+      productoLoteProduccion.idProdFin
+    );
+
+    const { message_error, description_error, result } = resultPeticion;
+    console.log(result);
+
+    const { idProdFin, nomProd, simMed, reqDet } = result[0];
+    let equivalenteKilogramos = 0;
+
+    reqDet.forEach((element) => {
+      if (element.idAre === 2 || element.idAre === 7) {
+        equivalenteKilogramos = parseFloat(element.canForProDet);
+      }
+    });
+
+    let cantidadUnidades = 0;
+    let cantidadklgLote = value;
+
+    if (parseFloat(cantidadklgLote) > 0.0) {
+      cantidadUnidades = parseFloat(cantidadklgLote) / equivalenteKilogramos;
+    }
 
     setproductoLoteProduccion({
       ...productoLoteProduccion,
-      [name]: value,
+      ["cantidadDeLote"]: cantidadklgLote,
+      ["cantidadDeProducto"]: cantidadUnidades.toFixed(2),
     });
   };
 
-  // ******* MANEJADORES PARA EL ARREGLO DE REQUISICIONES DE LOTE DE PRODUCCION *******
-  // MANEJADOR DE PRODUCTO
+  const handleInputsProductoFinalCantidad = async ({ target }) => {
+    var { value, name } = target;
+
+    const resultPeticion = await getFormulaProductoDetalleByProducto(
+      productoLoteProduccion.idProdFin
+    );
+
+    const { result } = resultPeticion;
+
+    const { reqDet } = result[0];
+    let equivalenteKilogramos = 0;
+
+    reqDet.forEach((element) => {
+      if (element.idAre === 2 || element.idAre === 7) {
+        equivalenteKilogramos = parseFloat(element.canForProDet);
+      }
+    });
+
+    let cantidadUnidades = value;
+    let cantidadklgLote = 0;
+
+    if (parseFloat(cantidadUnidades) > 0.0) {
+      cantidadklgLote = parseFloat(
+        (equivalenteKilogramos * parseFloat(cantidadUnidades)).toFixed(5)
+      );
+    }
+
+    setproductoLoteProduccion({
+      ...productoLoteProduccion,
+      ["cantidadDeLote"]: cantidadklgLote.toFixed(3),
+      ["cantidadDeProducto"]: cantidadUnidades,
+    });
+  };
+
   const onAddProductoRequisicionLoteProduccion = (value) => {
     setproductoRequisicionProduccion({
       ...productoRequisicionProduccion,
@@ -379,11 +436,12 @@ export const CrearProduccionLote = () => {
     e.preventDefault();
 
     if (
-      true ||
-      (idProdFin !== 0 && (cantidadDeLote > 0.0 || cantidadDeProducto > 0))
+      productoLoteProduccion.idProdFin !== 0 &&
+      (productoLoteProduccion.cantidadDeLote > 0.0 ||
+        productoLoteProduccion.cantidadDeProducto > 0)
     ) {
       const itemFound = prodDetProdc.find(
-        (element) => element.idProdFin === idProdFin
+        (element) => element.idProdFin === productoLoteProduccion.idProdFin
       );
 
       if (itemFound) {
@@ -396,11 +454,11 @@ export const CrearProduccionLote = () => {
         //console.log("idPRODFIN: ",idProdFin);
         // buscamos su formulación de producto
         const resultPeticion = await getFormulaProductoDetalleByProducto(
-          idProdFin
+          productoLoteProduccion.idProdFin
         );
 
         const { message_error, description_error, result } = resultPeticion;
-        console.log(idProdFin);
+        console.log(productoLoteProduccion.idProdFin);
         //return
 
         if (message_error.length === 0) {
@@ -419,17 +477,23 @@ export const CrearProduccionLote = () => {
 
           let cantidadUnidades = 0;
           let cantidadklgLote = 0;
-          if (parseFloat(cantidadDeLote) > 0.0) {
+          if (parseFloat(productoLoteProduccion.cantidadDeLote) > 0.0) {
             cantidadUnidades =
-              parseFloat(cantidadDeLote) / equivalenteKilogramos;
+              parseFloat(productoLoteProduccion.cantidadDeLote) /
+              equivalenteKilogramos;
 
-            cantidadklgLote = parseFloat(parseFloat(cantidadDeLote).toFixed(5)); // redondeado a las centenas
-          } else {
-            cantidadUnidades = Math.round(parseFloat(cantidadDeProducto));
             cantidadklgLote = parseFloat(
-              (equivalenteKilogramos * parseFloat(cantidadDeProducto)).toFixed(
-                5
-              )
+              parseFloat(productoLoteProduccion.cantidadDeLote).toFixed(5)
+            ); // redondeado a las centenas
+          } else {
+            cantidadUnidades = Math.round(
+              parseFloat(productoLoteProduccion.cantidadDeProducto)
+            );
+            cantidadklgLote = parseFloat(
+              (
+                equivalenteKilogramos *
+                parseFloat(productoLoteProduccion.cantidadDeProducto)
+              ).toFixed(5)
             );
           }
 
@@ -442,10 +506,7 @@ export const CrearProduccionLote = () => {
             totalUnidadesLoteProduccion + cantidadUnidades
           );
 
-          if (
-            false &&
-            cantidadTotalDelLoteProduccion > klgDisponibleLoteProduccion
-          ) {
+          if (cantidadTotalDelLoteProduccion > klgDisponibleLoteProduccion) {
             setfeedbackMessages({
               style_message: "warning",
               feedback_description_error:
@@ -520,11 +581,14 @@ export const CrearProduccionLote = () => {
       }
     } else {
       let advertenciaPresentacionFinal = "";
-      if (idProdFin === 0) {
+      if (productoLoteProduccion.idProdFin === 0) {
         advertenciaPresentacionFinal +=
           "Se debe proporcionar una presentacion final para agregar a la orden\n";
       }
-      if (cantidadDeLote <= 0.0 || cantidadDeProducto <= 0) {
+      if (
+        productoLoteProduccion.cantidadDeLote <= 0.0 ||
+        productoLoteProduccion.cantidadDeProducto <= 0
+      ) {
         advertenciaPresentacionFinal +=
           "Se debe proporcionar una cantidad mayor a 0 para agregar a la orden\n";
       }
@@ -822,11 +886,12 @@ export const CrearProduccionLote = () => {
                 <div className="col-md-2">
                   <label className="form-label">Cantidad Lote (KG)</label>
                   <TextField
-                    type="number"
+                    //type="number"
                     autoComplete="off"
                     size="small"
                     name="cantidadDeLote"
-                    onChange={handleInputsProductosFinales}
+                    value={productoLoteProduccion.cantidadDeLote}
+                    onChange={handleInputsProductoFinalLote}
                   />
                 </div>
 
@@ -836,11 +901,12 @@ export const CrearProduccionLote = () => {
                 <div className="col-md-2">
                   <label className="form-label">Cantidad Producto</label>
                   <TextField
-                    type="number"
+                    //type="number"
                     autoComplete="off"
                     size="small"
                     name="cantidadDeProducto"
-                    onChange={handleInputsProductosFinales}
+                    value={productoLoteProduccion.cantidadDeProducto}
+                    onChange={handleInputsProductoFinalCantidad}
                   />
                 </div>
 

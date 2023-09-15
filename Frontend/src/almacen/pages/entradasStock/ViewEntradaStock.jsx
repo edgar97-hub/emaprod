@@ -137,7 +137,7 @@ export const ViewEntradaStock = () => {
                   <input
                     type="text"
                     disabled={true}
-                    value={nomProd}
+                    value={nomProd ? nomProd : "No establecido"}
                     className="form-control"
                   />
                 </div>

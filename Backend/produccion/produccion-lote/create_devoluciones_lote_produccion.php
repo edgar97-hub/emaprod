@@ -68,6 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     WHERE st.idProdt = ? AND r.idProdc = ?";
 
                 try {
+
+                    
                     $stmt_salidas_empleadas_requisicion_detalle = $pdo->prepare($sql_salidas_empleadas_requisicion_detalle);
                     $stmt_salidas_empleadas_requisicion_detalle->bindParam(1, $idProdt, PDO::PARAM_INT);
                     $stmt_salidas_empleadas_requisicion_detalle->bindParam(2, $idProdc, PDO::PARAM_INT);

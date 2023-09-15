@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     /** detalle agregaciones */
 
-                    $row = getAgregaciones($pdo, $idProdLot, $row);
+                    $row = getAgregaciones($pdo, $idProdLot, $row, $codAgre);
                     array_push($result, $row);
                 }
 
@@ -130,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 
-function getAgregaciones($pdo, $idProdLot, $row){
+function getAgregaciones($pdo, $idProdLot, $row, $codAgre){
 
     
     $sql_requisicion =
@@ -157,10 +157,11 @@ function getAgregaciones($pdo, $idProdLot, $row){
         JOIN producto as p on p.id = pa.idProdt
         JOIN medida as me on me.id = p.idMed
     
-        WHERE pa.idProdc = ?  and pa.flag = 'A' ";
+        WHERE pa.idProdc = ?  and pa.flag = ? ";
 
     $stmt_requisicion = $pdo->prepare($sql_requisicion);
     $stmt_requisicion->bindParam(1, $idProdLot, PDO::PARAM_INT);
+    $stmt_requisicion->bindParam(2, $codAgre, PDO::PARAM_STR);
     $stmt_requisicion->execute();
 
     while ($row_requisicion = $stmt_requisicion->fetch(PDO::FETCH_ASSOC)) {

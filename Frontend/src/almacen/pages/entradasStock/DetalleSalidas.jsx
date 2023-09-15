@@ -17,7 +17,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { getEntradasStockByProdcFinal } from "./../../helpers/entradas-stock/getEntradasStockByProdcFinal";
 import CheckIcon from "@mui/icons-material/Check";
-import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
+import TableRowsIcon from "@mui/icons-material/TableRows";
 import Tooltip from '@mui/material/Tooltip';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -29,7 +29,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export function DetalleDevoluciones({ row, idProduccion }) {
+export function DetalleSalidas({ row, idProduccion }) {
   const [open, setOpen] = React.useState(false);
   const [entradas, setEntradas] = React.useState([]);
 
@@ -42,12 +42,11 @@ export function DetalleDevoluciones({ row, idProduccion }) {
 
   return (
     <div>
-      <Tooltip title="Devoluciones">
+      <Tooltip title="Salidas">
         <IconButton onClick={handleClickOpen}>
-          <AssignmentReturnIcon fontSize="medium" sx={{ color: "white" }} />
+          <TableRowsIcon fontSize="medium" sx={{ color: "white" }} />
         </IconButton>
       </Tooltip>
-
       <BootstrapDialog
         maxWidth={"lg"}
         onClose={handleClose}
@@ -55,7 +54,7 @@ export function DetalleDevoluciones({ row, idProduccion }) {
         open={open}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Detalle devoluciones
+          Detalle Salidas
         </DialogTitle>
 
         <DialogContent dividers>
@@ -98,31 +97,31 @@ function TableEntradas2({ row, idProdt }) {
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
-            <TableCell align="left">Codigo</TableCell>
+            <TableCell align="left">Numero OP</TableCell>
             <TableCell align="left">nombre</TableCell>
             {/**
             <TableCell align="left">Cant. Disponible</TableCell>
-               
-               */}
-            <TableCell align="left">Cant. Devuelta</TableCell>
+             
+             */}
+            <TableCell align="left">Salida</TableCell>
             <TableCell align="right">Fecha</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {entrada.devoluciones?.map((item, index) => (
+          {entrada.salidasStock?.map((item, index) => (
             <TableRow
               key={index}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-              <TableCell align="right">{row.codProd}</TableCell>
+              <TableCell align="left">{item.numop}</TableCell>
               <TableCell align="left">{item.nomProd}</TableCell>
               {/**
-                   <TableCell align="left">
+                <TableCell align="left">
                 {parseFloat(item.acumulado) - parseFloat(item.canTotDis)}
-                </TableCell>
+              </TableCell>
                */}
-              <TableCell align="left">{item.canProdDevTra}</TableCell>
-              <TableCell align="right">{item.fecCreProdDevTra}</TableCell>
+              <TableCell align="left">{item.canSalStoReq}</TableCell>
+              <TableCell align="right">{item.fecSalStoReq}</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import { TextField } from "@mui/material";
+import FechaPicker from "../../../src/components/Fechas/FechaPicker";
 
 export const RowProductosDisponiblesProduccion = ({
   detalle,
@@ -22,6 +23,18 @@ export const RowProductosDisponiblesProduccion = ({
       </TableCell>
       <TableCell align="left">{detalle.simMed}</TableCell>
       <TableCell align="left">{detalle.desCla}</TableCell>
+      <TableCell align="left">
+        <FechaPicker
+          onNewfecEntSto={(data) => {
+            var event = {
+              target: {
+                value: data,
+              },
+            };
+            onChangeDetalle(event, detalle.idProdt);
+          }}
+        />
+      </TableCell>
       <TableCell align="left">
         <TextField
           disabled={disabledInput}

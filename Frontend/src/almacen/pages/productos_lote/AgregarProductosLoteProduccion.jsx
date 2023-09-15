@@ -26,9 +26,11 @@ import { createProductosFinalesLoteProduccion } from "./../../helpers/producto-p
 import {
   DiaJuliano,
   FormatDateTimeMYSQLNow,
-  letraAnio, _parseInt
+  letraAnio,
+  _parseInt,
 } from "../../../utils/functions/FormatDate";
 import { DetalleProductosFinales } from "./DetalleProductosFinales";
+import FechaPicker from "../../../../src/components/Fechas/FechaPicker";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -77,8 +79,9 @@ export const AgregarProductosLoteProduccion = () => {
   const [productoFinal, setproductoFinal] = useState({
     idProdFin: 0,
     cantidadIngresada: 0.0,
+    fechaIngreso: FormatDateTimeMYSQLNow(),
   });
-  const { idProdFin, cantidadIngresada } = productoFinal;
+  const { idProdFin, cantidadIngresada, fechaIngreso } = productoFinal;
 
   // ******* ACCIONES DE FILTER PRODUCTO FINAL ******
   // MANEJADOR DE PRODUCTO
@@ -96,6 +99,16 @@ export const AgregarProductosLoteProduccion = () => {
     setproductoFinal({
       ...productoFinal,
       [name]: value,
+    });
+  };
+
+  const onAddFecReq = (newfecEntSto) => {
+    //setdatosEntrada({ ...datosEntrada, fecVenEntSto: newfecEntSto });
+
+    console.log(newfecEntSto);
+    setproductoFinal({
+      ...productoFinal,
+      fechaIngreso: newfecEntSto,
     });
   };
 
@@ -170,9 +183,11 @@ export const AgregarProductosLoteProduccion = () => {
             simMed: simMed, // medida del producto
             fecVenEntProdFin: fecVenLotProd, // fecha de vencimiento del lote
             canProdFin: cantidadIngresada, // cantidad devuelta
+            fechaIngreso: fechaIngreso,
           };
 
           const dataDetalle = [...detalleProductosFinales, detalle];
+
           setdetalleProductosFinales(dataDetalle);
         } else {
           setfeedbackMessages({
@@ -241,23 +256,27 @@ export const AgregarProductosLoteProduccion = () => {
               parseFloat(obj.canTotProgProdFin) +
               parseFloat(currentValue.canTotProgProdFin);
 
-              obj.canTotProgProdFin = _parseInt(obj).toFixed(2)
+            obj.canTotProgProdFin = _parseInt(obj);
 
-              //console.log(obj)
+            //console.log(obj)
 
-              obj.canTotIngProdFin = parseFloat(obj.canTotIngProdFin) +
+            obj.canTotIngProdFin =
+              parseFloat(obj.canTotIngProdFin) +
               parseFloat(currentValue.canTotIngProdFin);
-              obj.canTotIngProdFin = parseFloat(obj.canTotIngProdFin).toFixed(2)
+            obj.canTotIngProdFin = parseFloat(obj.canTotIngProdFin).toFixed(2);
 
             currentValue.total = obj.canTotProgProdFin;
-            currentValue.canTotProgProdFin =   _parseInt(currentValue, "canTotProgProdFin").toFixed(2)
+            currentValue.canTotProgProdFin = _parseInt(
+              currentValue,
+              "canTotProgProdFin"
+            );
             const clone = structuredClone(currentValue);
             obj.detail.push(clone);
           }
         });
       } else {
         const clone = structuredClone(currentValue);
-        clone.canTotProgProdFin =   _parseInt(currentValue, "canTotProgProdFin").toFixed(2)
+        clone.canTotProgProdFin = _parseInt(currentValue, "canTotProgProdFin");
         clone.total = clone.canTotProgProdFin;
         currentValue.detail = [clone];
         accumulator.push(currentValue);
@@ -266,10 +285,7 @@ export const AgregarProductosLoteProduccion = () => {
     }, []);
     result[0].proFinProdDet = copyProducts;
     result[0].productsAutocomplete = products;
-    console.log(result[0])
-
-
-
+    console.log(result[0]);
 
     if (message_error.length === 0) {
       setProFinProd(result[0]);
@@ -285,7 +301,7 @@ export const AgregarProductosLoteProduccion = () => {
   // ****** SUBMIT PRODUCTOS FINALES ******
   const crearProductosFinalesLoteProduccion = async () => {
     const { idProdTip } = proFinProd;
-    const fechaIngreso = FormatDateTimeMYSQLNow();
+    //const fechaIngreso = FormatDateTimeMYSQLNow();
 
     const dataEntrada = {
       letAniEntSto: letraAnio(fechaIngreso),
@@ -317,6 +333,7 @@ export const AgregarProductosLoteProduccion = () => {
 
   const handleSubmitProductosFinalesLoteProduccion = (e) => {
     e.preventDefault();
+
     if (detalleProductosFinales.length === 0) {
       setfeedbackMessages({
         style_message: "warning",
@@ -519,7 +536,11 @@ export const AgregarProductosLoteProduccion = () => {
                   />
                 </div>
 
-                {/* CANTIDAD DE PRRODUCTOS FINALES ESPERADOS */}
+                <div className="col-md-2">
+                  <label className="form-label">Fecha de entrada</label>
+                  <FechaPicker onNewfecEntSto={onAddFecReq} />
+                </div>
+
                 <div className="col-md-2">
                   <label className="form-label">Cantidad</label>
                   <TextField
@@ -573,6 +594,9 @@ export const AgregarProductosLoteProduccion = () => {
                           </TableCell>
                           <TableCell align="left" width={100}>
                             <b>Clase</b>
+                          </TableCell>
+                          <TableCell align="left" width={120}>
+                            <b>Fecha entrada</b>
                           </TableCell>
                           <TableCell align="left" width={120}>
                             <b>Cantidad</b>

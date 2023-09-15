@@ -35,9 +35,12 @@ import FechaPickerMonth from "./../../../components/Fechas/FechaPickerMonth";
 import ExportExcel from "../entradasStock/ExportExcel";
 import TypeEntrada from "./TypeEntrada";
 import { DetalleDevoluciones } from "./DetalleDevoluciones";
+import { DetalleSalidas } from "./DetalleSalidas";
+
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import IconButton from "@mui/material/IconButton";
 import BlockIcon from "@mui/icons-material/Block";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // CONFIGURACIONES DE ESTILOS
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
@@ -49,8 +52,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const ListEntradaStock = () => {
   // ESTADOS PARA LOS FILTROS PERSONALIZADOS
   const [dataEntSto, setdataEntSto] = useState([]);
-  const [dataEntStoTmp, setdataEntStoTmp] = useState([]);
-
   const [inputs, setInputs] = useState({
     producto: { label: "" },
     provedor: { label: "" },
@@ -61,6 +62,7 @@ const ListEntradaStock = () => {
     disponible: "",
     tipoEntrada: "TODO",
     documento: "",
+    procesar: false,
   });
 
   // ESTADOS PARA FILTROS GENERALES DE FECHA
@@ -108,17 +110,16 @@ const ListEntradaStock = () => {
     // hacer validaciones correpondientes
     const resultPeticion = await getEntradasStock(body);
     const { message_error, description_error, result } = resultPeticion;
-    console.log(result);
-
+    return result;
     if (message_error?.length === 0) {
-      setdataEntSto(result);
-      setdataEntStoTmp(result);
+      // setdataEntSto(result);
+      // setdataEntStoTmp(result);
     } else {
-      setfeedbackMessages({
-        style_message: "error",
-        feedback_description_error: description_error,
-      });
-      handleClickFeeback();
+      //setfeedbackMessages({
+      //  style_message: "error",
+      //  feedback_description_error: description_error,
+      //});
+      //handleClickFeeback();
     }
   };
 
@@ -176,7 +177,7 @@ const ListEntradaStock = () => {
       ...formState,
       fecEntIniSto: dateFormat,
     };
-    obtenerDataEntradaStock(body);
+    //obtenerDataEntradaStock(body);
   };
 
   const onChangeDateEndData = (newDate) => {
@@ -187,7 +188,7 @@ const ListEntradaStock = () => {
       ...formState,
       fecEntFinSto: dateFormat,
     };
-    obtenerDataEntradaStock(body);
+    //obtenerDataEntradaStock(body);
   };
 
   useEffect(() => {
@@ -198,57 +199,78 @@ const ListEntradaStock = () => {
     // seleccion: "",
     // ingresado: "",
     // disponible: "",
+    if (inputs.procesar) {
+      obtenerDataEntradaStock(formState)
+        .then((dataEntSto) => {
+          var total = 0;
+          var entradas = [];
+          dataEntSto.map((data) => {
+            if (inputs.tipoEntrada == "TODO") {
+              entradas.push(data);
+            }
+            if (inputs.tipoEntrada == "COMPRAS" && data.referencia == 0) {
+              entradas.push(data);
+            }
+            if (inputs.tipoEntrada == "PRODT. FINAL" && data.referencia) {
+              entradas.push(data);
+            }
+            if (
+              inputs.tipoEntrada == "DEVOLUCIONES" &&
+              data.devoluciones?.length
+            ) {
+              entradas.push(data);
+            }
+          });
+          console.log(entradas);
 
-    var total = 0;
-    var entradas = [];
-    dataEntSto.map((data) => {
-      if (inputs.tipoEntrada == "TODO") {
-        entradas.push(data);
-      }
-      //console.log(inputs.tipoEntrada, data)
-      if (inputs.tipoEntrada == "COMPRAS" && data.referencia == 0) {
-        entradas.push(data);
-      }
-      if (inputs.tipoEntrada == "PRODT. FINAL" && data.referencia) {
-        entradas.push(data);
-      }
-      if (inputs.tipoEntrada == "DEVOLUCIONES" && data.devoluciones?.length) {
-        entradas.push(data);
-      }
-    });
-    entradas.map((data) => {
-      if (
-        (inputs.almacen.label?.includes(data.nomAlm) ||
-          inputs.almacen.label.length == 0) &&
-        (inputs.provedor.label?.includes(data.nomProv) ||
-          inputs.provedor.label.length == 0) &&
-        (inputs.producto.label == data.nomProd ||
-          inputs.producto.label.length == 0) &&
-        (data.codEntSto?.includes(inputs.codigo) || inputs.codigo.length == 0) &&
-        (data.docEntSto?.includes(inputs.documento) ||
-          inputs.documento.length == 0) &&
-        // inputs.seleccion == data.esSel &&
-        (data.canTotEnt?.includes(inputs.ingresado) ||
-          inputs.ingresado.length == 0) &&
-        (data.canTotDis?.includes(inputs.disponible) ||
-          inputs.disponible.length == 0)
-      ) {
-        //console.log(data.canTotDis)
-        total += parseFloat(data.canTotDis);
-        data.acumulado = total.toFixed(2);
-        //data.canTotDis = parseFloat(data.canTotDis)
+          entradas.map((data) => {
+            if (
+              (inputs.almacen.label?.includes(data.nomAlm) ||
+                inputs.almacen.label?.length == 0) &&
+              (inputs.provedor.label?.includes(data.nomProv) ||
+                inputs.provedor.label?.length == 0) &&
+              (inputs.producto.label == data.nomProd ||
+                inputs.producto.label?.length == 0) &&
+              (data.codEntSto?.includes(inputs.codigo) ||
+                inputs.codigo?.length == 0) &&
+              (data.docEntSto?.includes(inputs.documento) ||
+                inputs.documento?.length == 0) &&
+              // inputs.seleccion == data.esSel &&
+              (data.canTotEnt?.includes(inputs.ingresado) ||
+                inputs.ingresado?.length == 0) &&
+              (data.canTotDis?.includes(inputs.disponible) ||
+                inputs.disponible?.length == 0)
+            ) {
+              //console.log(data.canTotDis)
+              total += parseFloat(data.canTotDis);
+              data.acumulado = total.toFixed(2);
+              //data.canTotDis = parseFloat(data.canTotDis)
 
-        resultSearch.push({ ...data });
-      }
-    });
-    console.log(resultSearch);
-    setdataEntStoTmp(resultSearch);
-  }, [inputs, dataEntSto]);
+              resultSearch.push({ ...data });
+            }
+          });
+          console.log(resultSearch);
+
+          setfeedbackMessages({
+            style_message: "info",
+            feedback_description_error: resultSearch.length + " reguistros",
+          });
+          handleClickFeeback();
+
+          setdataEntSto(resultSearch);
+          setInputs({
+            ...inputs,
+            procesar: false,
+          });
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [inputs, formState]);
 
   function filter() {}
 
   const resetData = () => {
-    setdataEntStoTmp(dataEntSto);
+    setdataEntSto(dataEntSto);
     setInputs({
       producto: { label: "" },
       provedor: { label: "" },
@@ -257,11 +279,18 @@ const ListEntradaStock = () => {
       seleccion: false,
       ingresado: "",
       disponible: "",
+      tipoEntrada: "TODO",
+      documento: "",
+      procesar: false,
     });
   };
 
   useEffect(() => {
-    obtenerDataEntradaStock();
+    setInputs({
+      ...inputs,
+      procesar: true,
+    });
+    // obtenerDataEntradaStock();
   }, []);
 
   return (
@@ -279,7 +308,10 @@ const ListEntradaStock = () => {
                   alignItems: "center",
                 }}
               >
-                <FechaPickerMonth onNewfecEntSto={onChangeDateStartData} label="Desde"/>
+                <FechaPickerMonth
+                  onNewfecEntSto={onChangeDateStartData}
+                  label="Desde"
+                />
               </div>
               <div
                 className="col-2"
@@ -289,7 +321,10 @@ const ListEntradaStock = () => {
                   alignItems: "center",
                 }}
               >
-                <FechaPickerMonth onNewfecEntSto={onChangeDateEndData} label="Hasta"/>
+                <FechaPickerMonth
+                  onNewfecEntSto={onChangeDateEndData}
+                  label="Hasta"
+                />
               </div>
 
               <div
@@ -316,13 +351,23 @@ const ListEntradaStock = () => {
               >
                 <Button
                   variant="contained"
-                  size="small"
-                  sx={{ width: 150, margin: 0.5, cursor: "pointer" }}
-                  onClick={(e) => {
-                    //exportExcel()
+                  color="primary"
+                  disabled={inputs.procesar}
+                  style={{ marginTop: "10px" }}
+                  onClick={() => {
+                    setInputs({
+                      ...inputs,
+                      procesar: true,
+                    });
                   }}
                 >
-                  PROCESAR
+                  Procesar
+                  {inputs.procesar && (
+                    <CircularProgress
+                      size={30}
+                      style={{ position: "absolute" }}
+                    />
+                  )}
                 </Button>
               </div>
 
@@ -374,7 +419,7 @@ const ListEntradaStock = () => {
                     <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64z" />
                   </svg>
                 </button> */}
-                <ExportExcel exelData={dataEntStoTmp} />
+                <ExportExcel exelData={dataEntSto} />
               </div>
               <div className="col-3">
                 {/* <button className="btn btn-danger">
@@ -525,7 +570,7 @@ const ListEntradaStock = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {dataEntStoTmp
+                  {dataEntSto
                     //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
                       <TableRow
@@ -586,9 +631,31 @@ const ListEntradaStock = () => {
                               backgroundColor: "#0E80E5",
                               borderRadius: "9px",
                             }}
+                            onClick={() => {
+                              //console.log(row)
+                              window.open(
+                                `/almacen/entradas-stock/view/${row.idEntStock}`,
+                                "_blank"
+                              );
+                            }}
                           >
-                            {row.devoluciones?.length ? (
-                              <DetalleDevoluciones
+                            <IconButton>
+                              <VisibilityIcon
+                                fontSize="medium"
+                                sx={{ color: "white" }}
+                              />
+                            </IconButton>
+                          </div>
+
+                          <div
+                            className="btn-toolbar"
+                            style={{
+                              backgroundColor: "#0E80E5",
+                              borderRadius: "9px",
+                            }}
+                          >
+                            {row.salidasStock?.length ? (
+                              <DetalleSalidas
                                 row={row}
                                 idProduccion={1}
                                 idEntStock={row.idEntStock}
@@ -610,16 +677,20 @@ const ListEntradaStock = () => {
                               borderRadius: "9px",
                             }}
                           >
-                            <Link
-                              to={`/almacen/entradas-stock/view/${row.idEntStock}`}
-                            >
+                            {row.devoluciones?.length ? (
+                              <DetalleDevoluciones
+                                row={row}
+                                idProduccion={1}
+                                idEntStock={row.idEntStock}
+                              />
+                            ) : (
                               <IconButton>
-                                <VisibilityIcon
+                                <BlockIcon
                                   fontSize="medium"
                                   sx={{ color: "white" }}
                                 />
                               </IconButton>
-                            </Link>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -644,7 +715,7 @@ const ListEntradaStock = () => {
 
       {/* FEEDBACK */}
       <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={feedbackDelete}
         autoHideDuration={6000}
         onClose={handleCloseFeedback}

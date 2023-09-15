@@ -14,12 +14,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // OBTENEMOS LOS DATOS
     $idReq = $data["idReq"]; // requisicion
+    $idAgre = $data["idAgre"]; // agregacion
     $idReqDet = $data["id"]; // requisicion detalle
     $idProdt = $data["idProdt"]; // producto (materia prima, material, insumo, etc)
     // $idAlm = $data["idAlm"]; // almacen de la transferencia (A. Principal --> A. Correspondiente)
     $idAre = $data["idAre"]; // area
     $idAlm = 1; // almacen principal
-    $idAlmDes = 0; // almacen destino
+    $idAlmDes = $data["idAlmDes"];
+    $numop = $data["numop"];
     $canReqDet = floatval($data["canReqDet"]); // cantidad de requisicion detalle
     $idEstSalSto = 1; // estado de completado
 
@@ -113,16 +115,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // comprobamos finalmente que la cantidad faltante sea exactamente 0
                 if ($cantidad_faltante == 0) {
-                    // CONSULTAMOS EL ALMACEN DESTINO
-                    $sql_consult_almacen_destino =
-                        "SELECT id FROM 
-                    almacen WHERE idAre = ?";
-                    $stmt_consult_almacen_destino = $pdo->prepare($sql_consult_almacen_destino);
-                    $stmt_consult_almacen_destino->bindParam(1, $idAre, PDO::PARAM_INT);
-                    $stmt_consult_almacen_destino->execute();
-                    while ($row_consult_almacen_destino = $stmt_consult_almacen_destino->fetch(PDO::FETCH_ASSOC)) {
-                        $idAlmDes = $row_consult_almacen_destino["id"];
-                    }
 
                     $sql = "";
                     // RECORREMOS TODAS LAS ENTRADAS UTILIZADAS PARA LA SALIDA
@@ -173,8 +165,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $sql =
                                 "INSERT
                             salida_stock
-                            (idEntSto, idReq, idProdt, idAlm, idEstSalSto, canSalStoReq, merSalStoReq)
-                            VALUES (?, ?, ?, ?, ?, $canSalStoReq, $merSalStoReq)";
+                            (idEntSto, idReq, idProdt, idAlm, idEstSalSto, canSalStoReq, merSalStoReq,idAgre, numop)
+                            VALUES (?, ?, ?, ?, ?, $canSalStoReq, $merSalStoReq, ?, ?)";
 
                             $stmt = $pdo->prepare($sql);
                             $stmt->bindParam(1, $idEntSto, PDO::PARAM_INT);
@@ -182,6 +174,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $stmt->bindParam(3, $idProdt, PDO::PARAM_INT);
                             $stmt->bindParam(4, $idAlmDes, PDO::PARAM_INT);
                             $stmt->bindParam(5, $idEstSalSto, PDO::PARAM_INT);
+                            $stmt->bindParam(6, $idAgre, PDO::PARAM_INT);
+                            $stmt->bindParam(7, $numop, PDO::PARAM_STR);
 
                             // EJECUTAMOS LA CREACION DE UNA SALIDA
                             $stmt->execute();
@@ -323,75 +317,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         }
                     }
 
-                    // ACTUALIZAMOS LOS ESTADOS DE LA REQUISICION MOLIENDA MAESTRO Y DETALLE
-                    if (empty($message_error)) {
-                        try {
-                            // Iniciamos una transaccion
-                            $pdo->beginTransaction();
-                            // ACTUALIZAMOS EL ESTADO DE LA REQUISICION MOLIENDA DETALLE
 
-                            $idReqDetEst = 2; // ESTADO DE COMPLETADO
-                            $total_requisiciones_detalle_no_completadas = 0;
-                            $sql_consulta_requisicion_detalle =
-                                "SELECT * FROM requisicion_detalle
-                            WHERE idReq = ? AND idReqDetEst <> ?";
-                            $stmt_consulta_requisicion_detalle = $pdo->prepare($sql_consulta_requisicion_detalle);
-                            $stmt_consulta_requisicion_detalle->bindParam(1, $idReq, PDO::PARAM_INT);
-                            $stmt_consulta_requisicion_detalle->bindParam(2, $idReqDetEst, PDO::PARAM_INT);
-                            $stmt_consulta_requisicion_detalle->execute();
+                    if (isset($idAgre)) {
+                        $fecEntReq = date('Y-m-d H:i:s');
 
-                            $total_requisiciones_detalle_no_completadas = $stmt_consulta_requisicion_detalle->rowCount();
-
-                            $idReqEst = 0; // inicializacion
-
-                            if ($total_requisiciones_detalle_no_completadas == 1) { // si es la unica requisicion detalle por completar
-                                $idReqEst = 3; // COMPLETADO
-                            } else {
-                                $idReqEst = 2; // EN PROCESO
-                            }
-
-                            // PRIMERO ACTUALIZAMOS EL DETALLE
-                            $idReqDetEstCom = 2; // ESTADO DE COMPLETADO
-                            $sql_update_requisicion_detalle =
-                                "UPDATE requisicion_detalle
-                            SET idReqDetEst = ?
+                        $sql_update_requisicion_completo = "UPDATE produccion_agregacion
+                            SET idReqDetEst = 2
                             WHERE id = ?";
-                            $stmt_update_requisicion_detalle = $pdo->prepare($sql_update_requisicion_detalle);
-                            $stmt_update_requisicion_detalle->bindParam(1, $idReqDetEstCom, PDO::PARAM_INT);
-                            $stmt_update_requisicion_detalle->bindParam(2, $idReqDet, PDO::PARAM_INT);
-                            $stmt_update_requisicion_detalle->execute();
-
-                            // LUEGO ACTUALIZAMOS EL MAESTRO
-                            if ($idReqEst == 3) {
-                                // obtenemos la fecha actual
-                                $fecEntReq = date('Y-m-d H:i:s');
-                                $sql_update_requisicion_completo =
-                                    "UPDATE requisicion
-                                SET idReqEst = ?, fecEntReq = ?
-                                WHERE id = ?";
-                                $stmt_update_requisicion_completo = $pdo->prepare($sql_update_requisicion_completo);
-                                $stmt_update_requisicion_completo->bindParam(1, $idReqEst, PDO::PARAM_INT);
-                                $stmt_update_requisicion_completo->bindParam(2, $fecEntReq);
-                                $stmt_update_requisicion_completo->bindParam(3, $idReq, PDO::PARAM_INT);
-                                $stmt_update_requisicion_completo->execute();
-                            } else {
-                                $sql_update_requisicion =
-                                    "UPDATE requisicion
-                                SET idReqEst = ?
-                                WHERE id = ?";
-                                $stmt_update_requisicion = $pdo->prepare($sql_update_requisicion);
-                                $stmt_update_requisicion->bindParam(1, $idReqEst, PDO::PARAM_INT);
-                                $stmt_update_requisicion->bindParam(2, $idReq, PDO::PARAM_INT);
-                                $stmt_update_requisicion->execute();
-                            }
-
-                            // TERMINAMOS LA TRANSACCION
-                            $pdo->commit();
-                        } catch (PDOException $e) {
-                            $pdo->rollback();
-                            $message_error = "ERROR INTERNO SERVER: fallo en la actualización de los estados";
-                            $description_error = $e->getMessage();
-                        }
+                        $stmt_update_requisicion_completo = $pdo->prepare($sql_update_requisicion_completo);
+                        //$stmt_update_requisicion_completo->bindParam(1, $fecEntReq);
+                        $stmt_update_requisicion_completo->bindParam(1, $idAgre, PDO::PARAM_INT);
+                        $stmt_update_requisicion_completo->execute();
                     }
                 } else {
                     $message_error = "No hay entradas suficientes";

@@ -13,19 +13,15 @@ export const ProtectedLayoutAlmacen = () => {
     const { idAre } = user;
     //console.log(user)
     if (idAre === 1 || idAre === 4) {
-      
       return (
         <>
-        {
-          (idAre === 4 ? <NavProduccion /> : <NavAlmacen />)
-        }
+          {idAre === 4 ? <NavProduccion /> : <NavAlmacen />}
           <main>{outlet}</main>
-          <footer></footer>;
+          <footer></footer>
         </>
       );
-    }else{
+    } else {
       return <Navigate to={"/login"} />;
     }
   }
-  
 };

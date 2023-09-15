@@ -289,7 +289,9 @@ export const ListAlmacenStockProductos = () => {
                     </TableCell>
                     <TableCell align="left" width={120}>
                       <b>Almacen</b>
-                      <FilterAlmacen onNewInput={onChangeAlmacen} />
+                      {/**
+                        <FilterAlmacen onNewInput={onChangeAlmacen} />
+                      */}
                     </TableCell>
                     <TableCell align="left" width={110}>
                       <b>Total</b>
