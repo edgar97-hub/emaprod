@@ -63,6 +63,7 @@ const ListEntradaStock = () => {
     tipoEntrada: "TODO",
     documento: "",
     procesar: false,
+    merTot: "",
   });
 
   // ESTADOS PARA FILTROS GENERALES DE FECHA
@@ -239,16 +240,23 @@ const ListEntradaStock = () => {
               (data.canTotEnt?.includes(inputs.ingresado) ||
                 inputs.ingresado?.length == 0) &&
               (data.canTotDis?.includes(inputs.disponible) ||
-                inputs.disponible?.length == 0)
+                inputs.disponible?.length == 0) &&
+              (data.merTot?.includes(inputs.merTot) ||
+                inputs.merTot?.length == 0)
             ) {
-              //console.log(data.canTotDis)
-              total += parseFloat(data.canTotDis);
-              data.acumulado = total.toFixed(2);
-              //data.canTotDis = parseFloat(data.canTotDis)
+              // total += parseFloat(data.canTotDis);
+              // data.acumulado = total.toFixed(2);
 
               resultSearch.push({ ...data });
             }
           });
+          resultSearch = resultSearch.reverse();
+          resultSearch.map((obj) => {
+            total += parseFloat(obj.canTotDis);
+            obj.acumulado = total.toFixed(2);
+          });
+          resultSearch = resultSearch.reverse();
+
           console.log(resultSearch);
 
           setfeedbackMessages({
@@ -539,6 +547,25 @@ const ListEntradaStock = () => {
                         }}
                       />
                     </TableCell>
+
+                    <TableCell align="left" width={50}>
+                      <b>Merma T.</b>
+
+                      <TextField
+                        onChange={handleFormFilter}
+                        type="number"
+                        size="small"
+                        name="merTot"
+                        value={inputs.merTot}
+                        InputProps={{
+                          style: {
+                            color: "black",
+                            background: "white",
+                          },
+                        }}
+                      />
+                    </TableCell>
+
                     <TableCell align="left" width={50}>
                       <b>Disponible</b>
                       <TextField
@@ -561,6 +588,11 @@ const ListEntradaStock = () => {
                        <FechaPickerDay onNewfecEntSto={onChangeDate} />
                       */}
                     </TableCell>
+
+                    <TableCell align="left" width={160}>
+                      <b>Fecha creación</b>
+                    </TableCell>
+
                     <TableCell align="left" width={160}>
                       <b>Acumulado</b>
                     </TableCell>
@@ -614,8 +646,11 @@ const ListEntradaStock = () => {
                           )}
                         </TableCell>
                         <TableCell align="left">{row.canTotEnt}</TableCell>
+                        <TableCell align="left">{row.merTot}</TableCell>
+
                         <TableCell align="left">{row.canTotDis}</TableCell>
                         <TableCell align="left">{row.fecEntSto}</TableCell>
+                        <TableCell align="left">{row.fecCreEntSto}</TableCell>
                         <TableCell align="left">{row.acumulado}</TableCell>
                         <TableCell
                           align="left"

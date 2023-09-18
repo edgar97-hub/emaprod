@@ -34,6 +34,7 @@ export const RowDetalleRequisicionSeleccion = ({
             };
             onChangeDetalleRequisicion(event, detalle.idMatPri);
           }}
+          date={detalle.fechaRequisicion}
         />
       </TableCell>
       <TableCell align="left">

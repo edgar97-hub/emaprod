@@ -29,10 +29,12 @@ export const RowProductosDisponiblesProduccion = ({
             var event = {
               target: {
                 value: data,
+                name: "fecEntSto",
               },
             };
             onChangeDetalle(event, detalle.idProdt);
           }}
+          date={detalle.fecEntSto}
         />
       </TableCell>
       <TableCell align="left">
@@ -42,6 +44,7 @@ export const RowProductosDisponiblesProduccion = ({
           autoComplete="off"
           size="small"
           value={detalle.canProdFin}
+          name="canProdFin"
           onChange={(e) => {
             onChangeDetalle(e, detalle.idProdt);
           }}

@@ -38,15 +38,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             rse.desReqSelEst,
             rs.codLotSel,
             rs.fecPedReqSel,
-            rs.fecTerReqSel
+            rs.fecTerReqSel,
+            rsd.id as idReqDet
             FROM requisicion_seleccion rs
             JOIN requisicion_seleccion_estado as rse on rse.id = rs.idReqSelEst
-            WHERE DATE(rs.fecPedReqSel) BETWEEN '$fechaInicio' AND '$fechaFin'
-            ORDER BY rs.fecPedReqSel DESC
+            JOIN requisicion_seleccion_detalle rsd  on rs.id = rsd.idReqSel
+            WHERE DATE(rsd.fecCreReqSelDet) BETWEEN '$fechaInicio' AND '$fechaFin'
+            ORDER BY rsd.fecCreReqSelDet DESC
             ";
 
         try {
-            // PREPARAMOS LA CONSULTA
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
         } catch (Exception $e) {
@@ -69,10 +70,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             rsd.idReqSelDetEst,
             rsde.desReqSelDetEst,
             rsd.canReqSelDet,
-            rsd.fecCreReqSelDet
-            FROM requisicion_seleccion_detalle rsd
-            JOIN producto as p on p.id = rsd.idMatPri
-            JOIN requisicion_seleccion_detalle_estado as rsde on rsde.id = rsd.idReqSelDetEst
+            rsd.fecCreReqSelDet,
+            rsd.id as idReqDet
+            FROM producto as p
+            right JOIN requisicion_seleccion_detalle rsd  on p.id = rsd.idMatPri
+            RIGHT JOIN requisicion_seleccion_detalle_estado as rsde on rsde.id = rsd.idReqSelDetEst
             WHERE rsd.idReqSel = ?
             ";
             $stmt_detalle = $pdo->prepare($sql_detalle);

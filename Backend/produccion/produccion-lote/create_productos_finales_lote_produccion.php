@@ -94,17 +94,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // evaluamos si es un tipo de produccion de sub producto
                     if (true  || $idProdTip == 5) {
                         // OBTENEMOS LOS DATOS DE LA ENTRADA
-                        $fecEntSto = $datEntSto["fecEntSto"]; // fecha de entrada de stock
+                        //$fecEntSto = $datEntSto["fecEntSto"]; 
+                        $fecEntSto = $row["fecEntSto"];
+
                         $codProd = $row["codProd2"]; // codigo de producto
                         $idProv = 1; // proveedor EMARANSAC
                         $idAlm = 1; // almacen principal
                         $idEntStoEst = 1; // disponible
                         $codProv = "00"; // proveedor EMARANSAC
                         $esSel = 0; // es seleccion
-                        $letAniEntSto = $datEntSto["letAniEntSto"]; // letra del año
-                        $diaJulEntSto =  $datEntSto["diaJulEntSto"]; // dia juliano
-                        $docEntSto = "Entrada subproducto"; // documento de entrada
+                        //$letAniEntSto = $datEntSto["letAniEntSto"]; 
+                        //$diaJulEntSto =  $datEntSto["diaJulEntSto"];
 
+                        $letAniEntSto = $row["letAniEntSto"];
+                        $diaJulEntSto =  $row["diaJulEntSto"];
+                        $docEntSto = "producto final";
                         $anioActual = explode("-", explode(" ", $fecEntSto)[0])[0]; // año actual
                         $sql_numero_entrada =
                             "SELECT 

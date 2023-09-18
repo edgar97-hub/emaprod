@@ -65,6 +65,7 @@ export const RequisicionSeleccionDetalle = ({
                     </TableRow>
                   </TableHead>
                   <TableBody>
+                  
                     {detalle.map((detalle, i) => (
                       <TableRow
                         key={detalle.id}

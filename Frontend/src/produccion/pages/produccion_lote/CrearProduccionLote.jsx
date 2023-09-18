@@ -23,6 +23,7 @@ import { RowEditDetalleRequisicionProduccion } from "../../components/componente
 import { getMateriaPrimaById } from "./../../../helpers/Referenciales/producto/getMateriaPrimaById";
 import { FilterAreaEncargada } from "./../../components/FilterAreaEncargada";
 import { createProduccionLoteWithRequisiciones } from "./../../helpers/produccion_lote/createProduccionLoteWithRequisiciones";
+import { FormatDateTimeMYSQLNow } from "../../../utils/functions/FormatDate";
 
 // IMPROTACIONES PARA LINEA DE PROGRESION
 import Box from "@mui/material/Box";
@@ -84,12 +85,16 @@ export const CrearProduccionLote = () => {
     codLotProd: "", // codigo de lote
     klgLotProd: 1, // kilogramos del lote
     canLotProd: 1, // cantidad
+    klgTotalLoteProduccion: 0,
+    klgDisponibleLoteProduccion: 0,
+    totalUnidadesLoteProduccion: 0, // cantidad
     obsProd: "", // observaciones
     fecProdIniProg: "", // fecha de inicio programado
     fecProdFinProg: "", // fecha de fin programado
     fecVenLotProd: "", // fecha de vencimiento del lote
     reqDetProdc: [], // detalle requisicion de lote
     prodDetProdc: [], // detalle de productos finales esperados
+    fecProdIniProg: FormatDateTimeMYSQLNow(),
   });
 
   const {
@@ -648,12 +653,23 @@ export const CrearProduccionLote = () => {
 
   // CREAR LOTE DE PRODUCCION
   const crearProduccionLote = async () => {
-    //console.log(produccionLote)
+
+    //totalUnidadesLoteProduccion,
+    //klgTotalLoteProduccion,
+    //klgDisponibleLoteProduccion,
+
+    
+    //produccionLote.totalUnidadesLoteProduccion = totalUnidadesLoteProduccion
+    //produccionLote.klgTotalLoteProduccion = klgTotalLoteProduccion
+    //produccionLote.klgDisponibleLoteProduccion = klgDisponibleLoteProduccion
+
+    //console.log(produccionLote);
+    //return;
+
     const resultPeticion = await createProduccionLoteWithRequisiciones(
       produccionLote
     );
 
-    //console.log(resultPeticion)
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
       // regresamos a la anterior vista
@@ -813,7 +829,6 @@ export const CrearProduccionLote = () => {
                 </div>
 
                 <div className="mb-3 row d-flex align-items-center">
-                  {/* TIPO DE PRODUCCION */}
                   <div className="col-md-4">
                     <label htmlFor="nombre" className="form-label">
                       <b>Tipo de Producción</b>
@@ -1181,7 +1196,7 @@ export const CrearProduccionLote = () => {
           </button>
           <button
             type="submit"
-            disabled={disableButton}
+            //disabled={disableButton}
             onClick={handleSubmitProduccionLote}
             className="btn btn-primary"
           >

@@ -5,6 +5,7 @@ import TableRow from "@mui/material/TableRow";
 export const RowStockAlmacen = ({ detalle }) => {
   return (
     <TableRow>
+      <TableCell>{detalle.codProd2}</TableCell>
       <TableCell>{detalle.nomProd}</TableCell>
       <TableCell>{detalle.desCla}</TableCell>
       <TableCell>{detalle.simMed}</TableCell>

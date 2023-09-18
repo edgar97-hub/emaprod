@@ -12,7 +12,7 @@ export const FilterEstadoRequisicionSeleccion = ({ onNewInput }) => {
     const formatSelect = resultPeticion.map((element) => {
       return {
         value: element.id,
-        label: element.desReqSelEst,
+        label: element.desReqSelDetEst,
         id: element.id,
       };
     });

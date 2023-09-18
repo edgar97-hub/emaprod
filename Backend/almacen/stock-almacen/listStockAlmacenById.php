@@ -36,7 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 al.nomAlm,
                 als.canSto,
                 als.canStoDis,
-                als.fecActAlmSto
+                als.fecActAlmSto,
+                p.codProd2
                 FROM almacen_stock as als
                 JOIN producto as p ON p.id = als.idProd
                 JOIN clase as c ON c.id = p.idCla

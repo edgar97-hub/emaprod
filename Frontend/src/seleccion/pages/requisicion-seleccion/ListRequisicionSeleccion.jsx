@@ -203,8 +203,7 @@ export const ListRequisicionSeleccion = () => {
     const resultPeticion = await getRequisicionSeleccionWithDetalle(body);
     const { message_error, description_error, result } = resultPeticion;
 
-
-    console.log(result)
+    console.log(result);
     if (message_error.length === 0) {
       setdataRequisicion(result);
       setdataRequisicionTemp(result);
@@ -226,13 +225,18 @@ export const ListRequisicionSeleccion = () => {
     setDetalleSeleccionado(null);
   };
 
-  // MOSTRAR Y OCULTAR DETALLE DE REQUISICION MOLIENDA
   const showRequisicionSeleccionDetalle = (idPosElement) => {
+    dataRequisicionTemp[idPosElement].reqSelDet = dataRequisicionTemp[
+      idPosElement
+    ].reqSelDet.filter(
+      (obj) => obj.idReqDet == dataRequisicionTemp[idPosElement].idReqDet
+    );
+
+    //console.log(dataRequisicionTemp[idPosElement]);
     const requisicionSeleccionDetalle =
       dataRequisicionTemp[idPosElement].reqSelDet;
-    // seteamos la data de la requisicion seleccionada
+
     setDetalleSeleccionado(requisicionSeleccionDetalle);
-    // mostramos el modal
     setMostrarDetalle(true);
   };
 
@@ -355,17 +359,29 @@ export const ListRequisicionSeleccion = () => {
                       />
                     </TableCell>
                     <TableCell align="left" width={140}>
-                      <b>Fecha requerido</b>
-                      <FechaPickerDay
+                      <b>Fecha de requerimiento</b>
+                      {/**
+                        <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaPedido}
                       />
+                       */}
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Fecha terminado</b>
-                      <FechaPickerDay
+                      {/**
+                         <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaTerminado}
                       />
+                         */}
                     </TableCell>
+                    <TableCell align="left" width={140}>
+                      <b>Materia prima</b>
+                    </TableCell>
+
+                    <TableCell align="left" width={140}>
+                      <b>Cantidad</b>
+                    </TableCell>
+
                     <TableCell align="left" width={100}>
                       <b>Acciones</b>
                     </TableCell>
@@ -376,14 +392,15 @@ export const ListRequisicionSeleccion = () => {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, i) => (
                       <TableRow
-                        key={row.id}
+                        key={row.idReqDet}
                         sx={{
                           "&:last-child td, &:last-child th": { border: 0 },
                         }}
                       >
                         <TableCell align="center">{row.codLotSel}</TableCell>
                         <TableCell align="left">
-                          <span
+                          {/**
+                            <span
                             className={
                               row.idReqSelEst === 1
                                 ? "badge text-bg-danger p-2"
@@ -394,16 +411,64 @@ export const ListRequisicionSeleccion = () => {
                           >
                             {row.desReqSelEst}
                           </span>
+                           */}
+
+                          <span
+                            className={
+                              row.reqSelDet.find(
+                                (obj) => obj.idReqDet == row.idReqDet
+                              ).idReqSelDetEst === 1
+                                ? "badge text-bg-danger p-2"
+                                : row.reqSelDet.find(
+                                    (obj) => obj.idReqDet == row.idReqDet
+                                  ).idReqSelDetEst === 2
+                                ? "badge text-bg-primary p-2"
+                                : row.reqSelDet.find(
+                                    (obj) => obj.idReqDet == row.idReqDet
+                                  ).idReqSelDetEst === 3
+                                ? "badge text-bg-warning p-2"
+                                : "badge text-bg-success p-2"
+                            }
+                          >
+                            {
+                              row.reqSelDet.find(
+                                (obj) => obj.idReqDet == row.idReqDet
+                              ).desReqSelDetEst
+                            }
+                          </span>
                         </TableCell>
-                        <TableCell align="left">{row.fecPedReqSel}</TableCell>
+                        <TableCell align="left">
+                          {
+                            row.reqSelDet.find(
+                              (obj) => obj.idReqDet == row.idReqDet
+                            ).fecCreReqSelDet
+                            //row.fecPedReqSel
+                          }
+                        </TableCell>
                         <TableCell align="left">
                           {row.fecTerReqSel === null
                             ? "Aun no terminado"
                             : row.fecTerReqSel}
                         </TableCell>
                         <TableCell align="left">
+                          {
+                            row.reqSelDet.find(
+                              (obj) => obj.idReqDet == row.idReqDet
+                            ).nomProd
+                          }
+                        </TableCell>
+
+                        <TableCell align="left">
+                          {
+                            row.reqSelDet.find(
+                              (obj) => obj.idReqDet == row.idReqDet
+                            ).canReqSelDet
+                          }
+                        </TableCell>
+                        <TableCell align="left">
                           <div className="btn-toolbar">
-                            <button
+                            {/**
+                               <button
                               onClick={() => {
                                 showRequisicionSeleccionDetalle(i);
                               }}
@@ -422,6 +487,7 @@ export const ListRequisicionSeleccion = () => {
                                 <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
                               </svg>
                             </button>
+                             */}
                             <button
                               disabled={row.idReqMolEst !== 3 ? true : false}
                               // onClick={() => {

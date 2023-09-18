@@ -20,6 +20,7 @@ import { RowStockAlmacen } from "../../components/componentes-almacen/RowStockAl
 import { FilterAllProductos } from "../../../components/ReferencialesFilters/Producto/FilterAllProductos";
 import { getStockAlmacenByAlmacen } from "./../../helpers/stock-almacen/getStockAlmacenByAlmacen";
 import { FilterClase } from "./../../../components/ReferencialesFilters/Clase/FilterClase";
+import ExportExcel from "./ExportExcel";
 
 export const ListAlmacenStockProductos = () => {
   // ESTADOS PARA LOS FILTROS PERSONALIZADOS
@@ -92,7 +93,22 @@ export const ListAlmacenStockProductos = () => {
   const filter = (terminoBusqueda, name) => {
     let resultSearch = [];
     switch (name) {
-      // filter de producto
+      case "filterCodigo":
+        resultSearch = dataStockAlmacen.filter((element) => {
+          if (
+            element.codProd2
+              .toString()
+              .toLowerCase()
+              .includes(terminoBusqueda.toLowerCase())
+          ) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+        setdataStockAlmacenTmp(resultSearch);
+        break;
+
       case "filterProducto":
         resultSearch = dataStockAlmacen.filter((element) => {
           if (
@@ -201,6 +217,8 @@ export const ListAlmacenStockProductos = () => {
     // hacer validaciones correpondientes
     const resultPeticion = await getStockAlmacenByAlmacen(body);
     const { message_error, description_error, result } = resultPeticion;
+
+    //console.log(result)
     if (message_error.length === 0) {
       setdataStockAlmacen(result);
       setdataStockAlmacenTmp(result);
@@ -226,14 +244,48 @@ export const ListAlmacenStockProductos = () => {
     <>
       <div className="container-fluid">
         {/* FILTRO DE ALMACEN */}
-        <div className="row d-flex mt-4">
-          <div className="col-8">
-            <div className="row ms-3">
-              <div className="col-5">
+        <div
+          className="row d-flex mt-4"
+          style={{
+            //border: "1px solid black",
+            display: "flex",
+            justifyContent: "start",
+            alignItems: "center",
+          }}
+        >
+          <div
+            className="col-8"
+            style={{
+              //border: "1px solid black",
+              width: "100%",
+            }}
+          >
+            <div
+              className="row ms-3"
+              style={{
+                //border: "1px solid black",
+                width: "100%",
+              }}
+            >
+              <div
+                className="col-5"
+                style={
+                  {
+                    //border: "1px solid black",
+                  }
+                }
+              >
                 Almacen
                 <FilterAlmacen onNewInput={onChangeFilterAlmacenGeneral} />
               </div>
-              <div className="col-3 d-flex align-items-end">
+              <div
+                className="col-3 d-flex align-items-end"
+                style={
+                  {
+                    //border: "1px solid black",
+                  }
+                }
+              >
                 <button onClick={resetData} className="btn btn-success">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -250,6 +302,19 @@ export const ListAlmacenStockProductos = () => {
                     <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
                   </svg>
                 </button>
+              </div>
+
+              <div
+                className="col-2"
+                style={{
+                  //border: "1px solid black",
+                  display: "flex",
+                  //width:"50%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <ExportExcel exelData={dataStockAlmacenTmp} />
               </div>
             </div>
           </div>
@@ -269,6 +334,16 @@ export const ListAlmacenStockProductos = () => {
                       },
                     }}
                   >
+                    <TableCell align="left" width={20}>
+                      <b>Codigo</b>
+                      <TextField
+                        onChange={handleFormFilter}
+                        name="filterCodigo"
+                        size="small"
+                        type="text"
+                        autoComplete="off"
+                      />
+                    </TableCell>
                     <TableCell align="left" width={200}>
                       <b>Producto</b>
                       <FilterAllProductos onNewInput={onChangeProducto} />

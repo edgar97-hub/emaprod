@@ -79,9 +79,9 @@ export const AgregarProductosLoteProduccion = () => {
   const [productoFinal, setproductoFinal] = useState({
     idProdFin: 0,
     cantidadIngresada: 0.0,
-    fechaIngreso: FormatDateTimeMYSQLNow(),
+    fecEntSto: FormatDateTimeMYSQLNow(),
   });
-  const { idProdFin, cantidadIngresada, fechaIngreso } = productoFinal;
+  const { idProdFin, cantidadIngresada, fecEntSto } = productoFinal;
 
   // ******* ACCIONES DE FILTER PRODUCTO FINAL ******
   // MANEJADOR DE PRODUCTO
@@ -108,7 +108,7 @@ export const AgregarProductosLoteProduccion = () => {
     console.log(newfecEntSto);
     setproductoFinal({
       ...productoFinal,
-      fechaIngreso: newfecEntSto,
+      fecEntSto: newfecEntSto,
     });
   };
 
@@ -183,7 +183,7 @@ export const AgregarProductosLoteProduccion = () => {
             simMed: simMed, // medida del producto
             fecVenEntProdFin: fecVenLotProd, // fecha de vencimiento del lote
             canProdFin: cantidadIngresada, // cantidad devuelta
-            fechaIngreso: fechaIngreso,
+            fecEntSto: fecEntSto,
           };
 
           const dataDetalle = [...detalleProductosFinales, detalle];
@@ -208,12 +208,12 @@ export const AgregarProductosLoteProduccion = () => {
 
   // ACCION PARA EDITAR CAMPOS EN DETALLE DE PRODUCTO DEVUELTO
   const handleChangeInputProductoFinal = async ({ target }, idItem) => {
-    const { value } = target;
+    const { value, name } = target;
     const editFormDetalle = detalleProductosFinales.map((element) => {
       if (element.idProdt === idItem) {
         return {
           ...element,
-          canProdFin: value,
+          [name]: value,
         };
       } else {
         return element;
@@ -256,7 +256,7 @@ export const AgregarProductosLoteProduccion = () => {
               parseFloat(obj.canTotProgProdFin) +
               parseFloat(currentValue.canTotProgProdFin);
 
-            obj.canTotProgProdFin = _parseInt(obj);
+            obj.canTotProgProdFin = _parseInt(obj, "canTotProgProdFin");
 
             //console.log(obj)
 
@@ -277,6 +277,11 @@ export const AgregarProductosLoteProduccion = () => {
       } else {
         const clone = structuredClone(currentValue);
         clone.canTotProgProdFin = _parseInt(currentValue, "canTotProgProdFin");
+        currentValue.canTotProgProdFin = _parseInt(
+          currentValue,
+          "canTotProgProdFin"
+        );
+
         clone.total = clone.canTotProgProdFin;
         currentValue.detail = [clone];
         accumulator.push(currentValue);
@@ -304,18 +309,57 @@ export const AgregarProductosLoteProduccion = () => {
     //const fechaIngreso = FormatDateTimeMYSQLNow();
 
     const dataEntrada = {
-      letAniEntSto: letraAnio(fechaIngreso),
-      diaJulEntSto: DiaJuliano(fechaIngreso),
-      fecEntSto: fechaIngreso,
+      letAniEntSto: letraAnio(fecEntSto),
+      diaJulEntSto: DiaJuliano(fecEntSto),
+      fechaIngreso: fecEntSto,
     };
-    console.log(detalleProductosFinales, idProdTip, dataEntrada);
 
-    //return;
+    detalleProductosFinales.map((obj) => {
+      obj.letAniEntSto = letraAnio(obj.fecEntSto);
+      obj.diaJulEntSto = DiaJuliano(obj.fecEntSto);
+    });
+    //console.log(detalleProductosFinales, proFinProdDet);
+    //canTotIngProdFin
+
+    var productoFin = {};
+    detalleProductosFinales.map((obj) => {
+      var producto = proFinProdDet.find(
+        (prodFin) => obj.codProd2 == prodFin.codProd2
+      );
+
+      if (producto) {
+        producto.canTotIngProdFin =
+          parseFloat(producto.canTotIngProdFin) + parseFloat(obj.canProdFin);
+      }
+
+      //var producto = proFinProdDet.find(
+      //  (prodFin) => obj.canProdFin > prodFin.canTotIngProdFin
+      //);
+      if (producto?.canTotIngProdFin > producto?.canTotProgProdFin) {
+        productoFin = producto;
+        productoFin.check = true;
+      }
+    });
+    //console.log(productoFin);
+    if (productoFin.check) {
+      setfeedbackMessages({
+        style_message: "error",
+        feedback_description_error:
+          " la suma de la cantidad ingresada para " +
+          productoFin.nomProd +
+          " supera a la cantidad programada",
+      });
+      handleClickFeeback();
+      return;
+    }
+    console.log(productoFin);
+    
     const resultPeticion = await createProductosFinalesLoteProduccion(
       detalleProductosFinales,
       idProdTip,
       dataEntrada
     );
+
     //console.log(resultPeticion);
     const { message_error, description_error } = resultPeticion;
     if (message_error.length === 0) {

@@ -163,10 +163,9 @@ function TableEntradas({ rows, idProdt }) {
             <TableCell align="left">Provedor</TableCell>
             <TableCell align="left">Almacen</TableCell>
             <TableCell align="left">Codigo</TableCell>
-            <TableCell align="left">Seleccion</TableCell>
+            <TableCell align="left">Fecha entrada</TableCell>
             <TableCell align="right">Ingresado</TableCell>
             <TableCell align="right">Disponible</TableCell>
-            <TableCell align="left">Fecha entrada</TableCell>
             <TableCell align="right">Acumulado</TableCell>
           </TableRow>
         </TableHead>
@@ -181,10 +180,9 @@ function TableEntradas({ rows, idProdt }) {
               <TableCell align="left">{row.nomProv}</TableCell>
               <TableCell align="left">{row.nomAlm}</TableCell>
               <TableCell align="left">{row.codEntSto}</TableCell>
-              <TableCell align="left">{row.esSel}</TableCell>
+              <TableCell align="left">{row.fecEntSto}</TableCell>
               <TableCell align="right">{row.canTotEnt}</TableCell>
               <TableCell align="right">{row.canTotDis}</TableCell>
-              <TableCell align="left">{row.fecEntSto}</TableCell>
               <TableCell align="right">{row.acumulado}</TableCell>
             </TableRow>
           ))}

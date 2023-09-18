@@ -230,6 +230,7 @@ export const AgregarRequisicionSeleccion = () => {
             ...reqSelDet,
             detalleFormulaMateriaPrima,
           ];
+          //console.log(dataMateriaPrimaDetalle)
           setRequisicion({
             ...requisicion,
             reqSelDet: dataMateriaPrimaDetalle,
