@@ -22,11 +22,10 @@ const FechaPicker = ({ onNewfecEntSto, disabled = false }) => {
       <DatePicker
         disabled={disabled}
         value={value}
-        
         inputFormat="DD/MM/YYYY HH:mm:ss"
         onChange={formatFechaMYSQL}
         renderInput={(params) => (
-          <TextField {...params} onKeyDown={handleKeyDown} size="small"/>
+          <TextField {...params} onKeyDown={handleKeyDown} size="small" />
         )}
       />
     </LocalizationProvider>

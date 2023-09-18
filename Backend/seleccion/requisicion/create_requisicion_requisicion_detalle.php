@@ -72,16 +72,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // EXTRAEMOS LOS VALORES
                     $idMatPri = $fila["idMatPri"];
                     $canMatPriReq = $fila["canMatPriFor"];
+                    $fechaRequisicion = $fila["fechaRequisicion"];
 
                     // CREAMOS LA SENTENCIA
                     $sql_detalle = "INSERT INTO 
-                            requisicion_seleccion_detalle (idReqSel, idMatPri, idReqSelDetEst, canReqSelDet) 
-                            VALUES (?, ?, ?, $canMatPriReq);";
+                            requisicion_seleccion_detalle (idReqSel, idMatPri, idReqSelDetEst, canReqSelDet, fecCreReqSelDet) 
+                            VALUES (?, ?, ?, $canMatPriReq, ?);";
                     // PREPARAMOS LA CONSULTA
                     $stmt_detalle = $pdo->prepare($sql_detalle);
                     $stmt_detalle->bindParam(1, $idLastInsertion, PDO::PARAM_INT);
                     $stmt_detalle->bindParam(2, $idMatPri, PDO::PARAM_INT);
                     $stmt_detalle->bindParam(3, $idReqSelDetEst, PDO::PARAM_INT);
+                    $stmt_detalle->bindParam(4, $fechaRequisicion);
                     // EJECUTAMOS LA CONSULTA
                     $stmt_detalle->execute();
                     $sql_detalle = "";

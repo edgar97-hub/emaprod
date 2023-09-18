@@ -35,8 +35,10 @@ export const AgregarRequisicionSeleccion = () => {
   const [materiaPrimaDetalle, setmateriaPrimaDetalle] = useState({
     idMateriaPrima: 0,
     cantidadMateriaPrima: 0,
+    fechaRequisicion: FormatDateTimeMYSQLNow(),
   });
-  const { idMateriaPrima, cantidadMateriaPrima } = materiaPrimaDetalle;
+  const { idMateriaPrima, cantidadMateriaPrima, fechaRequisicion } =
+    materiaPrimaDetalle;
 
   // ESTADO PARA CONTROLAR EL FEEDBACK
   const [feedbackCreate, setfeedbackCreate] = useState(false);
@@ -97,6 +99,16 @@ export const AgregarRequisicionSeleccion = () => {
     });
   };
 
+  const onAddFecReq = (newfecEntSto) => {
+    //setdatosEntrada({ ...datosEntrada, fecVenEntSto: newfecEntSto });
+    console.log(newfecEntSto);
+
+    setmateriaPrimaDetalle({
+      ...materiaPrimaDetalle,
+      fechaRequisicion: newfecEntSto,
+    });
+  };
+
   const handleCantidadMateriaPrima = ({ target }) => {
     const { name, value } = target;
     setmateriaPrimaDetalle({
@@ -105,9 +117,7 @@ export const AgregarRequisicionSeleccion = () => {
     });
   };
 
-  // ELIMINAR DETALLE DE REQUISICION
   const deleteDetalleRequisicion = (idItem) => {
-    // FILTRAMOS EL ELEMENTO ELIMINADO
     const nuevaDataDetalleRequisicion = reqSelDet.filter((element) => {
       if (element.idMatPri !== idItem) {
         return element;
@@ -116,22 +126,19 @@ export const AgregarRequisicionSeleccion = () => {
       }
     });
 
-    // VOLVEMOS A SETEAR LA DATA
     setRequisicion({
       ...requisicion,
       reqSelDet: nuevaDataDetalleRequisicion,
     });
   };
 
-  // ACTUALIZAR DETALLE DE REQUISICION
-  // MANEJADOR PARA ACTUALIZAR REQUISICION
   const handledFormularioDetalle = ({ target }, idItem) => {
-    const { value } = target;
+    const { value, name } = target;
     const editFormDetalle = reqSelDet.map((element) => {
       if (element.idMatPri === idItem) {
         return {
           ...element,
-          canMatPriFor: value,
+          [name]: value,
         };
       } else {
         return element;
@@ -149,7 +156,7 @@ export const AgregarRequisicionSeleccion = () => {
     const { message_error, description_error, result } =
       await createRequisicionSeleccionWithDetalle(requisicion);
 
-     // console.log(requisicion, result)
+    // console.log(requisicion, result)
     if (message_error.length === 0) {
       // retornamos a la anterior vista
       onNavigateBack();
@@ -166,6 +173,9 @@ export const AgregarRequisicionSeleccion = () => {
   // SUBMIT FORMULARIO DE REQUISICION (M-D)
   const handleSubmitRequisicion = (e) => {
     e.preventDefault();
+
+    console.log(requisicion);
+    //return;
     if (codLotSel.length === 0 || reqSelDet.length === 0) {
       setfeedbackMessages({
         style_message: "warning",
@@ -213,6 +223,7 @@ export const AgregarRequisicionSeleccion = () => {
             nomProd: nomProd,
             simMed: simMed,
             canMatPriFor: cantidadMateriaPrima,
+            fechaRequisicion,
           };
           // SETEAMOS SU ESTADO PARA QUE PUEDA SER MOSTRADO EN LA TABLA DE DETALLE
           const dataMateriaPrimaDetalle = [
@@ -240,36 +251,41 @@ export const AgregarRequisicionSeleccion = () => {
     }
   };
 
-  const onAddFecReq = (newfecEntSto) => {
-    //setdatosEntrada({ ...datosEntrada, fecVenEntSto: newfecEntSto });
-
-    console.log(newfecEntSto);
-    setRequisicion({
-      ...requisicion,
-      fecPedReqSel: newfecEntSto,
-    });
-  };
   return (
     <>
       <div className="container-fluid mx-3">
         <h1 className="mt-4 text-center">Agregar Requisicion</h1>
-        {/* DATOS DE LA REQUISICION */}
         <div className="row mt-4 mx-4">
           <div className="card d-flex">
             <h6 className="card-header">Datos de la requisicion</h6>
             <div className="card-body d-flex align-items-center">
-              <div className="col-md-2" style={{
-                //border:"1px solid black"
-                }}>
-                <label htmlFor="nombre" className="col-form-label" style={{
-                  //border:"1px solid black"
-                  }}>
+              <div
+                className="col-md-2"
+                style={
+                  {
+                    //border:"1px solid black"
+                  }
+                }
+              >
+                <label
+                  htmlFor="nombre"
+                  className="col-form-label"
+                  style={
+                    {
+                      //border:"1px solid black"
+                    }
+                  }
+                >
                   Numero de Lote
                 </label>
-                <div className="col-md-5" style={{
-                  //border:"1px solid black"
-                }
-                  }>
+                <div
+                  className="col-md-5"
+                  style={
+                    {
+                      //border:"1px solid black"
+                    }
+                  }
+                >
                   <input
                     type="text"
                     name="codLotSel"
@@ -277,17 +293,6 @@ export const AgregarRequisicionSeleccion = () => {
                     value={codLotSel}
                     className="form-control"
                   />
-                </div>
-              </div>
-
-              <div className="col-md-5" style={{
-                //border:"1px solid black"
-                }}>
-                <label htmlFor="nombre" className="col-form-label">
-                  Fecha de requerimiento
-                </label>
-                <div className="col-md-5">
-                  <FechaPicker onNewfecEntSto={onAddFecReq} />
                 </div>
               </div>
             </div>
@@ -300,15 +305,20 @@ export const AgregarRequisicionSeleccion = () => {
             </h6>
             <div className="card-body">
               <form className="row mb-4 mt-4 d-flex flex-row justify-content-start align-items-end">
-                {/* AGREGAR MATERIA PRIMA */}
-                <div className="col-md-6">
+                <div className="col-md-4">
                   <label htmlFor="inputPassword4" className="form-label">
                     Materia Prima
                   </label>
                   <FilterAllProductos onNewInput={onMateriaPrimaId} />
                 </div>
 
-                {/* AGREGAR CANTIDAD*/}
+                <div className="col-md-2">
+                  <label htmlFor="inputPassword4" className="form-label">
+                    Fecha de requerimiento
+                  </label>
+                  <FechaPicker onNewfecEntSto={onAddFecReq} />
+                </div>
+
                 <div className="col-md-2">
                   <label htmlFor="inputPassword4" className="form-label">
                     Cantidad
@@ -321,7 +331,6 @@ export const AgregarRequisicionSeleccion = () => {
                     className="form-control"
                   />
                 </div>
-                {/* BOTON AGREGAR MATERIA PRIMA */}
                 <div className="col-md-3 d-flex justify-content-end ms-auto">
                   <button
                     onClick={handleAddNewMateriPrimaDetalle}
@@ -361,6 +370,9 @@ export const AgregarRequisicionSeleccion = () => {
                         </TableCell>
                         <TableCell align="left" width={140}>
                           <b>Sub clase</b>
+                        </TableCell>
+                        <TableCell align="left" width={150}>
+                          <b>Fecha</b>
                         </TableCell>
                         <TableCell align="left" width={150}>
                           <b>Cantidad</b>

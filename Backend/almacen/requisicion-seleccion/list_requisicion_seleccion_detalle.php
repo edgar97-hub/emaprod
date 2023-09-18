@@ -68,7 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             p.codProd,
             rsd.idReqSelDetEst,
             rsde.desReqSelDetEst,
-            rsd.canReqSelDet
+            rsd.canReqSelDet,
+            rsd.fecCreReqSelDet
             FROM requisicion_seleccion_detalle rsd
             JOIN producto as p on p.id = rsd.idMatPri
             JOIN requisicion_seleccion_detalle_estado as rsde on rsde.id = rsd.idReqSelDetEst

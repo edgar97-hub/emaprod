@@ -54,6 +54,9 @@ export const RequisicionSeleccionDetalle = ({
                         <b>Materia Prima</b>
                       </TableCell>
                       <TableCell align="left" width={70}>
+                        <b>Fecha de requerimiento</b>
+                      </TableCell>
+                      <TableCell align="left" width={70}>
                         <b>Cantidad</b>
                       </TableCell>
                       <TableCell align="left" width={70}>
@@ -71,6 +74,9 @@ export const RequisicionSeleccionDetalle = ({
                       >
                         <TableCell component="th" scope="detalle">
                           {detalle.nomProd}
+                        </TableCell>
+                        <TableCell align="left">
+                          {detalle.fecCreReqSelDet}
                         </TableCell>
                         <TableCell align="left">
                           {detalle.canReqSelDet}
