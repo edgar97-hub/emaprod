@@ -62,7 +62,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 pd.codProd2,
                 CASE WHEN pa.idProdFin is null THEN false
                 ELSE true
-                END AS isAgregation
+                END AS isAgregation,
+                ppf.idProdc  
 
                 FROM produccion_producto_final ppf
                 JOIN producto as pd on pd.id = ppf.idProdt

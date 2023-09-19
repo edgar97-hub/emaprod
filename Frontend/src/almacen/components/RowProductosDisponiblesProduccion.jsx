@@ -3,6 +3,7 @@ import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import { TextField } from "@mui/material";
 import FechaPicker from "../../../src/components/Fechas/FechaPicker";
+import FechaPickerYear from "../../../src/components/Fechas/FechaPickerYear";
 
 export const RowProductosDisponiblesProduccion = ({
   detalle,
@@ -35,6 +36,20 @@ export const RowProductosDisponiblesProduccion = ({
             onChangeDetalle(event, detalle.idProdt);
           }}
           date={detalle.fecEntSto}
+        />
+      </TableCell>
+      <TableCell align="left">
+        <FechaPickerYear
+          onNewfecEntSto={(data) => {
+            var event = {
+              target: {
+                value: data,
+                name: "fecVenEntProdFin",
+              },
+            };
+            onChangeDetalle(event, detalle.idProdt);
+          }}
+          date={detalle.fecVenEntProdFin}
         />
       </TableCell>
       <TableCell align="left">

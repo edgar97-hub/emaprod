@@ -41,7 +41,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import IconButton from "@mui/material/IconButton";
 import BlockIcon from "@mui/icons-material/Block";
 import CircularProgress from "@mui/material/CircularProgress";
-
+import { FormatDateMYSQL } from "../../../utils/functions/FormatDate";
 // CONFIGURACIONES DE ESTILOS
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 // CONFIGURACION DE FEEDBACK
@@ -69,8 +69,8 @@ const ListEntradaStock = () => {
   // ESTADOS PARA FILTROS GENERALES DE FECHA
   const { fecEntIniSto, fecEntFinSto, formState, setFormState, onInputChange } =
     useForm({
-      fecEntIniSto: "",
-      fecEntFinSto: "",
+      fecEntIniSto: FormatDateMYSQL(),
+      fecEntFinSto: FormatDateMYSQL(),
     });
 
   // ESTADOS PARA LA PAGINACIÓN
@@ -111,6 +111,8 @@ const ListEntradaStock = () => {
     // hacer validaciones correpondientes
     const resultPeticion = await getEntradasStock(body);
     const { message_error, description_error, result } = resultPeticion;
+
+    console.log(resultPeticion);
     return result;
     if (message_error?.length === 0) {
       // setdataEntSto(result);
@@ -145,7 +147,6 @@ const ListEntradaStock = () => {
       ...inputs,
       provedor: obj,
     });
-    //filter(obj.label, "filterProveedor");
   };
 
   const onChangeAlmacen = (obj) => {
@@ -200,11 +201,24 @@ const ListEntradaStock = () => {
     // seleccion: "",
     // ingresado: "",
     // disponible: "",
+
+    //console.log("1",formState)
+
     if (inputs.procesar) {
       obtenerDataEntradaStock(formState)
         .then((dataEntSto) => {
-          var total = 0;
+          var totalDis = 0;
+          var totalMer = 0;
           var entradas = [];
+
+          console.log("2", formState, dataEntSto);
+
+          // setInputs({
+          //   ...inputs,
+          //   procesar: false,
+          // });
+
+          // return;
           dataEntSto.map((data) => {
             if (inputs.tipoEntrada == "TODO") {
               entradas.push(data);
@@ -252,12 +266,15 @@ const ListEntradaStock = () => {
           });
           resultSearch = resultSearch.reverse();
           resultSearch.map((obj) => {
-            total += parseFloat(obj.canTotDis);
-            obj.acumulado = total.toFixed(2);
+            totalDis += parseFloat(obj.canTotDis);
+            obj.disAcu = totalDis.toFixed(2);
+
+            totalMer += parseFloat(obj.merTot);
+            obj.merAcu = totalMer.toFixed(2);
           });
           resultSearch = resultSearch.reverse();
 
-          console.log(resultSearch);
+          // console.log(resultSearch);
 
           setfeedbackMessages({
             style_message: "info",
@@ -583,18 +600,23 @@ const ListEntradaStock = () => {
                       />
                     </TableCell>
                     <TableCell align="left" width={160}>
-                      <b>Fecha de entrada</b>
+                      <b>Fecha ent.</b>
                       {/**
                        <FechaPickerDay onNewfecEntSto={onChangeDate} />
                       */}
                     </TableCell>
-
                     <TableCell align="left" width={160}>
-                      <b>Fecha creación</b>
+                      <b>Fecha ven.</b>
+                    </TableCell>
+                    <TableCell align="left" width={160}>
+                      <b>Fecha cre.</b>
                     </TableCell>
 
                     <TableCell align="left" width={160}>
-                      <b>Acumulado</b>
+                      <b>Disponible Acu.</b>
+                    </TableCell>
+                    <TableCell align="left" width={160}>
+                      <b>Merma Acu.</b>
                     </TableCell>
                     <TableCell align="center" width={50}>
                       <b>Acciones</b>
@@ -650,8 +672,10 @@ const ListEntradaStock = () => {
 
                         <TableCell align="left">{row.canTotDis}</TableCell>
                         <TableCell align="left">{row.fecEntSto}</TableCell>
+                        <TableCell align="left">{row.fecVenEntSto}</TableCell>
                         <TableCell align="left">{row.fecCreEntSto}</TableCell>
-                        <TableCell align="left">{row.acumulado}</TableCell>
+                        <TableCell align="left">{row.disAcu}</TableCell>
+                        <TableCell align="left">{row.merAcu}</TableCell>
                         <TableCell
                           align="left"
                           sx={{

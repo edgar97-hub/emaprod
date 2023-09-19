@@ -8,11 +8,14 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Link } from "react-router-dom";
 import "../styles/style-modal.css";
+import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
+import Tooltip from "@mui/material/Tooltip";
 
 export const RequisicionSeleccionDetalle = ({
   detalle,
   onClose,
   onCreateSalidas,
+  anular,
 }) => {
   return (
     <div
@@ -50,7 +53,7 @@ export const RequisicionSeleccionDetalle = ({
                         },
                       }}
                     >
-                      <TableCell align="left" width={150}>
+                      <TableCell align="left" width={50}>
                         <b>Materia Prima</b>
                       </TableCell>
                       <TableCell align="left" width={70}>
@@ -59,7 +62,7 @@ export const RequisicionSeleccionDetalle = ({
                       <TableCell align="left" width={70}>
                         <b>Estado</b>
                       </TableCell>
-                      <TableCell align="left" width={50}>
+                      <TableCell align="left" width={120}>
                         <b>Acciones</b>
                       </TableCell>
                     </TableRow>
@@ -79,8 +82,8 @@ export const RequisicionSeleccionDetalle = ({
                           {detalle.canReqSelDet}
                         </TableCell>
                         <TableCell align="left">
-                          <span
-                            className={
+                          {/**
+                               className={
                               detalle.idReqSelDetEst === 1
                                 ? "badge text-bg-danger p-2"
                                 : detalle.idReqSelDetEst === 2
@@ -89,19 +92,38 @@ export const RequisicionSeleccionDetalle = ({
                                 ? "badge text-bg-warning p-2"
                                 : "badge text-bg-success p-2"
                             }
+                               */}
+                          <span
+                            className={
+                              (detalle.idReqSelDetEstt === 1 &&
+                                " badge text-bg-warning p-2 ") +
+                              (detalle.idReqSelDetEst === 2 &&
+                                " badge text-bg-primary p-2 ") +
+                              // (row.reqSelDet.find(
+                              //</TableCell>   (obj) => obj.idReqDet == row.idReqDet
+                              // ).idReqSelDetEst === 3 &&
+                              //   " badge text-bg-warning p-2 ") +
+                              (detalle.idReqSelDetEst === 4 &&
+                                " badge text-bg-success p-2 ") +
+                              (detalle.idReqSelDetEst === 5 &&
+                                " badge text-bg-danger p-2 ")
+
+                              // "badge text-bg-success p-2"
+                            }
                           >
                             {detalle.desReqSelDetEst}
                           </span>
                         </TableCell>
                         <TableCell align="left">
-                          <div className="btn-toolbar">
+                          <div
+                            className="btn-toolbar"
+                            style={{ display: "flex", flexDirection: "row" }}
+                          >
                             <button
                               onClick={() => {
                                 onCreateSalidas(detalle);
                               }}
-                              disabled={
-                                detalle.idReqSelDetEst !== 1 ? true : false
-                              }
+                              disabled={detalle.idReqSelDetEst !== 1}
                               className={
                                 detalle.idReqSelDetEst !== 1
                                   ? "btn btn-secondary me-2"
@@ -146,6 +168,28 @@ export const RequisicionSeleccionDetalle = ({
                                 <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
                               </svg>
                             </Link>
+
+                            <button
+                              onClick={() => {
+                                let result = window.confirm(
+                                  "Estás seguro de anular este registro?"
+                                );
+
+                                if (result) {
+                                  anular(detalle.id);
+                                }
+                              }}
+                              disabled={detalle.idReqSelDetEst === 5}
+                              className={
+                                detalle.idReqSelDetEst === 5
+                                  ? "btn btn-secondary me-2"
+                                  : "btn btn-primary me-2"
+                              }
+                            >
+                              <Tooltip title="Anular">
+                                <DoNotDisturbOnIcon />
+                              </Tooltip>
+                            </button>
                           </div>
                         </TableCell>
                       </TableRow>

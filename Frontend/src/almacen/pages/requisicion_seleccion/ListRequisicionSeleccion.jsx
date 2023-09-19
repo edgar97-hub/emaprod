@@ -27,6 +27,8 @@ import { TextField } from "@mui/material";
 import { FilterEstadoRequisicionSeleccion } from "../../../components/ReferencialesFilters/EstadoRequisicionSeleccion/FilterEstadoRequisicionSeleccion";
 import { RequisicionSeleccionDetalle } from "./../../components/RequisicionSeleccionDetalle";
 import { createSalidasByReqSelDetAutomatico } from "../../helpers/requisicion-seleccion/createSalidasByReqSelDetAutomatico";
+import { anularRequisicionSeleccion } from "../../helpers/requisicion-seleccion/anularRequisicionSeleccion";
+import { FormatDateMYSQL } from "../../../utils/functions/FormatDate";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -45,8 +47,8 @@ export const ListRequisicionSeleccion = () => {
   // filtros
   const { fecReqMolIni, fecReqMolFin, formState, setFormState, onInputChange } =
     useForm({
-      fecReqMolIni: "",
-      fecReqMolFin: "",
+      fecReqMolIni: FormatDateMYSQL(),
+      fecReqMolFin: FormatDateMYSQL(),
     });
 
   // ESTADOS PARA LA PAGINACIÓN
@@ -203,9 +205,10 @@ export const ListRequisicionSeleccion = () => {
   };
 
   //FUNCION PARA TRAER LA DATA DE REQUISICION MOLIENDA
-  const obtenerDataRequisicionSeleccion = async (body = {}) => {
+  const obtenerDataRequisicionSeleccion = async (body = formState) => {
     const resultPeticion = await getRequisicionSeleccionWithDetalle(body);
     const { message_error, description_error, result } = resultPeticion;
+
     if (message_error.length === 0) {
       setdataRequisicion(result);
       setdataRequisicionTemp(result);
@@ -279,6 +282,14 @@ export const ListRequisicionSeleccion = () => {
     obtenerDataRequisicionSeleccion();
   }, []);
 
+  async function anular(id) {
+    //console.log(id);
+    var data = {
+      idReqSelDet: id,
+    };
+    await anularRequisicionSeleccion(data);
+    obtenerDataRequisicionSeleccion();
+  }
   return (
     <>
       <div className="container-fluid">
@@ -287,12 +298,16 @@ export const ListRequisicionSeleccion = () => {
           <div className="col-6">
             <div className="row">
               <div className="col-4">
-                Desde
-                <FechaPickerMonth onNewfecEntSto={onChangeDateStartData} />
+                <FechaPickerMonth
+                  onNewfecEntSto={onChangeDateStartData}
+                  label={"Desde"}
+                />
               </div>
               <div className="col-4">
-                Hasta
-                <FechaPickerMonth onNewfecEntSto={onChangeDateEndData} />
+                <FechaPickerMonth
+                  onNewfecEntSto={onChangeDateEndData}
+                  label={"Hasta"}
+                />
               </div>
               <div className="col-2 d-flex align-items-end">
                 <button onClick={resetData} className="btn btn-success">
@@ -448,19 +463,28 @@ export const ListRequisicionSeleccion = () => {
 
                           <span
                             className={
-                              row.reqSelDet.find(
+                              (row.reqSelDet.find(
                                 (obj) => obj.idReqDet == row.idReqDet
-                              ).idReqSelDetEst === 1
-                                ? "badge text-bg-danger p-2"
-                                : row.reqSelDet.find(
-                                    (obj) => obj.idReqDet == row.idReqDet
-                                  ).idReqSelDetEst === 2
-                                ? "badge text-bg-primary p-2"
-                                : row.reqSelDet.find(
-                                    (obj) => obj.idReqDet == row.idReqDet
-                                  ).idReqSelDetEst === 3
-                                ? "badge text-bg-warning p-2"
-                                : "badge text-bg-success p-2"
+                              ).idReqSelDetEst === 1 &&
+                                " badge text-bg-warning p-2 ") +
+                              (row.reqSelDet.find(
+                                (obj) => obj.idReqDet == row.idReqDet
+                              ).idReqSelDetEst === 2 &&
+                                " badge text-bg-primary p-2 ") +
+                              // (row.reqSelDet.find(
+                              //</TableCell>   (obj) => obj.idReqDet == row.idReqDet
+                              // ).idReqSelDetEst === 3 &&
+                              //   " badge text-bg-warning p-2 ") +
+                              (row.reqSelDet.find(
+                                (obj) => obj.idReqDet == row.idReqDet
+                              ).idReqSelDetEst === 4 &&
+                                " badge text-bg-success p-2 ") +
+                              (row.reqSelDet.find(
+                                (obj) => obj.idReqDet == row.idReqDet
+                              ).idReqSelDetEst === 5 &&
+                                " badge text-bg-danger p-2 ")
+
+                              // "badge text-bg-success p-2"
                             }
                           >
                             {
@@ -472,7 +496,9 @@ export const ListRequisicionSeleccion = () => {
                         </TableCell>
 
                         <TableCell align="left">
-                          {"RS" + String(row.idReqDet).padStart(5, "0")}
+                          {row.codReqSel +
+                            " - " +
+                            String(row.idReqDet).padStart(3, "0")}
                         </TableCell>
                         <TableCell align="left">{row.fecPedReqSel}</TableCell>
                         <TableCell align="left">
@@ -500,6 +526,11 @@ export const ListRequisicionSeleccion = () => {
                         <TableCell align="left">
                           <div className="btn-toolbar">
                             <button
+                              disabled={
+                                row.reqSelDet.find(
+                                  (obj) => obj.idReqDet == row.idReqDet
+                                ).idReqSelDetEst === 5
+                              }
                               onClick={() => {
                                 showRequisicionSeleccionDetalle(i);
                               }}
@@ -562,6 +593,7 @@ export const ListRequisicionSeleccion = () => {
               detalle={detalleSeleccionado}
               onClose={closeDetalleRequisicionSeleccion}
               onCreateSalidas={createSalidasRequisicionSeleccionDetalle}
+              anular={anular}
             />
           )}
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import TextField from "@mui/material/TextField";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -15,7 +15,13 @@ const FechaPickerYear = ({ onNewfecEntSto, date }) => {
 
   const handleKeyDown = (event) => {
     event.preventDefault();
-  }
+  };
+
+  useEffect(() => {
+    if (date) {
+      setValue(date);
+    }
+  }, [date]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -24,7 +30,9 @@ const FechaPickerYear = ({ onNewfecEntSto, date }) => {
         openTo={"year"}
         inputFormat="DD/MM/YYYY"
         onChange={formatFechaMYSQL}
-        renderInput={(params) => <TextField {...params} onKeyDown={handleKeyDown}/>}
+        renderInput={(params) => (
+          <TextField {...params} onKeyDown={handleKeyDown} size="small" />
+        )}
       />
     </LocalizationProvider>
   );

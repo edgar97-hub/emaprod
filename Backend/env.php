@@ -1,5 +1,5 @@
 ; <?php exit; ?>
-MYSQL_DATABASE_NAME = "emaprod5"
+MYSQL_DATABASE_NAME = "emaprod6"
 //emaran
 //emaprod2
 MYSQL_USER = "root"

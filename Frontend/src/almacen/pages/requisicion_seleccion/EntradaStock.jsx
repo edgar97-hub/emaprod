@@ -60,6 +60,8 @@ export const EntradaStock = () => {
     prodtEnt: 0,
     codProdEnt: "",
     fecVenEntSto: "",
+    fecEnt: FormatDateTimeMYSQLNow(),
+    fecVent: "",
   });
 
   const { prodtEnt, fecVenEntSto, codProdEnt } = datosEntrada;
@@ -74,11 +76,12 @@ export const EntradaStock = () => {
     });
   };
 
-  // agregar fecha de vencimiento
-  const onAddFecVenEntSto = (newfecEntSto) => {
-    setdatosEntrada({ ...datosEntrada, fecVenEntSto: newfecEntSto });
+  const onAddFecEntSto = (newfecEntSto) => {
+    setdatosEntrada({ ...datosEntrada, fecEnt: newfecEntSto });
   };
-
+  const onAddFecVenSto = (newfecEntSto) => {
+    setdatosEntrada({ ...datosEntrada, fecVent: newfecEntSto });
+  };
   // ESTADO PARA LAS SALIDAS DISPONIBLES
   const [salidasDisponibles, setsalidasDisponibles] = useState([]);
 
@@ -186,7 +189,6 @@ export const EntradaStock = () => {
             codProd2,
             canReqSelDet,
           } = result[0];
-          // SETEAMOS EL CONTADOR
           setcount(canReqSelDet);
           setentradaSeleccion({
             ...entradaSeleccion,
@@ -216,7 +218,6 @@ export const EntradaStock = () => {
     }
   };
 
-  // TRAER DATOS DE SALIDAS DISPONIBLES PARA LA REQUISICION SELECCION DETALLE
   const traerDatosEntradasDisponibles = async (idReqSel, idMatPri) => {
     const { result } = await getSalidasDisponiblesForSeleccion(
       idReqSel,
@@ -226,24 +227,21 @@ export const EntradaStock = () => {
   };
 
   const crearEntradasStockByRequisicionSeleccionDetalle = async () => {
-    // obtenemos la fecha de ingreso
-    const fechaIngreso = FormatDateTimeMYSQLNow();
-
-    // datos de la entrada
+    // const fechaIngreso = FormatDateTimeMYSQLNow();
     const datEntSto = {
       ...datosEntrada,
-      letAniEntSto: letraAnio(fechaIngreso),
-      diaJulEntSto: DiaJuliano(fechaIngreso),
-      fecEntSto: fechaIngreso,
+      letAniEntSto: letraAnio(datosEntrada.fecEnt),
+      diaJulEntSto: DiaJuliano(datosEntrada.fecEnt),
+      fecEntSto: datosEntrada.fecEnt,
     };
 
-    // datos para el backend
     const data = {
       ...entradaSeleccion,
       salStoSelDet: salidasDisponibles,
       datEntSto: datEntSto,
     };
     console.log(data);
+    //return;
 
     const resultPeticion = await createEntradasStockByReqSelDet(data);
     console.log(resultPeticion);
@@ -265,15 +263,14 @@ export const EntradaStock = () => {
   // enviar salida
   const onSubmitSalidaStock = (e) => {
     e.preventDefault();
-    // CONDICIONES DE ENVIO
+
     if (
       salidasDisponibles.length === 0 ||
       idReqSel === 0 ||
       idMatPri === 0 ||
       prodtEnt === 0 ||
-      fecVenEntSto.length === 0
+      datosEntrada.fecVent.length === 0
     ) {
-      // MANEJAMOS FORMULARIOS INCOMPLETOS
       if (salidasDisponibles.length === 0) {
         setfeedbackMessages({
           style_message: "error",
@@ -294,15 +291,26 @@ export const EntradaStock = () => {
       // recorremos las salidas disponibles
       for (let i = 0; i < salidasDisponibles.length; i++) {
         let element = { ...salidasDisponibles[i] };
-        if (element.canEntStoReqSel <= 0 || element.merReqSel <= 0) {
+        if (element.canEntStoReqSel < 0 || element.merReqSel < 0) {
           message_error =
             "No se proporciono las cantidades de las salidas realizadas";
           break;
         } else {
           let canPlusMer =
             parseFloat(element.canEntStoReqSel) + parseFloat(element.merReqSel);
+          console.log(
+            parseFloat(element.canEntStoReqSel),
+            parseFloat(element.merReqSel),
+            parseFloat(canPlusMer).toFixed(2),
+            parseFloat(element.canSalStoReqSel),
+            parseFloat(canPlusMer).toFixed(3) !=
+              parseFloat(element.canSalStoReqSel).toFixed(3)
+          );
 
-          if (parseFloat(canPlusMer) != parseFloat(element.canSalStoReqSel)) {
+          if (
+            parseFloat(canPlusMer).toFixed(3) !=
+            parseFloat(element.canSalStoReqSel).toFixed(3)
+          ) {
             message_error = `En la salida de: ${element.canSalStoReqSel} no coinciden la cantidad entrada y la merma`;
             break;
           }
@@ -325,7 +333,6 @@ export const EntradaStock = () => {
   };
 
   useEffect(() => {
-    // TRAEMOS DATOS DE REQUISICION DETALLE
     traerDatosRequisicionSeleccionDetalle();
   }, []);
 
@@ -443,7 +450,7 @@ export const EntradaStock = () => {
               </h6>
               <div className="card-body">
                 <form className="row mb-4 mt-4 d-flex flex-row justify-content-start align-items-end">
-                  <div className="col-md-6">
+                  <div className="col-md-4">
                     <label htmlFor="inputPassword4" className="form-label">
                       Materia Prima Seleccionada
                     </label>
@@ -452,12 +459,20 @@ export const EntradaStock = () => {
                     />
                   </div>
 
-                  {/* AGREGAR CANTIDAD*/}
-                  <div className="col-md-4">
+                  <div className="col-md-3">
+                    <label htmlFor="inputPassword4" className="form-label">
+                      Fecha de entrada
+                    </label>
+                    <br />
+                    <FechaPicker onNewfecEntSto={onAddFecEntSto} />
+                  </div>
+
+                  <div className="col-md-3">
                     <label htmlFor="inputPassword4" className="form-label">
                       Fecha de vencimiento
                     </label>
-                    <FechaPickerYear onNewfecEntSto={onAddFecVenEntSto} />
+                    <br />
+                    <FechaPickerYear onNewfecEntSto={onAddFecVenSto} />
                   </div>
                 </form>
               </div>

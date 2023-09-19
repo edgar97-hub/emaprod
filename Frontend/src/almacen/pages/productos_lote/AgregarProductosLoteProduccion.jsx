@@ -31,6 +31,7 @@ import {
 } from "../../../utils/functions/FormatDate";
 import { DetalleProductosFinales } from "./DetalleProductosFinales";
 import FechaPicker from "../../../../src/components/Fechas/FechaPicker";
+import FechaPickerYear from "../../../components/Fechas/FechaPickerYear";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -80,8 +81,9 @@ export const AgregarProductosLoteProduccion = () => {
     idProdFin: 0,
     cantidadIngresada: 0.0,
     fecEntSto: FormatDateTimeMYSQLNow(),
+    fecVenSto: "",
   });
-  const { idProdFin, cantidadIngresada, fecEntSto } = productoFinal;
+  const { idProdFin, cantidadIngresada, fecEntSto, fecVenSto } = productoFinal;
 
   // ******* ACCIONES DE FILTER PRODUCTO FINAL ******
   // MANEJADOR DE PRODUCTO
@@ -102,13 +104,17 @@ export const AgregarProductosLoteProduccion = () => {
     });
   };
 
-  const onAddFecReq = (newfecEntSto) => {
-    //setdatosEntrada({ ...datosEntrada, fecVenEntSto: newfecEntSto });
-
-    console.log(newfecEntSto);
+  const onAddFecEntSto = (newfecEntSto) => {
     setproductoFinal({
       ...productoFinal,
       fecEntSto: newfecEntSto,
+    });
+  };
+
+  const onAddFecVenSto = (newfecEntSto) => {
+    setproductoFinal({
+      ...productoFinal,
+      fecVenSto: newfecEntSto,
     });
   };
 
@@ -181,8 +187,8 @@ export const AgregarProductosLoteProduccion = () => {
             desSubCla: desSubCla, // subclase del producto
             nomProd: nomProd, // nombre del producto
             simMed: simMed, // medida del producto
-            fecVenEntProdFin: fecVenLotProd, // fecha de vencimiento del lote
-            canProdFin: cantidadIngresada, // cantidad devuelta
+            fecVenEntProdFin: fecVenSto,
+            canProdFin: cantidadIngresada,
             fecEntSto: fecEntSto,
           };
 
@@ -245,8 +251,6 @@ export const AgregarProductosLoteProduccion = () => {
 
     const { message_error, description_error, result } = resultPeticion;
     var products = result[0].proFinProdDet;
-    //var productsAutocomplete = products.filter((obj) => !obj.isAgregation);
-    //console.log(result[0])
 
     var copyProducts = products.reduce((accumulator, currentValue) => {
       if (accumulator.some((obj) => obj.idProdt === currentValue.idProdt)) {
@@ -352,8 +356,9 @@ export const AgregarProductosLoteProduccion = () => {
       handleClickFeeback();
       return;
     }
-    console.log(productoFin);
-    
+    console.log(detalleProductosFinales);
+
+    //return;
     const resultPeticion = await createProductosFinalesLoteProduccion(
       detalleProductosFinales,
       idProdTip,
@@ -570,7 +575,7 @@ export const AgregarProductosLoteProduccion = () => {
             <div className="card-body">
               <form className="row mb-4 mt-4 d-flex flex-row justify-content-start align-items-end">
                 {/* AGREGAR PRODUCTO */}
-                <div className="col-md-5">
+                <div className="col-md-4">
                   <label className="form-label">
                     Producto final o sub producto
                   </label>
@@ -582,7 +587,12 @@ export const AgregarProductosLoteProduccion = () => {
 
                 <div className="col-md-2">
                   <label className="form-label">Fecha de entrada</label>
-                  <FechaPicker onNewfecEntSto={onAddFecReq} />
+                  <FechaPicker onNewfecEntSto={onAddFecEntSto} />
+                </div>
+
+                <div className="col-md-2">
+                  <label className="form-label">Fecha de vencimiento</label>
+                  <FechaPickerYear onNewfecEntSto={onAddFecVenSto} />
                 </div>
 
                 <div className="col-md-2">
@@ -641,6 +651,9 @@ export const AgregarProductosLoteProduccion = () => {
                           </TableCell>
                           <TableCell align="left" width={120}>
                             <b>Fecha entrada</b>
+                          </TableCell>
+                          <TableCell align="left" width={120}>
+                            <b>Fecha vencimiento</b>
                           </TableCell>
                           <TableCell align="left" width={120}>
                             <b>Cantidad</b>

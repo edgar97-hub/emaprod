@@ -20,7 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $datEntSto =  $data["datEntSto"]; // datos de la entrada
     $cantidadTotalEntrada = 0; // cantidad total ingresada
     $mermaTotalIngresada = 0; // merma total generada
-
+    $fecEntSto = $datEntSto["fecEnt"];
+    $fecVenEntSto = $datEntSto["fecVent"];
+    
     if ($pdo) {
         $sql = "";
         foreach ($salStoSelDet as $item) {
@@ -52,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $stmt_update_entrada_seleccion = $pdo->prepare($sql_update_entrada_seleccion);
                 $stmt_update_entrada_seleccion->bindParam(1, $idSalEntSelEst, PDO::PARAM_INT);
-                $stmt_update_entrada_seleccion->bindParam(2, $fecEntStoReqSel); // fecha de la entrada
+                $stmt_update_entrada_seleccion->bindParam(2, $fecEntStoReqSel);
                 $stmt_update_entrada_seleccion->bindParam(3, $idSalEntStoSel, PDO::PARAM_INT);
                 $stmt_update_entrada_seleccion->bindParam(4, $idSalEntSelEstSalidaCompleta, PDO::PARAM_INT);
 
@@ -74,9 +76,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // CREAMOS LA ENTRADA RESPECTIVA
         if (empty($message_error)) {
-            // OBTENEMOS LOS DATOS DE LA ENTRADA
-            $fecEntSto = $datEntSto["fecEntSto"]; // fecha de entrada de stock
-            $fecVenEntSto = $datEntSto["fecVenEntSto"]; // fecha de vencimiento
+            //$fecEntSto = $datEntSto["fecEntSto"];  
+            // $fecVenEntSto = $datEntSto["fecVenEntSto"]; 
+
+
+           
+
             $idProd = $datEntSto["prodtEnt"]; // producto
             $codProd = $datEntSto["codProdEnt"]; // codigo de producto
             $idProv = 1; // proveedor EMARANSAC

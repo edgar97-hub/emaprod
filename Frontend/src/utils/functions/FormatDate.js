@@ -4,6 +4,12 @@ const FormatDateTimeMYSQL = (newDate) => {
     return fecha + " " + hora;
 }
 
+const FormatDateMYSQL = () => {
+    let nowDate = new Date();
+    let fecha = nowDate.toISOString().split("T", 1)[0];
+    return fecha;
+}
+
 const FormatDateTimeMYSQLNow = () => {
     let nowDate = new Date();
     let fecha = nowDate.toISOString().split("T", 1)[0];
@@ -123,4 +129,4 @@ const DiaJuliano = (fecha) => {
 
 }
 
-export { FormatDateTimeMYSQL, FormatDateTimeMYSQLNow, DiaJuliano, letraAnio, _parseInt };
+export { FormatDateTimeMYSQL, FormatDateTimeMYSQLNow, DiaJuliano, letraAnio, FormatDateMYSQL,_parseInt };

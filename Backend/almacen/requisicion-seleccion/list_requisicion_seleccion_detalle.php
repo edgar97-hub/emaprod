@@ -28,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
 
+    //die(json_encode( $fechaInicio));
     $data_requisicion_seleccion = [];
 
     if ($pdo) {
@@ -37,9 +38,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             rs.idReqSelEst,
             rse.desReqSelEst,
             rs.codLotSel,
-            rs.fecPedReqSel,
+            #rs.fecPedReqSel,
+            rsd.fecCreReqSelDet as fecPedReqSel,
             rs.fecTerReqSel,
-            rsd.id as idReqDet
+            rsd.id as idReqDet,
+            rs.codReqSel
             FROM requisicion_seleccion rs
             JOIN requisicion_seleccion_estado as rse on rse.id = rs.idReqSelEst
             JOIN requisicion_seleccion_detalle rsd  on rs.id = rsd.idReqSel
