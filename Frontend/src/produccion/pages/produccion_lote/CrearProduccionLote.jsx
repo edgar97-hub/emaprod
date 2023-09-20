@@ -463,7 +463,7 @@ export const CrearProduccionLote = () => {
         );
 
         const { message_error, description_error, result } = resultPeticion;
-        console.log(productoLoteProduccion.idProdFin);
+        //console.log(productoLoteProduccion.idProdFin);
         //return
 
         if (message_error.length === 0) {
@@ -489,7 +489,7 @@ export const CrearProduccionLote = () => {
 
             cantidadklgLote = parseFloat(
               parseFloat(productoLoteProduccion.cantidadDeLote).toFixed(5)
-            ); // redondeado a las centenas
+            );
           } else {
             cantidadUnidades = Math.round(
               parseFloat(productoLoteProduccion.cantidadDeProducto)
@@ -502,15 +502,21 @@ export const CrearProduccionLote = () => {
             );
           }
 
-          // verificamos que la cantidad de klg no sobrepase lo permitido
           const cantidadTotalDelLoteProduccion = parseFloat(
             klgTotalLoteProduccion + cantidadklgLote
           );
 
-          const cantidadTotalUnidadesDelLoteProduccion = parseInt(
-            totalUnidadesLoteProduccion + cantidadUnidades
+          var _cantidadUnidades = Math.abs(Math.floor(-cantidadUnidades));
+          console.log(
+            totalUnidadesLoteProduccion,
+            Math.abs(Math.floor(-cantidadUnidades))
           );
 
+          const cantidadTotalUnidadesDelLoteProduccion = parseInt(
+            totalUnidadesLoteProduccion + _cantidadUnidades
+          );
+
+          console.log(cantidadTotalUnidadesDelLoteProduccion);
           if (cantidadTotalDelLoteProduccion > klgDisponibleLoteProduccion) {
             setfeedbackMessages({
               style_message: "warning",
@@ -519,7 +525,6 @@ export const CrearProduccionLote = () => {
             });
             handleClickFeeback();
           } else {
-            // actualizamos la cantidad disponible
             setcantidadLoteProduccion({
               ...cantidadLoteProduccion,
               klgTotalLoteProduccion: cantidadTotalDelLoteProduccion,
@@ -527,7 +532,6 @@ export const CrearProduccionLote = () => {
                 cantidadTotalUnidadesDelLoteProduccion,
             });
 
-            // ahora recien formamos el detalle
             const nextIndex = prodDetProdc.length + 1;
             const detalleProductosFinales = [
               ...prodDetProdc,
@@ -653,23 +657,20 @@ export const CrearProduccionLote = () => {
 
   // CREAR LOTE DE PRODUCCION
   const crearProduccionLote = async () => {
-
     //totalUnidadesLoteProduccion,
     //klgTotalLoteProduccion,
     //klgDisponibleLoteProduccion,
 
-    
-    //produccionLote.totalUnidadesLoteProduccion = totalUnidadesLoteProduccion
-    //produccionLote.klgTotalLoteProduccion = klgTotalLoteProduccion
-    //produccionLote.klgDisponibleLoteProduccion = klgDisponibleLoteProduccion
-
-    //console.log(produccionLote);
-    //return;
+    produccionLote.totalUnidadesLoteProduccion = totalUnidadesLoteProduccion;
+    produccionLote.klgTotalLoteProduccion = klgTotalLoteProduccion;
+    //produccionLote.klgDisponibleLoteProduccion = klgDisponibleLoteProduccion;
 
     const resultPeticion = await createProduccionLoteWithRequisiciones(
       produccionLote
     );
-
+    console.log(produccionLote, resultPeticion);
+    //return;
+    
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
       // regresamos a la anterior vista
@@ -757,9 +758,7 @@ export const CrearProduccionLote = () => {
         handleClickFeeback();
       } else {
         setdisableButton(true);
-        // LLAMAMOS A LA FUNCION CREAR REQUISICION
         crearProduccionLote();
-        // RESETEAMOS LOS VALORES
       }
     }
   };
@@ -770,13 +769,11 @@ export const CrearProduccionLote = () => {
         <h1 className="mt-4 text-center">Crear Orden de Producción</h1>
 
         <div className="row mt-4 mx-4">
-          {/* Datos de produccion */}
           <div className="card d-flex">
             <h6 className="card-header">Datos de Producción</h6>
             <div className="card-body">
               <form>
                 <div className="mb-3 row">
-                  {/* NUMERO DE LOTE */}
                   <div className="col-md-2">
                     <label htmlFor="nombre" className="form-label">
                       <b>Número de Lote</b>
@@ -789,7 +786,6 @@ export const CrearProduccionLote = () => {
                       className="form-control"
                     />
                   </div>
-                  {/* PRODUCTO */}
                   <div className="col-md-6 me-4">
                     <label htmlFor="nombre" className="form-label">
                       <b>Producto Intermedio</b>
@@ -799,7 +795,6 @@ export const CrearProduccionLote = () => {
                     />
                   </div>
 
-                  {/* CANTIDAD DE LOTE */}
                   <div className="col-md-2">
                     <label htmlFor="nombre" className="form-label">
                       <b>Peso de Lote</b>
@@ -812,7 +807,6 @@ export const CrearProduccionLote = () => {
                       className="form-control"
                     />
                   </div>
-                  {/* KILOGRAMOS DE LOTE */}
                   <div className="col-md-1">
                     <label htmlFor="nombre" className="form-label">
                       <b>Cantidad</b>

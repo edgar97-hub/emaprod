@@ -37,6 +37,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $reqDetProdc = $data["reqDetProdc"]; // requerimientos
     $prodDetProdc = $data["prodDetProdc"]; // producto finales programados
 
+    $totalUnidadesLoteProduccion = $data["totalUnidadesLoteProduccion"];
+    $klgTotalLoteProduccion = $data["klgTotalLoteProduccion"];
+
+
 
     if ($pdo) {
 
@@ -70,7 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt_consult_formula_detalle->execute();
 
             while ($row_detalle = $stmt_consult_formula_detalle->fetch(PDO::FETCH_ASSOC)) {
-                // la agregamos a la requisicion detalle
                 array_push($reqDetProdc, $row_detalle);
             }
 
@@ -178,8 +181,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     fecProdIniProg,
                     fecProdFinProg,
                     fecVenLotProd,
-                    numop)
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    numop,
+                    totalUnidadesLoteProduccion,
+                    klgTotalLoteProduccion)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             try {
                 $stmt_insert_produccion = $pdo->prepare($sql_insert_produccion);
                 $stmt_insert_produccion->bindParam(1, $idProdt, PDO::PARAM_INT);
@@ -196,6 +201,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt_insert_produccion->bindParam(12, $fecProdFinProg, PDO::PARAM_STR);
                 $stmt_insert_produccion->bindParam(13, $fecVenLotProd, PDO::PARAM_STR);
                 $stmt_insert_produccion->bindParam(14, $numop, PDO::PARAM_STR);
+                $stmt_insert_produccion->bindParam(15, $totalUnidadesLoteProduccion);
+                $stmt_insert_produccion->bindParam(16, $klgTotalLoteProduccion);
+
                 $numop = $op . $anio . $mes . $lastInsertId;
                 $stmt_insert_produccion->execute();
 

@@ -205,13 +205,17 @@ const styles = StyleSheet.create({
   },
 });
 
-function _parseInt(str) {
+function _parseInt(str, property) {
   // console.log(str)
   if (str.canProdAgr) {
     str.canReqDet = str.canProdAgr;
   }
   if (str.canTotProgProdFin) {
     str.canReqDet = str.canTotProgProdFin;
+  }
+
+  if (property) {
+    str.canReqDet = str[property];
   }
   str.canReqDet = parseFloat(str.canReqDet).toFixed(2);
   let index = str.canReqDet.toString().indexOf(".");
@@ -383,7 +387,7 @@ const PDFExample = ({ data, show }) => {
                       marginTop: 10,
                       backgroundColor: "#d8dbe3",
                       width: 220,
-                      height: 60,
+                      height: 70,
                       borderRadius: 5,
                       marginRight: 20,
                     }}
@@ -393,6 +397,18 @@ const PDFExample = ({ data, show }) => {
                         ...styles.content,
                         marginLeft: 10,
                         marginTop: 7,
+                        maxWidth: "100%",
+                      }}
+                    >
+                      Tipo de Producción: {data.result.produccion.desProdTip}
+                    </Text>
+
+                    <Text
+                      style={{
+                        ...styles.content,
+                        marginLeft: 10,
+                        marginTop: 4,
+                        maxWidth: "100%",
                       }}
                     >
                       Número de Lote: {data.result.produccion.codLotProd}
@@ -405,8 +421,11 @@ const PDFExample = ({ data, show }) => {
                       }}
                     >
                       Peso Total de Lote:{" "}
-                      {data.result.produccion.canLotProd + " KG"}
+                      {parseFloat(data.result.produccion.canLotProd).toFixed(
+                        2
+                      ) + " KG"}
                     </Text>
+
                     <Text
                       style={{
                         ...styles.content,
@@ -415,8 +434,25 @@ const PDFExample = ({ data, show }) => {
                         maxWidth: "100%",
                       }}
                     >
-                      Tipo de Producción: {data.result.produccion.desProdTip}
+                      Peso Programado:{" "}
+                      {parseFloat(
+                        data.result.produccion.klgTotalLoteProduccion
+                      ).toFixed(2) + " KG"}
                     </Text>
+
+                    {/**
+                       <Text
+                      style={{
+                        ...styles.content,
+                        marginLeft: 10,
+                        marginTop: 4,
+                        maxWidth: "100%",
+                      }}
+                    >
+                      Total Unidades: 
+                      {data.result.produccion.totalUnidadesLoteProduccion}
+                    </Text>
+                       */}
                   </View>
 
                   <Text
@@ -434,8 +470,7 @@ const PDFExample = ({ data, show }) => {
               </View>
             </View>
 
-            {show == "agregaciones" && <Agregations data={data} />}
-            {show == "detalleOrden" && <DetalleOrden data={data} />}
+            {<DetalleOrden data={data} />}
           </View>
         </Page>
       </Document>
@@ -540,6 +575,7 @@ const DetalleOrden = ({ data }) => {
               </Text>
               <Text style={styles.gridTitle}>U.M</Text>
               <Text style={styles.gridTitle}>Cantidad</Text>
+              <Text style={styles.gridTitle}>Total</Text>
             </View>
             {data.result?.requisiciones
               ?.find((req) => req.desAre === "Envasado")
@@ -570,58 +606,193 @@ const DetalleOrden = ({ data }) => {
                   <Text style={styles.gridContent_p}>{detalle.simMed}</Text>
                   {/** <Text style={styles.gridContent_num}>{detalle.canReqDet}</Text> */}
                   <Text style={styles.gridContent_num}>
-                    {_parseInt(detalle)}
+                    {_parseInt(detalle, "canReqDet")}
+                  </Text>
+                  <Text style={styles.gridContent_num}>
+                    {_parseInt(detalle, "acu")}
                   </Text>
                 </View>
               ))}
           </View>
         </View>
 
+        {data.result?.requisiciones?.find((req) => req.desAre === "Envasado")
+          ?.resumenProductos?.length && (
+          <>
+            <Text
+              style={{
+                ...styles.title,
+                fontWeight: "bold",
+                fontSize: 7,
+                marginLeft: -410,
+                marginTop: -12,
+              }}
+            >
+              Acumulacion de envasado
+            </Text>
+            <View style={{ ...styles.section, marginTop: -25 }}>
+              <View style={styles.gridContainer}>
+                <View style={[styles.gridHeader, styles.green_]}>
+                  <Text style={styles.gridTitle}>Código</Text>
+                  <Text
+                    style={{
+                      ...styles.gridTitle,
+                      flex: 4,
+                      textAlign: "left",
+                    }}
+                  >
+                    Descripción de Item
+                  </Text>
+                  <Text style={styles.gridTitle}>U.M</Text>
+                  <Text style={styles.gridTitle}>Total</Text>
+                </View>
+                {data.result?.requisiciones
+                  ?.find((req) => req.desAre === "Envasado")
+                  ?.resumenProductos.map((detalle, index) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.gridRow,
+                        ...[{ backgroundColor: "#a4a8b0" }],
+                      ]}
+                    >
+                      <Text style={styles.gridContent_p}>
+                        {detalle.codProd2}
+                      </Text>
+                      <Text
+                        style={{
+                          ...styles.gridContent_p,
+                          flex: 4,
+                          textAlign: "left",
+                        }}
+                      >
+                        {detalle.nomProd}
+                      </Text>
+                      <Text style={styles.gridContent_p}>{detalle.simMed}</Text>
+                      <Text style={styles.gridContent_num}>
+                        {_parseInt(detalle, "acu")}
+                      </Text>
+                    </View>
+                  ))}
+              </View>
+            </View>
+          </>
+        )}
+
+        {data.result?.requisiciones?.find((req) => req.desAre === "Encajado")
+          ?.resumenProductos?.length && (
+          <>
+            <Text
+              style={{
+                ...styles.title,
+                fontWeight: "bold",
+                fontSize: 7,
+                marginLeft: -440,
+                marginTop: -12,
+              }}
+            >
+              Detalle Encajado
+            </Text>
+            <View style={{ ...styles.section, marginTop: -25 }}>
+              <View style={styles.gridContainer}>
+                <View style={[styles.gridHeader, styles.yellow_]}>
+                  <Text style={{ ...styles.gridTitle, flex: 0.7 }}>
+                    Cód Aso
+                  </Text>
+                  <Text style={{ ...styles.gridTitle, flex: 0.7 }}>
+                    Cód Ref
+                  </Text>
+                  <Text style={styles.gridTitle}>Código</Text>
+                  <Text
+                    style={{
+                      ...styles.gridTitle,
+                      flex: 4,
+                      textAlign: "center",
+                    }}
+                  >
+                    Descripción de Item
+                  </Text>
+                  <Text style={styles.gridTitle}>U.M</Text>
+                  <Text style={styles.gridTitle}>Cantidad</Text>
+                  <Text style={styles.gridTitle}>Total</Text>
+                </View>
+                {data.result.requisiciones
+                  .find((req) => req.desAre === "Encajado")
+                  ?.detalles?.map((detalle, index) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.gridRow,
+                        index % 2 === 0 ? { backgroundColor: "#a4a8b0" } : {},
+                      ]}
+                    >
+                      <Text style={{ ...styles.gridContent_p, flex: 0.7 }}>
+                        {detalle.prodFCode}
+                      </Text>
+                      <Text style={{ ...styles.gridContent_p, flex: 0.7 }}>
+                        {detalle.codProd}
+                      </Text>
+                      <Text style={styles.gridContent_p}>
+                        {detalle.codProd2}
+                      </Text>
+                      <Text
+                        style={{
+                          ...styles.gridContent_p,
+                          flex: 4,
+                          textAlign: "left",
+                        }}
+                      >
+                        {detalle.nomProd}
+                      </Text>
+                      <Text style={styles.gridContent_p}>{detalle.simMed}</Text>
+                      {/** <Text style={styles.gridContent_num}>{detalle.canReqDet}</Text> */}
+                      <Text style={styles.gridContent_num}>
+                        {_parseInt(detalle)}
+                      </Text>
+                      <Text style={styles.gridContent_num}>
+                        {_parseInt(detalle, "acu")}
+                      </Text>
+                    </View>
+                  ))}
+              </View>
+            </View>
+          </>
+        )}
+
         <Text
           style={{
             ...styles.title,
             fontWeight: "bold",
             fontSize: 7,
-            marginLeft: -440,
+            marginLeft: -410,
             marginTop: -12,
           }}
         >
-          Detalle Encajado
+          Acumulacion de Encajado
         </Text>
         <View style={{ ...styles.section, marginTop: -25 }}>
           <View style={styles.gridContainer}>
-            <View style={[styles.gridHeader, styles.yellow_]}>
-              <Text style={{ ...styles.gridTitle, flex: 0.7 }}>Cód Aso</Text>
-              <Text style={{ ...styles.gridTitle, flex: 0.7 }}>Cód Ref</Text>
+            <View style={[styles.gridHeader, styles.green_]}>
               <Text style={styles.gridTitle}>Código</Text>
               <Text
                 style={{
                   ...styles.gridTitle,
                   flex: 4,
-                  textAlign: "center",
+                  textAlign: "left",
                 }}
               >
                 Descripción de Item
               </Text>
               <Text style={styles.gridTitle}>U.M</Text>
-              <Text style={styles.gridTitle}>Cantidad</Text>
+              <Text style={styles.gridTitle}>Total</Text>
             </View>
-            {data.result.requisiciones
-              .find((req) => req.desAre === "Encajado")
-              ?.detalles?.map((detalle, index) => (
+            {data.result?.requisiciones
+              ?.find((req) => req.desAre === "Encajado")
+              ?.resumenProductos.map((detalle, index) => (
                 <View
                   key={index}
-                  style={[
-                    styles.gridRow,
-                    index % 2 === 0 ? { backgroundColor: "#a4a8b0" } : {},
-                  ]}
+                  style={[styles.gridRow, ...[{ backgroundColor: "#a4a8b0" }]]}
                 >
-                  <Text style={{ ...styles.gridContent_p, flex: 0.7 }}>
-                    {detalle.prodFCode}
-                  </Text>
-                  <Text style={{ ...styles.gridContent_p, flex: 0.7 }}>
-                    {detalle.codProd}
-                  </Text>
                   <Text style={styles.gridContent_p}>{detalle.codProd2}</Text>
                   <Text
                     style={{
@@ -633,9 +804,8 @@ const DetalleOrden = ({ data }) => {
                     {detalle.nomProd}
                   </Text>
                   <Text style={styles.gridContent_p}>{detalle.simMed}</Text>
-                  {/** <Text style={styles.gridContent_num}>{detalle.canReqDet}</Text> */}
                   <Text style={styles.gridContent_num}>
-                    {_parseInt(detalle)}
+                    {_parseInt(detalle, "acu")}
                   </Text>
                 </View>
               ))}
@@ -1044,20 +1214,87 @@ export const ListProduccionLote = () => {
           (obj) => obj.id == null
         );
       var productosFinal = productosFinal.map((obj) => obj.idProdFin);
-      //console.log(response.data.result.agregaciones.detAgr);
-      //console.log(productosFinal);
       response.data.result.productos_finales =
         response.data.result.productos_finales.filter((obj) =>
           productosFinal.includes(obj.id)
         );
-      //console.log(response.data.result.productos_finales);
 
-      //return;
+      response.data.result?.requisiciones?.map((req) => {
+        if (req.desAre === "Envasado") {
+          var productsEnvasado = req.detalles.reduce(
+            (accumulator, currentValue) => {
+              if (
+                accumulator.some(
+                  (obj) => obj.codProd2 === currentValue.codProd2
+                )
+              ) {
+                accumulator.map((obj) => {
+                  if (obj.codProd2 === currentValue.codProd2) {
+                    currentValue.acu =
+                      parseFloat(obj.acu) + parseFloat(currentValue.canReqDet);
+                    currentValue.isDuplicated = true;
+                    accumulator.push(currentValue);
+                  }
+                });
+              } else {
+                currentValue.acu = currentValue.canReqDet;
+                accumulator.push(currentValue);
+              }
+              return accumulator;
+            },
+            []
+          );
+          req.detalles = productsEnvasado;
+          productsEnvasado = productsEnvasado.filter((obj) => obj.isDuplicated);
+          req.resumenProductos = removeDuplicates(productsEnvasado);
+        }
+
+        if (req.desAre === "Encajado") {
+          var productosEncajado = req.detalles.reduce(
+            (accumulator, currentValue) => {
+              if (
+                accumulator.some(
+                  (obj) => obj.codProd2 === currentValue.codProd2
+                )
+              ) {
+                accumulator.map((obj) => {
+                  if (obj.codProd2 === currentValue.codProd2) {
+                    currentValue.acu =
+                      parseFloat(obj.acu) + parseFloat(currentValue.canReqDet);
+                    currentValue.isDuplicated = true;
+                    accumulator.push(currentValue);
+                  }
+                });
+              } else {
+                currentValue.acu = currentValue.canReqDet;
+                accumulator.push(currentValue);
+              }
+              return accumulator;
+            },
+            []
+          );
+          req.detalles = productosEncajado;
+          productosEncajado = productosEncajado.filter(
+            (obj) => obj.isDuplicated
+          );
+          req.resumenProductos = removeDuplicates(productosEncajado);
+        }
+      });
+
+      console.log(response.data.result.requisiciones);
+
       generatePDF(response.data, show);
     } catch (error) {
       console.error("Error al obtener los datos:", error);
     }
   };
+
+  function removeDuplicates(arr) {
+    return arr.filter(
+      ({ codProd2 }, index) =>
+        arr.map((obj) => obj.codProd2).indexOf(codProd2) === index
+    );
+  }
 
   const resetData = () => {
     setdataProduccionLoteTemp(dataProduccionLote);

@@ -19,7 +19,11 @@ if (isset($_GET["id"])) {
         $id = (int) $id;
 
         // Consulta SQL para obtener los datos de producción por ID
-        $sqlProduccion = "SELECT pd.id,p.codProd,p.codProd2, pd.fecProdIniProg,pd.fecProdFinProg,pd.obsProd,pd.numop, pd.idProdt, p.nomProd, pd.idProdEst, pe.desEstPro, pd.idProdTip, pt.desProdTip, pd.codLotProd, pd.klgLotProd, pd.canLotProd, pd.fecVenLotProd,pd.fecCreProd
+        $sqlProduccion = "SELECT pd.id,p.codProd,p.codProd2, pd.fecProdIniProg,pd.fecProdFinProg,pd.obsProd,pd.numop, pd.idProdt,
+                        p.nomProd, pd.idProdEst, pe.desEstPro, pd.idProdTip, pt.desProdTip, pd.codLotProd, pd.klgLotProd, 
+                        pd.canLotProd, pd.fecVenLotProd,pd.fecCreProd,
+                        pd.totalUnidadesLoteProduccion,
+                        pd.klgTotalLoteProduccion
                          FROM produccion pd
                          JOIN producto as p ON p.id = pd.idProdt
                          JOIN produccion_estado as pe ON pe.id = pd.idProdEst
@@ -105,18 +109,18 @@ if (isset($_GET["id"])) {
             // Preparamos la respuesta con los datos de producción, las requisiciones con sus detalles y los productos finales
             $result["produccion"] = $resultProduccion;
             $result["requisiciones"] = $resultRequisiciones;
-            $result["agregaciones"] = getAgregationsByOrderProdc($pdo,$id);;
-            $result["prodFinalWithAgreg"] = agregWithProdFinal($pdo,$id);;
+            $result["agregaciones"] = getAgregationsByOrderProdc($pdo, $id);;
+            $result["prodFinalWithAgreg"] = agregWithProdFinal($pdo, $id);;
             //$result["AllAgregations"] = AllAgregations($pdo);
 
-        
+
         } catch (PDOException $e) {
             // Manejo de errores
             $message_error = "Error interno en la consulta de la base de datos.";
             $description_error = $e->getMessage();
         }
     } else {
-        
+
         $result["AllAgregations"] = AllAgregations($pdo);
     }
 } else {
@@ -131,14 +135,15 @@ $return['result'] = $result;
 echo json_encode($return);
 
 
-function AllAgregations($pdo){
+function AllAgregations($pdo)
+{
 
     try {
-    
-            $row["detAgr"] = [];
 
-            $sql_detalle_agregaciones_lote_produccion =
-                "SELECT 
+        $row["detAgr"] = [];
+
+        $sql_detalle_agregaciones_lote_produccion =
+            "SELECT 
             pa.id,
             pa.idProdc,
             pa.idProdt,
@@ -163,31 +168,31 @@ function AllAgregations($pdo){
             JOIN almacen as al ON al.id = pa.idAlm
             JOIN produccion as pd ON pd.id = pa.idProdc
             LEFT JOIN produccion_agregacion_motivo as pam ON pam.id = pa.idProdAgrMot
-            ORDER BY pa.id asc" ;
+            ORDER BY pa.id asc";
 
-                $stmt_detalle_agregaciones_lote_produccion = $pdo->prepare($sql_detalle_agregaciones_lote_produccion);
-                $stmt_detalle_agregaciones_lote_produccion->execute();
+        $stmt_detalle_agregaciones_lote_produccion = $pdo->prepare($sql_detalle_agregaciones_lote_produccion);
+        $stmt_detalle_agregaciones_lote_produccion->execute();
 
-                while ($row_detalle_agregacion_lote_produccion = $stmt_detalle_agregaciones_lote_produccion->fetch(PDO::FETCH_ASSOC)) {
-                    array_push($row["detAgr"], $row_detalle_agregacion_lote_produccion);
-                }
-          
-         return $row;
+        while ($row_detalle_agregacion_lote_produccion = $stmt_detalle_agregaciones_lote_produccion->fetch(PDO::FETCH_ASSOC)) {
+            array_push($row["detAgr"], $row_detalle_agregacion_lote_produccion);
+        }
 
+        return $row;
     } catch (PDOException $e) {
         $description_error = $e->getMessage();
         return $description_error;
     }
 }
 
-function getAgregationsByOrderProdc($pdo,$idLotProdc){
+function getAgregationsByOrderProdc($pdo, $idLotProdc)
+{
 
     try {
-    
-            $row["detAgr"] = [];
 
-            $sql_detalle_agregaciones_lote_produccion =
-                "SELECT 
+        $row["detAgr"] = [];
+
+        $sql_detalle_agregaciones_lote_produccion =
+            "SELECT 
             pa.id,
             pa.idProdc,
             pa.idProdt,
@@ -208,16 +213,15 @@ function getAgregationsByOrderProdc($pdo,$idLotProdc){
             LEFT JOIN produccion_agregacion_motivo as pam ON pam.id = pa.idProdAgrMot
             WHERE pa.idProdc = ?";
 
-                $stmt_detalle_agregaciones_lote_produccion = $pdo->prepare($sql_detalle_agregaciones_lote_produccion);
-                $stmt_detalle_agregaciones_lote_produccion->bindParam(1, $idLotProdc, PDO::PARAM_INT);
-                $stmt_detalle_agregaciones_lote_produccion->execute();
+        $stmt_detalle_agregaciones_lote_produccion = $pdo->prepare($sql_detalle_agregaciones_lote_produccion);
+        $stmt_detalle_agregaciones_lote_produccion->bindParam(1, $idLotProdc, PDO::PARAM_INT);
+        $stmt_detalle_agregaciones_lote_produccion->execute();
 
-                while ($row_detalle_agregacion_lote_produccion = $stmt_detalle_agregaciones_lote_produccion->fetch(PDO::FETCH_ASSOC)) {
-                    array_push($row["detAgr"], $row_detalle_agregacion_lote_produccion);
-                }
-          
-         return $row;
+        while ($row_detalle_agregacion_lote_produccion = $stmt_detalle_agregaciones_lote_produccion->fetch(PDO::FETCH_ASSOC)) {
+            array_push($row["detAgr"], $row_detalle_agregacion_lote_produccion);
+        }
 
+        return $row;
     } catch (PDOException $e) {
         $description_error = $e->getMessage();
         return $description_error;
@@ -225,13 +229,14 @@ function getAgregationsByOrderProdc($pdo,$idLotProdc){
 }
 
 
-function agregWithProdFinal($pdo,$idLotProdc){
+function agregWithProdFinal($pdo, $idLotProdc)
+{
 
     try {
-            $row["detAgr"] = [];
+        $row["detAgr"] = [];
 
-            $sql_detalle_agregaciones_lote_produccion =
-                "SELECT 
+        $sql_detalle_agregaciones_lote_produccion =
+            "SELECT 
             pa.id,
             pa.idProdc,
             pa.idProdt,
@@ -254,16 +259,15 @@ function agregWithProdFinal($pdo,$idLotProdc){
             RIGHT JOIN produccion_producto_final as pf ON pf.id = pa.idProdFin
             WHERE pf.idProdc = ?";
 
-                $stmt_detalle_agregaciones_lote_produccion = $pdo->prepare($sql_detalle_agregaciones_lote_produccion);
-                $stmt_detalle_agregaciones_lote_produccion->bindParam(1, $idLotProdc, PDO::PARAM_INT);
-                $stmt_detalle_agregaciones_lote_produccion->execute();
+        $stmt_detalle_agregaciones_lote_produccion = $pdo->prepare($sql_detalle_agregaciones_lote_produccion);
+        $stmt_detalle_agregaciones_lote_produccion->bindParam(1, $idLotProdc, PDO::PARAM_INT);
+        $stmt_detalle_agregaciones_lote_produccion->execute();
 
-                while ($row_detalle_agregacion_lote_produccion = $stmt_detalle_agregaciones_lote_produccion->fetch(PDO::FETCH_ASSOC)) {
-                    array_push($row["detAgr"], $row_detalle_agregacion_lote_produccion);
-                }
-          
-         return $row;
+        while ($row_detalle_agregacion_lote_produccion = $stmt_detalle_agregaciones_lote_produccion->fetch(PDO::FETCH_ASSOC)) {
+            array_push($row["detAgr"], $row_detalle_agregacion_lote_produccion);
+        }
 
+        return $row;
     } catch (PDOException $e) {
         $description_error = $e->getMessage();
         return $description_error;
