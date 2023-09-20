@@ -29,7 +29,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export function DetalleSalidas({ row, idProduccion }) {
+export function DetalleSalReqSel({ row, idProduccion }) {
   const [open, setOpen] = React.useState(false);
   const [entradas, setEntradas] = React.useState([]);
 
@@ -97,18 +97,20 @@ function TableEntradas2({ row, idProdt }) {
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
-            <TableCell align="left">Numero OP</TableCell>
+            <TableCell align="left">Codigo</TableCell>
             <TableCell align="left">nombre</TableCell>
             {/**
             <TableCell align="left">Cant. Disponible</TableCell>
              
              */}
             <TableCell align="left">Salida</TableCell>
-            <TableCell align="right">Fecha</TableCell>
+            <TableCell align="left">Entrada</TableCell>
+            <TableCell align="left">Merma</TableCell>
+            <TableCell align="right">Fecha salida requisicion</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {entrada.salidasProduccion?.map((item, index) => (
+          {entrada.salidasSeleccion?.map((item, index) => (
             <TableRow
               key={index}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

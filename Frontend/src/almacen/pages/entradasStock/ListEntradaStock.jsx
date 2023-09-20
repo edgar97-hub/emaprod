@@ -36,6 +36,7 @@ import ExportExcel from "../entradasStock/ExportExcel";
 import TypeEntrada from "./TypeEntrada";
 import { DetalleDevoluciones } from "./DetalleDevoluciones";
 import { DetalleSalidas } from "./DetalleSalidas";
+import { DetalleSalReqSel } from "./DetalleSalReqSel";
 
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import IconButton from "@mui/material/IconButton";
@@ -713,8 +714,31 @@ const ListEntradaStock = () => {
                               borderRadius: "9px",
                             }}
                           >
-                            {row.salidasStock?.length ? (
+                            {row.salidasProduccion?.length ? (
                               <DetalleSalidas
+                                row={row}
+                                idProduccion={1}
+                                idEntStock={row.idEntStock}
+                              />
+                            ) : (
+                              <IconButton>
+                                <BlockIcon
+                                  fontSize="medium"
+                                  sx={{ color: "white" }}
+                                />
+                              </IconButton>
+                            )}
+                          </div>
+
+                          <div
+                            className="btn-toolbar"
+                            style={{
+                              backgroundColor: "#0E80E5",
+                              borderRadius: "9px",
+                            }}
+                          >
+                            {row.salidasSeleccion?.length ? (
+                              <DetalleSalReqSel
                                 row={row}
                                 idProduccion={1}
                                 idEntStock={row.idEntStock}

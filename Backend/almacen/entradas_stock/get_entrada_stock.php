@@ -64,10 +64,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                 $row["devoluciones"] = [];
-                $row["salidasStock"] = [];
+                $row["salidasProduccion"] = [];
+                $row["salidasSeleccion"] = [];
+
                 $idEntStock = $row["idEntStock"];
                 $row = getDevoluciones($pdo, $idEntStock, $row);
-                $row = getSalidasStock($pdo, $idEntStock, $row);
+                $row = getSalidasProduccion($pdo, $idEntStock, $row);
+                $row = getSalidasSeleccion($pdo, $idEntStock, $row);
                 array_push($result, $row);
             }
         } catch (PDOException $e) {
@@ -86,7 +89,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['result'] = $result;
     echo json_encode($return);
 }
-function getSalidasStock($pdo, $idEntStock, $row)
+function getSalidasSeleccion($pdo, $idEntStock, $row)
+{
+    $sql_salida_stock =
+        "SELECT st.id, es.id , es.codEntSto,  st.idReqSel, st.idMatPri,   st.idEntSto,st.idMatPri, p.id as idProdt, p.codProd2,  p.nomProd,st.canSalStoReqSel, st.canEntStoReqSel, st.merReqSel
+        FROM entrada_stock as es
+        join salida_entrada_seleccion st on st.idEntSto =  es.id
+        join producto p on p.id = st.idMatPri
+        WHERE es.id = ?";
+
+    try {
+        $stmt = $pdo->prepare($sql_salida_stock);
+        $stmt->bindParam(1, $idEntStock, PDO::PARAM_INT);
+        $stmt->execute();
+
+        while ($row_salida_stock = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            array_push($row["salidasSeleccion"], $row_salida_stock);
+        }
+    } catch (PDOException $e) {
+        $description_error = $e->getMessage();
+        $row["salidasSeleccion"] = $description_error;
+    }
+    return $row;
+}
+
+function getSalidasProduccion($pdo, $idEntStock, $row)
 {
     $sql_salida_stock =
         "SELECT st.id, es.id , es.codEntSto,  st.idReq, st.idAgre, st.numop,  es.idProd, es.idAlm, st.idEntSto, st.idProdt, codProd2, st.idAlm, al.nomAlm, p.nomProd, st.canSalStoReq, st.fecSalStoReq
@@ -102,11 +129,11 @@ function getSalidasStock($pdo, $idEntStock, $row)
         $stmt->execute();
 
         while ($row_salida_stock = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            array_push($row["salidasStock"], $row_salida_stock);
+            array_push($row["salidasProduccion"], $row_salida_stock);
         }
     } catch (PDOException $e) {
         $description_error = $e->getMessage();
-        $row["salidasStock"] = $description_error;
+        $row["salidasProduccion"] = $description_error;
     }
     return $row;
 }

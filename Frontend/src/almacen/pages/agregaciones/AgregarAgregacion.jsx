@@ -26,7 +26,10 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { FilterPresentacionFinal } from "../../../components/ReferencialesFilters/Producto/FilterPresentacionFinal";
 import DetalleProducts from "./DetalleProducts";
-import { FormatDateTimeMYSQLNow, _parseInt } from "../../../utils/functions/FormatDate";
+import {
+  FormatDateTimeMYSQLNow,
+  _parseInt,
+} from "../../../utils/functions/FormatDate";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -254,7 +257,7 @@ export const AgregarAgregacion = () => {
         indexProdFin: obj.indexProdFin ? obj.indexProdFin : 0,
         cantUnidadesProdFin: obj.cantidadUnidades ? obj.cantidadUnidades : 0,
         cantidadklgLote: obj.cantidadklgLote,
-        idProdFin: obj.idProdFin ? obj.idProdFin: 0,
+        idProdFin: obj.idProdFin ? obj.idProdFin : 0,
       });
     });
 
@@ -377,6 +380,10 @@ export const AgregarAgregacion = () => {
     } else {
       setEntradasNoDisponible([]);
       if (message_error?.length === 0) {
+        setfeedbackMessages({
+          style_message: "success",
+          feedback_description_error: "Agregacion creado con exito",
+        });
         onNavigateBack();
       } else {
         setfeedbackMessages({
@@ -384,10 +391,11 @@ export const AgregarAgregacion = () => {
           feedback_description_error: description_error,
         });
         handleClickFeeback();
+        setdisableButton(false);
       }
     }
 
-    setdisableButton(false);
+    //setdisableButton(false);
   }
 
   useEffect(() => {

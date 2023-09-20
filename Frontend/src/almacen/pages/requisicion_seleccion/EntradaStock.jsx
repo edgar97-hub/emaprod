@@ -201,7 +201,6 @@ export const EntradaStock = () => {
             codProd2: codProd2,
             canReqSelDet: canReqSelDet,
           });
-          // TRAEMOS LOS DATOS DE SUS SALIDAS CORRESPONDIENTE A LA MATERIA PRIMA
           traerDatosEntradasDisponibles(idReqSel, idMatPri);
         } else {
           console.log("Se proporciono un id inexistente");
@@ -223,6 +222,8 @@ export const EntradaStock = () => {
       idReqSel,
       idMatPri
     );
+
+    console.log(result)
     setsalidasDisponibles(result);
   };
 
@@ -526,6 +527,7 @@ export const EntradaStock = () => {
                     <thead className="table-success ">
                       <tr>
                         <th scope="col">#</th>
+                        <th scope="col">Codigo entrada</th>
                         <th scope="col">Salida</th>
                         <th scope="col">Ingreso</th>
                         <th scope="col">Merma</th>

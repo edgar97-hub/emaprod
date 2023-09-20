@@ -16,6 +16,7 @@ export const RowSalidaDisponibleSeleccion = ({
   return (
     <tr>
       <td scope="row">{index + 1}</td>
+      <td>{element.codEntSto}</td>
       <td>{element.canSalStoReqSel}</td>
       <td>
         <input

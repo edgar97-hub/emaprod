@@ -204,11 +204,11 @@ export const ListRequisicionSeleccion = () => {
     }
   };
 
-  //FUNCION PARA TRAER LA DATA DE REQUISICION MOLIENDA
   const obtenerDataRequisicionSeleccion = async (body = formState) => {
     const resultPeticion = await getRequisicionSeleccionWithDetalle(body);
     const { message_error, description_error, result } = resultPeticion;
 
+    //console.log(result, body);
     if (message_error.length === 0) {
       setdataRequisicion(result);
       setdataRequisicionTemp(result);
@@ -244,20 +244,15 @@ export const ListRequisicionSeleccion = () => {
     setMostrarDetalle(true);
   };
 
-  // funciona para generar las salidas de requisicion seleccion
   const createSalidasRequisicionSeleccionDetalle = async (detalle) => {
     console.log(detalle);
-    // realizamos una peticion post
     const resultPeticion = await createSalidasByReqSelDetAutomatico(detalle);
 
     const { message_error, description_error } = resultPeticion;
 
     if (message_error.length === 0) {
-      // cerramos el modal
       closeDetalleRequisicionSeleccion();
-      // volvemos a traer la data
       obtenerDataRequisicionSeleccion();
-      // mostramos el feedback
       setfeedbackMessages({
         style_message: "success",
         feedback_description_error: "Se generaron las salidas con exito",
