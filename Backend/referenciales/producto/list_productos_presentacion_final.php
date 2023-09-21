@@ -19,6 +19,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // 175 => KION MOLIDO PROCESADO X 01 KG
         // 176 => OREGANO MOLIDO PROCESADO X 01 KG
 
+        // 398 => BOLSA PALILLO MOLIDO BATAN X 01 KG
+        // 400 => BOLSA KION MOLIDO BATAN X 01 KG
+        // 401 => BOLSA PIMIENTA MOLIDO BATAN X 01 KG
+        // 402 => BOLSA COMINO MOLIDO BATAN X 01 KG
+        // 403 =>  BOLSA  AJO MOLIDO BATAN X 01 KG
+        // 404 => BOLSA OREGANO BATAN X 01 KG
+
         $sql =
             "SELECT
         p.id,
@@ -31,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         p.esProProd
         FROM producto p
         LEFT JOIN medida ME ON p.idMed = ME.id
-        WHERE p.esProFin = ? or p.id in (171, 172, 173, 174, 175, 176)
+        WHERE(p.esProFin = ?   and p.id not in (398, 400, 401, 402, 403, 404)) or p.id in (171, 172, 173, 174, 175, 176)
         ";
         // Preparamos la consulta
         $stmt = $pdo->prepare($sql);
@@ -60,7 +67,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['result'] = $result;
     echo json_encode($return);
 }
-
-// Si se pudo realizar la conexion a la base de datos
-
-// Programa terminado
