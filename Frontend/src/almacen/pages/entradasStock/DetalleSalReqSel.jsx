@@ -42,7 +42,7 @@ export function DetalleSalReqSel({ row, idProduccion }) {
 
   return (
     <div>
-      <Tooltip title="Salidas">
+      <Tooltip title="Salidas seleccion">
         <IconButton onClick={handleClickOpen}>
           <TableRowsIcon fontSize="medium" sx={{ color: "white" }} />
         </IconButton>
@@ -54,7 +54,7 @@ export function DetalleSalReqSel({ row, idProduccion }) {
         open={open}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Detalle Salidas
+          Detalle salidas requisición selección
         </DialogTitle>
 
         <DialogContent dividers>
@@ -103,10 +103,12 @@ function TableEntradas2({ row, idProdt }) {
             <TableCell align="left">Cant. Disponible</TableCell>
              
              */}
-            <TableCell align="left">Salida</TableCell>
-            <TableCell align="left">Entrada</TableCell>
+            {/**
+               <TableCell align="left">Entrada</TableCell>
             <TableCell align="left">Merma</TableCell>
-            <TableCell align="right">Fecha salida requisicion</TableCell>
+             */}
+            <TableCell align="left">Fecha sal req.</TableCell>
+            <TableCell align="right">Salida</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -115,15 +117,18 @@ function TableEntradas2({ row, idProdt }) {
               key={index}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-              <TableCell align="left">{item.numop}</TableCell>
+              <TableCell align="left">{item.codProd2}</TableCell>
               <TableCell align="left">{item.nomProd}</TableCell>
               {/**
-                <TableCell align="left">
-                {parseFloat(item.acumulado) - parseFloat(item.canTotDis)}
-              </TableCell>
+                 <TableCell align="right">{item.canEntStoReqSel}</TableCell>
+              <TableCell align="right">{item.merReqSel}</TableCell>
+                 */}
+              <TableCell align="left">{item.fecSalStoReqSel}</TableCell>
+              <TableCell align="right">{item.canSalStoReqSel}</TableCell>
+
+              {/**
+                <TableCell align="right">{item.fecEntStoReqSel}</TableCell>
                */}
-              <TableCell align="left">{item.canSalStoReq}</TableCell>
-              <TableCell align="right">{item.fecSalStoReq}</TableCell>
             </TableRow>
           ))}
         </TableBody>

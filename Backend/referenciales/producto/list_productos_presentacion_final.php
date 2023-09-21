@@ -10,19 +10,28 @@ $description_error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($pdo) {
+
+
+        // 171 => COMINO MOLIDO PROCESADO X 01 KG
+        // 172 => PIMIENTA NEGRA MOLIDO PROCESADO X 01 KG
+        // 173 => PALILLO MOLIDO PROCESADO X 01 KG
+        // 174 = AJO MOLIDO PROCESADO X 01 KG
+        // 175 => KION MOLIDO PROCESADO X 01 KG
+        // 176 => OREGANO MOLIDO PROCESADO X 01 KG
+
         $sql =
             "SELECT
-        M.id,
-        M.idMed,
+        p.id,
+        p.idMed,
         ME.simMed,
-        M.nomProd,
-        M.codProd2,
-        M.esMatPri,
-        M.esProFin,
-        M.esProProd
-        FROM producto M
-        LEFT JOIN medida ME ON M.idMed = ME.id
-        WHERE M.esProFin = ?
+        p.nomProd,
+        p.codProd2,
+        p.esMatPri,
+        p.esProFin,
+        p.esProProd
+        FROM producto p
+        LEFT JOIN medida ME ON p.idMed = ME.id
+        WHERE p.esProFin = ? or p.id in (171, 172, 173, 174, 175, 176)
         ";
         // Preparamos la consulta
         $stmt = $pdo->prepare($sql);

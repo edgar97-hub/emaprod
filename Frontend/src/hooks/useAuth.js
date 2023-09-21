@@ -9,10 +9,8 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     const login = async (data) => {
-        // ACTUALIZAMOS EL LOCAL STORAGE
         setUser(data);
         const { idAre } = data;
-        // REDIRECCIONAMOS AL USUARIO A UNA RUTA ADECUADA
         setTimeout(() => {
             switch (idAre) {
                 case 1: navigate("/almacen", { replace: true });

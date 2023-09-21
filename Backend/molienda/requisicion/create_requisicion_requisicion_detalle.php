@@ -8,6 +8,7 @@ $result = [];
 $message_error = "";
 $description_error = "";
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
@@ -53,6 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(2, $idReqEst, PDO::PARAM_INT);
         $stmt->bindParam(3, $idProdt, PDO::PARAM_INT);
         $stmt->bindParam(4, $codReq, PDO::PARAM_STR);
+        //die(json_encode("test"));
 
         try {
             $pdo->beginTransaction();

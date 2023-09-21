@@ -46,18 +46,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             pc.canLotProd,
             re.desReqEst,
             p.nomProd,
-            r.fecPedReq,
+            r.fecPedReq
             FROM requisicion r
             JOIN producto as p on p.id = r.idProdt
             JOIN produccion pc  on pc.id = r.idProdc
             JOIN produccion_tipo pct on pct.id = pc.idProdTip
             JOIN area a on a.id = r.idAre
             JOIN requisicion_estado as re on re.id = r.idReqEst
-            WHERE r.idAre = ? DATE(r.fecPedReq) BETWEEN '$fechaInicio' AND '$fechaFin'
+            WHERE r.idAre = ?  
+            #DATE(r.fecPedReq) BETWEEN '$fechaInicio' AND '$fechaFin'
             ORDER BY r.fecPedReq DESC
             ";
         try {
-            // PREPARAMOS LA CONSULTA
+
+            //die(json_encode("test"));
+
             $idAre = 2; // AREA DE MOLIENDA
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(1, $idAre, PDO::PARAM_INT);

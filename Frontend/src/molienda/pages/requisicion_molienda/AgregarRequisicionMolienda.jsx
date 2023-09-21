@@ -52,7 +52,7 @@ export const AgregarRequisicionMolienda = () => {
     idProdt: 0,
     reqMolDet: [], // DETALLE DE REQUISICION MOLIENDA
   });
-  const { idProdc, idProdt, reqMolDet } = requisicion;
+ // const { idProdc, idProdt, reqMolDet } = requisicion;
 
   // ESTADOS PARA DATOS DE DETALLE FORMULA (DETALLE)
   const [materiaPrimaDetalle, setmateriaPrimaDetalle] = useState({
@@ -122,7 +122,7 @@ export const AgregarRequisicionMolienda = () => {
   // ELIMINAR DETALLE DE REQUISICION
   const deleteDetalleRequisicion = (idItem) => {
     // FILTRAMOS EL ELEMENTO ELIMINADO
-    const nuevaDataDetalleRequisicion = reqMolDet.filter((element) => {
+    const nuevaDataDetalleRequisicion = requisicion.reqMolDet.filter((element) => {
       if (element.idMatPri !== idItem) {
         return element;
       } else {
@@ -141,7 +141,7 @@ export const AgregarRequisicionMolienda = () => {
   // MANEJADOR PARA ACTUALIZAR REQUISICION
   const handledFormularioDetalle = ({ target }, idItem) => {
     const { value } = target;
-    const editFormDetalle = reqMolDet.map((element) => {
+    const editFormDetalle = requisicion.reqMolDet.map((element) => {
       if (element.idMatPri === idItem) {
         return {
           ...element,
@@ -181,8 +181,8 @@ export const AgregarRequisicionMolienda = () => {
   // SUBMIT FORMULARIO DE REQUISICION (M-D)
   const handleSubmitRequisicion = (e) => {
     e.preventDefault();
-    console.log(reqMolDet);
-    if (idProdc === 0 || reqMolDet.length === 0) {
+    console.log(requisicion.reqMolDet);
+    if (requisicion.idProdc === 0 || requisicion.reqMolDet.length === 0) {
       setfeedbackMessages({
         style_message: "warning",
         feedback_description_error:
@@ -331,7 +331,7 @@ export const AgregarRequisicionMolienda = () => {
     // PRIMERO VERIFICAMOS QUE LOS INPUTS TENGAN DATOS
     if (idMateriaPrima !== 0 && cantidadMateriaPrima > 0) {
       // PRIMERO VERIFICAMOS SI EXISTE ALGUNA COINCIDENCIA DE LO INGRESADO
-      const itemFound = reqMolDet.find(
+      const itemFound = requisicion.reqMolDet.find(
         (elemento) => elemento.idMatPri === idMateriaPrima
       );
       if (itemFound) {
@@ -360,7 +360,7 @@ export const AgregarRequisicionMolienda = () => {
 
           // SETEAMOS SU ESTADO PARA QUE PUEDA SER MOSTRADO EN LA TABLA DE DETALLE
           const dataMateriaPrimaDetalle = [
-            ...reqMolDet,
+            ...requisicion.reqMolDet,
             detalleFormulaMateriaPrima,
           ];
           setRequisicion({
@@ -612,7 +612,7 @@ export const AgregarRequisicionMolienda = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {reqMolDet
+                      {requisicion.reqMolDet
                         .slice(
                           page * rowsPerPage,
                           page * rowsPerPage + rowsPerPage
@@ -632,7 +632,7 @@ export const AgregarRequisicionMolienda = () => {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   component="div"
-                  count={reqMolDet.length}
+                  count={requisicion.reqMolDet.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   onPageChange={handleChangePage}

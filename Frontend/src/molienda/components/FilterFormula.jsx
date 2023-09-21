@@ -14,6 +14,8 @@ export const FilterFormula = ({ onNewInput }) => {
         label: element.nomFor, // NOMBRE DE LA FORMULA Y PRODUCTO
       };
     });
+
+    console.log(formatSelect);
     setResult(formatSelect);
   };
 

@@ -92,7 +92,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 function getSalidasSeleccion($pdo, $idEntStock, $row)
 {
     $sql_salida_stock =
-        "SELECT st.id, es.id , es.codEntSto,  st.idReqSel, st.idMatPri,   st.idEntSto,st.idMatPri, p.id as idProdt, p.codProd2,  p.nomProd,st.canSalStoReqSel, st.canEntStoReqSel, st.merReqSel
+        "SELECT st.id, es.id , es.codEntSto,  st.idReqSel, st.idMatPri,   st.idEntSto,st.idMatPri, p.id as idProdt, 
+        p.codProd2,  p.nomProd,st.canSalStoReqSel, st.canEntStoReqSel, st.merReqSel, st.fecSalStoReqSel, st.fecEntStoReqSel
         FROM entrada_stock as es
         join salida_entrada_seleccion st on st.idEntSto =  es.id
         join producto p on p.id = st.idMatPri

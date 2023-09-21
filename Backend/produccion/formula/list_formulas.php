@@ -8,14 +8,16 @@ $result = [];
 $message_error = "";
 $description_error = "";
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
     if ($pdo) {
         $sql =
             "SELECT
             f.id,
             f.idProd,
             f.idTipFor,
-            ft.desTipFor,
+            ft.desForTip,
             p.nomProd,
             f.nomFor,
             f.desFor,
@@ -56,7 +58,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['result'] = $result;
     echo json_encode($return);
 }
-
-// Si se pudo realizar la conexion a la base de datos
-
-// Programa terminado

@@ -240,6 +240,8 @@ export const ListRequisicionesMolienda = () => {
   const obtenerDataRequisicionMolienda = async (body = {}) => {
     const resultPeticion = await getRequisicionMoliendaWithDetalle(body);
     const { message_error, description_error, result } = resultPeticion;
+
+    console.log(resultPeticion);
     if (message_error.length === 0) {
       setdataRequisicion(result);
       setdataRequisicionTemp(result);
@@ -284,12 +286,16 @@ export const ListRequisicionesMolienda = () => {
           <div className="col-6">
             <div className="row">
               <div className="col-4">
-                Desde
-                <FechaPickerMonth onNewfecEntSto={onChangeDateStartData} />
+                <FechaPickerMonth
+                  onNewfecEntSto={onChangeDateStartData}
+                  label="Desde"
+                />
               </div>
               <div className="col-4">
-                Hasta
-                <FechaPickerMonth onNewfecEntSto={onChangeDateEndData} />
+                <FechaPickerMonth
+                  onNewfecEntSto={onChangeDateEndData}
+                  label="Hasta"
+                />
               </div>
             </div>
           </div>
@@ -394,15 +400,19 @@ export const ListRequisicionesMolienda = () => {
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Fecha requerido</b>
-                      <FechaPickerDay
+                      {/**
+                         <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaPedido}
                       />
+                         */}
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Fecha terminado</b>
-                      <FechaPickerDay
+                      {/**
+                        <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaTerminado}
                       />
+                       */}
                     </TableCell>
                     <TableCell align="left" width={100}>
                       <b>Acciones</b>

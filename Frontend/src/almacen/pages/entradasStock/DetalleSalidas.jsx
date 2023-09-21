@@ -42,7 +42,7 @@ export function DetalleSalidas({ row, idProduccion }) {
 
   return (
     <div>
-      <Tooltip title="Salidas">
+      <Tooltip title="Salidas produccion">
         <IconButton onClick={handleClickOpen}>
           <TableRowsIcon fontSize="medium" sx={{ color: "white" }} />
         </IconButton>
@@ -54,7 +54,7 @@ export function DetalleSalidas({ row, idProduccion }) {
         open={open}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Detalle Salidas
+          Detalle salidas producción
         </DialogTitle>
 
         <DialogContent dividers>

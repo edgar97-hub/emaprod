@@ -25,7 +25,7 @@ export const FilterPresentacionFinal = ({ onNewInput, finalProducts }) => {
           id: element.id,
         };
       });
-      //console.log(formatSelect)
+      console.log(formatSelect)
 
       setResult(formatSelect);
     }

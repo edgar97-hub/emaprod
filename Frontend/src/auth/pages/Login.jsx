@@ -59,7 +59,6 @@ export const Login = () => {
 
   // LOGIN USUARIO
   const loginUser = async (user) => {
-
     const { message_error, description_error, result } = await consultUser(
       user
     );
