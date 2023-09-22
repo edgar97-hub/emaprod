@@ -265,11 +265,14 @@ export const ListRequisicionesMolienda = () => {
 
   // MOSTRAR Y OCULTAR DETALLE DE REQUISICION MOLIENDA
   const showRequisicionMoliendaDetalle = (idPosElement) => {
-    const requisicionMoliendaDetalle =
-      dataRequisicionTemp[idPosElement].reqMolDet;
-    // seteamos la data de la requisicion seleccionada
+    //var ss = dataRequisicionTemp[idPosElement].reqMolDet
+    var ss = dataRequisicionTemp[idPosElement].reqDet;
+    const requisicionMoliendaDetalle = ss;
+
+    console.log(requisicionMoliendaDetalle, idPosElement, dataRequisicionTemp);
+
+    //return;
     setDetalleSeleccionado(requisicionMoliendaDetalle);
-    // mostramos el modal
     setMostrarDetalle(true);
   };
 
@@ -447,10 +450,10 @@ export const ListRequisicionesMolienda = () => {
                                 : "badge text-bg-success"
                             }
                           >
-                            {row.desReqMolEst}
+                            {row.desReqEst}
                           </span>
                         </TableCell>
-                        <TableCell align="left">{row.fecPedReqMol}</TableCell>
+                        <TableCell align="left">{row.fecPedReq}</TableCell>
                         <TableCell align="left">
                           {row.fecTerReqMol === null
                             ? "Aun no terminado"

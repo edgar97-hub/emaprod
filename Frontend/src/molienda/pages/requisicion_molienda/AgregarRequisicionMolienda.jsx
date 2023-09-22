@@ -52,7 +52,7 @@ export const AgregarRequisicionMolienda = () => {
     idProdt: 0,
     reqMolDet: [], // DETALLE DE REQUISICION MOLIENDA
   });
- // const { idProdc, idProdt, reqMolDet } = requisicion;
+  // const { idProdc, idProdt, reqMolDet } = requisicion;
 
   // ESTADOS PARA DATOS DE DETALLE FORMULA (DETALLE)
   const [materiaPrimaDetalle, setmateriaPrimaDetalle] = useState({
@@ -122,13 +122,15 @@ export const AgregarRequisicionMolienda = () => {
   // ELIMINAR DETALLE DE REQUISICION
   const deleteDetalleRequisicion = (idItem) => {
     // FILTRAMOS EL ELEMENTO ELIMINADO
-    const nuevaDataDetalleRequisicion = requisicion.reqMolDet.filter((element) => {
-      if (element.idMatPri !== idItem) {
-        return element;
-      } else {
-        return false;
+    const nuevaDataDetalleRequisicion = requisicion.reqMolDet.filter(
+      (element) => {
+        if (element.idMatPri !== idItem) {
+          return element;
+        } else {
+          return false;
+        }
       }
-    });
+    );
 
     // VOLVEMOS A SETEAR LA DATA
     setRequisicion({
@@ -161,8 +163,12 @@ export const AgregarRequisicionMolienda = () => {
   // FUNCION ASINCRONA PARA CREAR LA REQUISICION CON SU DETALLE
   const crearRequisicion = async () => {
     console.log(requisicion);
-    const { message_error, description_error } =
-      await createRequisicionWithDetalle(requisicion);
+
+    //return
+    var response = await createRequisicionWithDetalle(requisicion);
+    console.log(requisicion, response);
+
+    const { message_error, description_error } = response;
 
     if (message_error.length === 0) {
       // regresamos a la anterior vista
@@ -181,7 +187,7 @@ export const AgregarRequisicionMolienda = () => {
   // SUBMIT FORMULARIO DE REQUISICION (M-D)
   const handleSubmitRequisicion = (e) => {
     e.preventDefault();
-    console.log(requisicion.reqMolDet);
+    console.log(requisicion);
     if (requisicion.idProdc === 0 || requisicion.reqMolDet.length === 0) {
       setfeedbackMessages({
         style_message: "warning",
@@ -190,10 +196,7 @@ export const AgregarRequisicionMolienda = () => {
       });
       handleClickFeeback();
     } else {
-      // setdisableButton(true);
-      // LLAMAMOS A LA FUNCION CREAR REQUISICION
       crearRequisicion();
-      // RESETEAMOS LOS VALORES
     }
   };
 
@@ -238,38 +241,33 @@ export const AgregarRequisicionMolienda = () => {
   };
 
   // FUNCION ASINCRONA PARA TRAER LA FORMULA APROPIADA
-  const traerDatosFormulaDetalleApropiada = async () => {
-    /*
-      FORMULA QUE CORRESPONDA AL PESO Y PRODUCTO REQUERIDOS
-    */
-    const body = {
-      idProd: requisicion.idProdt,
-      lotKgrFor: klgLotProd,
-    };
+  async function traerDatosFormulaDetalleApropiada(body, requisicion) {
+    //const body = {
+    //  idProd: requisicion.idProdt,
+    //  lotKgrFor: klgLotProd,
+    //};
     const resultPeticion = await getFormulaWithDetalleByPrioridad(body);
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
       if (result.length === 0) {
-        setfeedbackMessages({
-          style_message: "warning",
-          feedback_description_error:
-            "No se encontro ninguna formula apropiada",
-        });
-        handleClickFeeback();
+        //setfeedbackMessages({
+        //  style_message: "warning",
+        //  feedback_description_error:
+        //    "No se encontro ninguna formula apropiada",
+        //});
+        //handleClickFeeback();
       } else {
-        // seteamos la data
         const { forDet } = result[0];
         setRequisicion({
           ...requisicion,
           reqMolDet: forDet,
         });
 
-        // mostramos feedback
-        setfeedbackMessages({
-          style_message: "success",
-          feedback_description_error: "Se encontro una formula apropiada",
-        });
-        handleClickFeeback();
+        //setfeedbackMessages({
+        //  style_message: "success",
+        //  feedback_description_error: "Se encontro una formula apropiada",
+        //});
+        //handleClickFeeback();
       }
     } else {
       setfeedbackMessages({
@@ -278,7 +276,7 @@ export const AgregarRequisicionMolienda = () => {
       });
       handleClickFeeback();
     }
-  };
+  }
 
   // FUNCION ASINCRONA PARA TRAER AL LOTE DE PRODUCCION Y SUS DATOS
   const traerDatosLoteProduccion = async () => {
@@ -286,7 +284,6 @@ export const AgregarRequisicionMolienda = () => {
     const { id, idProdt, codLotProd, nomProd, canLotProd, klgLotProd } =
       result[0];
 
-    // seteamos el estado de los datos de produccion lote
     setProduccionLote({
       ...produccionLote,
       idProdt: idProdt,
@@ -296,12 +293,23 @@ export const AgregarRequisicionMolienda = () => {
       klgLotProd: klgLotProd,
     });
 
-    // seteamos el estado de los datos de requisicion
-    setRequisicion({
+    var requisicion = {
       ...requisicion,
       idProdc: id,
       idProdt: idProdt,
-    });
+    };
+    //setRequisicion({
+    //  ...requisicion,
+    //  idProdc: id,
+    //  idProdt: idProdt,
+    //});
+
+    console.log(id, idProdt);
+    const body = {
+      idProd: idProdt,
+      lotKgrFor: klgLotProd,
+    };
+    traerDatosFormulaDetalleApropiada(body, requisicion);
   };
 
   const handleCompleteDatosProduccionLote = (e) => {
@@ -473,13 +481,11 @@ export const AgregarRequisicionMolienda = () => {
           </div>
         </div>
 
-        {/* CONTROL PARA JALAR DE FORMULA */}
-        {codLotProd.length !== 0 && (
+        {false && codLotProd.length !== 0 && (
           <div className="row mt-4 mx-4">
             <div className="card d-flex">
               <h6 className="card-header">Plantilla de formula</h6>
               <div className="card-body d-flex justify-content-between align-items-center">
-                {/* FILTRO POR FORMULA */}
                 <div className="col-md-5">
                   <label className="form-label">Formula</label>
                   <div className="col d-flex">
@@ -506,7 +512,6 @@ export const AgregarRequisicionMolienda = () => {
                     </div>
                   </div>
                 </div>
-                {/* BOTON AGREGAR DATOS FORMULA */}
                 <div className="col-md-7 d-flex justify-content-end">
                   <button
                     onClick={traerDatosFormulaDetalleApropiada}

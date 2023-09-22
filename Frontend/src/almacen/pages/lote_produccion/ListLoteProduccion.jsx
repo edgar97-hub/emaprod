@@ -242,12 +242,16 @@ export const ListLoteProduccion = () => {
           <div className="col-6">
             <div className="row">
               <div className="col-4">
-                Desde
-                <FechaPickerMonth onNewfecEntSto={onChangeDateStartData} />
+                <FechaPickerMonth
+                  onNewfecEntSto={onChangeDateStartData}
+                  label="Desde"
+                />
               </div>
               <div className="col-4">
-                Hasta
-                <FechaPickerMonth onNewfecEntSto={onChangeDateEndData} />
+                <FechaPickerMonth
+                  onNewfecEntSto={onChangeDateEndData}
+                  label="Hasta"
+                />
               </div>
 
               <div className="col-2 d-flex align-items-end">

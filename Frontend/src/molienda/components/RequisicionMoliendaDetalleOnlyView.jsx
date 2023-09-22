@@ -68,7 +68,11 @@ export const RequisicionMoliendaDetalleOnlyView = ({ detalle, onClose }) => {
                         <TableCell component="th" scope="row">
                           {row.nomProd}
                         </TableCell>
-                        <TableCell align="left">{row.canReqMolDet}</TableCell>
+                        {/**
+                         <TableCell align="left">{row.canReqMolDet}</TableCell>
+                        */}
+
+                        <TableCell align="left">{row.canReqDet}</TableCell>
                         <TableCell align="left">
                           <span
                             className={
@@ -77,7 +81,10 @@ export const RequisicionMoliendaDetalleOnlyView = ({ detalle, onClose }) => {
                                 : "badge text-bg-success"
                             }
                           >
+                            {/**
                             {row.desReqMolDetEst}
+                            */}
+                            {row.desReqDetEst}
                           </span>
                         </TableCell>
                       </TableRow>

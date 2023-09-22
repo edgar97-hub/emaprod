@@ -122,6 +122,36 @@ const NavAlmacen = () => {
                   </li> */}
                 </ul>
               </li>
+              {/* REQUISICION MOLIENDA */}
+
+              <li className="nav-item dropdown">
+                <button
+                  className="btn btn-lg dropdown-toggle"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Requisicion molienda
+                </button>
+                <ul className="dropdown-menu">
+                  <li>
+                    <Link
+                      className="dropdown-item"
+                      to={"/almacen/requisicion-molienda"}
+                    >
+                      Administrar
+                    </Link>
+                  </li>
+                  {/* <li>
+                    <Link
+                      className="dropdown-item"
+                      to={"/almacen/entradas-stock/crear"}
+                    >
+                      Crear
+                    </Link>
+                  </li> */}
+                </ul>
+              </li>
 
               {/* MATERIAS PRIMAS */}
               {/* <li className="nav-item dropdown">

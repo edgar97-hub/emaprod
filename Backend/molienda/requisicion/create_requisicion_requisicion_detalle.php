@@ -40,13 +40,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         $idReqEst = 1; // estado de requerido
+        $idAre = 2;  
 
         // insertamos la requisicion
         $sql =
             "INSERT INTO
                 requisicion
-                (idProdc, idReqEst, idProdt, codReq)
-                VALUES (?,?,?,?);
+                (idProdc, idReqEst, idProdt, codReq, idAre)
+                VALUES (?,?,?,?,?);
                 ";
         // PREPARAMOS LA CONSULTA
         $stmt = $pdo->prepare($sql);
@@ -54,6 +55,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(2, $idReqEst, PDO::PARAM_INT);
         $stmt->bindParam(3, $idProdt, PDO::PARAM_INT);
         $stmt->bindParam(4, $codReq, PDO::PARAM_STR);
+        $stmt->bindParam(5, $idAre, PDO::PARAM_STR);
+
         //die(json_encode("test"));
 
         try {

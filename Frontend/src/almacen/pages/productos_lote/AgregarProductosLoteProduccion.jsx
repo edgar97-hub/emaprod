@@ -322,12 +322,10 @@ export const AgregarProductosLoteProduccion = () => {
       obj.letAniEntSto = letraAnio(obj.fecEntSto);
       obj.diaJulEntSto = DiaJuliano(obj.fecEntSto);
     });
-    //console.log(detalleProductosFinales, proFinProdDet);
-    //canTotIngProdFin
-
+    const cloneProFinProdDet = structuredClone(proFinProdDet);
     var productoFin = {};
     detalleProductosFinales.map((obj) => {
-      var producto = proFinProdDet.find(
+      var producto = cloneProFinProdDet.find(
         (prodFin) => obj.codProd2 == prodFin.codProd2
       );
 
@@ -336,27 +334,23 @@ export const AgregarProductosLoteProduccion = () => {
           parseFloat(producto.canTotIngProdFin) + parseFloat(obj.canProdFin);
       }
 
-      //var producto = proFinProdDet.find(
-      //  (prodFin) => obj.canProdFin > prodFin.canTotIngProdFin
-      //);
       if (producto?.canTotIngProdFin > producto?.canTotProgProdFin) {
         productoFin = producto;
         productoFin.check = true;
       }
     });
-    //console.log(productoFin);
+
     if (productoFin.check) {
       setfeedbackMessages({
         style_message: "error",
         feedback_description_error:
-          " la suma de la cantidad ingresada para " +
+          "la suma de la cantidad ingresada para " +
           productoFin.nomProd +
           " supera a la cantidad programada",
       });
       handleClickFeeback();
       return;
     }
-    console.log(detalleProductosFinales);
 
     //return;
     const resultPeticion = await createProductosFinalesLoteProduccion(

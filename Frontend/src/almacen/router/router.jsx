@@ -5,6 +5,8 @@ import { RouterAlmacenMateriaPrima } from "./../pages/materiaPrima/RouterAlmacen
 import { RouterAlmacenProveedor } from "./../pages/proveedor/RouterAlmacenProveedor";
 import { RouterAlmacenSalidasStock } from "./../pages/salidasStocks/RouterAlmacenSalida";
 import { RouterRequisicionSeleccion } from "./../pages/requisicion_seleccion/RouterRequisicionSeleccion";
+import { RouterRequisicionMolienda } from "./../pages/requisicion_molienda/RouterRequisicionMolienda";
+
 import { RouterReportesAlmacen } from "./../pages/reportes/RouterReportesAlmacen";
 import { RouterAlmacenProductosLote } from "./../pages/productos_lote/RouterAlmacenProductosLote";
 import { RouterAlmacenLoteProduccion } from "../pages/lote_produccion/RouterAlmacenLoteProduccion";
@@ -41,6 +43,11 @@ export const RouterAlmacen = [
     path: "requisicion-seleccion",
     element: <LayoutModulo />,
     children: RouterRequisicionSeleccion,
+  },
+  {
+    path: "requisicion-molienda",
+    element: <LayoutModulo />,
+    children: RouterRequisicionMolienda,
   },
   {
     path: "reportes",
