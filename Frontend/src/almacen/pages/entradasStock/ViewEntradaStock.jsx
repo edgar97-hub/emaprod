@@ -112,7 +112,8 @@ export const ViewEntradaStock = () => {
   // ESTADOS PARA LA NAVEGACION
   const navigate = useNavigate();
   const onNavigateBack = () => {
-    navigate(-1);
+    window.close();
+    //navigate(-1);
   };
 
   useEffect(() => {
@@ -452,7 +453,7 @@ export const ViewEntradaStock = () => {
               onClick={onNavigateBack}
               className="btn btn-secondary me-2"
             >
-              Volver
+              Cerrar
             </button>
           </div>
         </div>

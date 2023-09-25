@@ -23,6 +23,7 @@ import { AccionesProduccionLote } from "./../../components/AccionesProduccionLot
 import { updateFechasProduccion } from "./../../helpers/produccion_lote/updateFechasProduccion";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 //import PDFExample from "../../pdf/PDFExample";
 import {
   PDFViewer,
@@ -1915,7 +1916,7 @@ export const ListProduccionLote = () => {
                                         width: "200px",
                                       }}
                                     >
-                                      <strong>TIPO PRODUCCIÓN</strong>{" "}
+                                      <strong>TIPO PRODUCCIÓN</strong>
                                       <input
                                         type="text"
                                         readOnly
@@ -2207,16 +2208,17 @@ export const ListProduccionLote = () => {
                             </div>
                           </div>
 
-                          {/**
-                             <div className="btn-toolbar">
-                              <Link
-                                to={`/almacen/productos-lote/crear?idLotProdc=${row.id}`}
-                                className="btn btn-primary me-2 btn"
-                              >
-                                RPF
-                              </Link>
-                            </div>
-                             */}
+                          <div
+                            className="btn-toolbar btn btn-primary me-2 btn"
+                            onClick={() => {
+                              window.open(
+                                `/almacen/productos-lote/crear?idLotProdc=${row.id}`,
+                                "_blank"
+                              );
+                            }}
+                          >
+                            <AppRegistrationIcon />
+                          </div>
 
                           <div
                             className="btn btn-primary me-2 btn"

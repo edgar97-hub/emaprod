@@ -31,7 +31,7 @@ export const RowRequisicionDetalleLoteProduccion = ({
         </span>
       </TableCell>
       <TableCell>{detalle.simMed}</TableCell>
-      <TableCell>{detalle.canReqDet}</TableCell>
+      <TableCell>{"detalle.canReqDet"}</TableCell>
       <TableCell>
         <div className="btn-toolbar">
          {onUpdateDetalleRequisicion && 

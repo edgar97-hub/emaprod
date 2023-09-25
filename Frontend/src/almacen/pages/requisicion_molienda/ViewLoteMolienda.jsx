@@ -220,7 +220,7 @@ export const ViewLoteMolienda = () => {
             <h6 className="card-header">Acciones</h6>
             <div className="card-body align-self-center">
               <Link
-                to={`/almacen/productos-lote/crear?idLotProdc=${idProdc}`}
+                to={`/almacen/requisicion-molienda/agregar?idLotProdc=${idProdc}`}
                 className="btn btn-primary"
               >
                 Registrar productos intermedios
@@ -383,6 +383,17 @@ export const ViewLoteMolienda = () => {
                 );
               })}
             </div>
+          </div>
+          <div className="btn-toolbar mt-4">
+            <button
+              type="button"
+              onClick={() => {
+                window.close();
+              }}
+              className="btn btn-secondary me-2"
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       </div>

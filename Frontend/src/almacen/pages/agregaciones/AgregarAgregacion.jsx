@@ -384,7 +384,10 @@ export const AgregarAgregacion = () => {
           style_message: "success",
           feedback_description_error: "Agregacion creado con exito",
         });
-        onNavigateBack();
+        handleClickFeeback();
+        setTimeout(() => {
+          window.close();
+        }, "1000");
       } else {
         setfeedbackMessages({
           style_message: "error",

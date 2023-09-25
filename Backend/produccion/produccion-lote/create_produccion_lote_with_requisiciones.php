@@ -3,14 +3,6 @@ include_once "../../common/cors.php";
 header('Content-Type: application/json; charset=utf-8');
 require('../../common/conexion.php');
 
-/*************************CAMBIOS EN LA BASE DE DATOS************************* */
-//ALTER TABLE produccion ADD numop VARCHAR(255) DEFAULT NULL;
-
-/************************************OBSERBACIONES*************************** */
-/*
-tenemos errores en las comlumnas klLote y canLotPrdo 
-
-*/
 
 $pdo = getPDO();
 $result = [];

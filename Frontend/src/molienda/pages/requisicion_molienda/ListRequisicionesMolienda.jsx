@@ -122,6 +122,21 @@ export const ListRequisicionesMolienda = () => {
   const filter = (terminoBusqueda, name) => {
     let resultSearch = [];
     switch (name) {
+      case "filterCodReq":
+        resultSearch = dataRequisicion.filter((element) => {
+          if (
+            element.codReq
+              .toString()
+              .toLowerCase()
+              .includes(terminoBusqueda.toLowerCase())
+          ) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+        setdataRequisicionTemp(resultSearch);
+        break;
       case "filterLoteProduccion":
         resultSearch = dataRequisicion.filter((element) => {
           if (
@@ -369,6 +384,23 @@ export const ListRequisicionesMolienda = () => {
                         }}
                       />
                     </TableCell>
+
+                    <TableCell align="left" width={70}>
+                      <b>Codigo</b>
+                      <TextField
+                        name="filterCodReq"
+                        onChange={handleFormFilter}
+                        //type="number"
+                        size="small"
+                        autoComplete="off"
+                        InputProps={{
+                          style: {
+                            color: "black",
+                            background: "white",
+                          },
+                        }}
+                      />
+                    </TableCell>
                     <TableCell align="left" width={100}>
                       <b>Tipo</b>
                       <FilterTipoProduccion
@@ -434,6 +466,9 @@ export const ListRequisicionesMolienda = () => {
                       >
                         <TableCell component="th" scope="row">
                           {row.codLotProd}
+                        </TableCell>
+                        <TableCell component="th" scope="row">
+                          {row.codReq}
                         </TableCell>
                         <TableCell align="left">{row.desProdTip}</TableCell>
                         <TableCell align="left">{row.nomProd}</TableCell>

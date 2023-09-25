@@ -26,6 +26,7 @@ import { createProductosFinalesLoteProduccion } from "./../../helpers/producto-p
 import {
   DiaJuliano,
   FormatDateTimeMYSQLNow,
+  FormatDateTimeMYSQL,
   letraAnio,
   _parseInt,
 } from "../../../utils/functions/FormatDate";
@@ -88,10 +89,21 @@ export const AgregarProductosLoteProduccion = () => {
   // ******* ACCIONES DE FILTER PRODUCTO FINAL ******
   // MANEJADOR DE PRODUCTO
   const onAddProductoFinalSubProducto = (value) => {
+    var year = 0;
+    if (value.item.simMed === "LTS") {
+      year = 1;
+    } else {
+      year = 4;
+    }
+    var date = new Date(fecEntSto);
+    date.setFullYear(date.getFullYear() + year);
+    var fecVenEntProdFin = FormatDateTimeMYSQL(date);
+    //console.log(fecVenEntProdFin);
     setproductoFinal({
       ...productoFinal,
       idProdFin: value.id, // id de producto de la tabla productos
       idProdfinal: value.idProdFin, // id record de la tabla produccion_producto_final
+      fecVenSto: fecVenEntProdFin,
     });
   };
 
@@ -294,7 +306,7 @@ export const AgregarProductosLoteProduccion = () => {
     }, []);
     result[0].proFinProdDet = copyProducts;
     result[0].productsAutocomplete = products;
-    console.log(result[0]);
+    //console.log(result[0]);
 
     if (message_error.length === 0) {
       setProFinProd(result[0]);
@@ -352,7 +364,6 @@ export const AgregarProductosLoteProduccion = () => {
       return;
     }
 
-    //return;
     const resultPeticion = await createProductosFinalesLoteProduccion(
       detalleProductosFinales,
       idProdTip,
@@ -586,7 +597,10 @@ export const AgregarProductosLoteProduccion = () => {
 
                 <div className="col-md-2">
                   <label className="form-label">Fecha de vencimiento</label>
-                  <FechaPickerYear onNewfecEntSto={onAddFecVenSto} />
+                  <FechaPickerYear
+                    onNewfecEntSto={onAddFecVenSto}
+                    date={fecVenSto}
+                  />
                 </div>
 
                 <div className="col-md-2">
@@ -664,6 +678,7 @@ export const AgregarProductosLoteProduccion = () => {
                             detalle={row}
                             onDeleteDetalle={handleDeleteProductoDevuelto}
                             onChangeDetalle={handleChangeInputProductoFinal}
+                            showButtonDelete={true}
                           />
                         ))}
                       </TableBody>

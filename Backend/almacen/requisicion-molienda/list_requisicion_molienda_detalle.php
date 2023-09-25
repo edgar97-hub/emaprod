@@ -46,7 +46,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             pc.canLotProd,
             re.desReqEst,
             p.nomProd,
-            r.fecPedReq
+            r.fecPedReq, 
+            r.codReq
             FROM requisicion r
             JOIN producto as p on p.id = r.idProdt
             JOIN produccion pc  on pc.id = r.idProdc

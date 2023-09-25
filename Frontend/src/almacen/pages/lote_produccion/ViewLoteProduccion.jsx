@@ -187,7 +187,7 @@ export const ViewLoteProduccion = () => {
 
     const { message_error, description_error, result } = resultPeticion;
 
-   // console.log(result[0].prodLotReq);
+    // console.log(result[0].prodLotReq);
 
     result[0].prodLotReq.map((obj) => {
       obj.reqDet.map((obj) => {
@@ -394,6 +394,17 @@ export const ViewLoteProduccion = () => {
                   />
                 );
               })}
+            </div>
+            <div className="btn-toolbar mt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  window.close();
+                }}
+                className="btn btn-secondary me-2"
+              >
+                Cerrar
+              </button>
             </div>
           </div>
         </div>

@@ -5,7 +5,12 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { getAllProductos } from "./../../../helpers/Referenciales/producto/getAllProductos";
 import { useAuth } from "../../../hooks/useAuth";
 
-export const FilterAllProductos = ({ onNewInput, inputs, productos, mostrarCodigo }) => {
+export const FilterAllProductos = ({
+  onNewInput,
+  inputs,
+  productos,
+  mostrarCodigo,
+}) => {
   const [result, setResult] = useState([]);
   const [value, setValue] = useState({
     label: "",
@@ -16,6 +21,7 @@ export const FilterAllProductos = ({ onNewInput, inputs, productos, mostrarCodig
     const resultPeticion = await getAllProductos(user);
     var formatSelect = resultPeticion.map((element) => {
       return {
+        item: element,
         value: element.codProd2 === null ? "000000" : element.codProd2,
         label: element.nomProd,
         id: element.id,
@@ -72,12 +78,13 @@ export const FilterAllProductos = ({ onNewInput, inputs, productos, mostrarCodig
         getOptionLabel={(option) =>
           typeof option === "string"
             ? option
-            : ( mostrarCodigo  && option.value ? (option.value + " - ") : "") + option.label
+            : (mostrarCodigo && option.value ? option.value + " - " : "") +
+              option.label
         }
         renderOption={(props, option) => {
           return (
             <li {...props} key={option.id}>
-              {(mostrarCodigo   ? (option.value + " - ") : "" )+ (option.label)}
+              {(mostrarCodigo ? option.value + " - " : "") + option.label}
             </li>
           );
         }}

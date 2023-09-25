@@ -665,12 +665,14 @@ export const CrearProduccionLote = () => {
     produccionLote.klgTotalLoteProduccion = klgTotalLoteProduccion;
     //produccionLote.klgDisponibleLoteProduccion = klgDisponibleLoteProduccion;
 
+    console.log(produccionLote);
+    //return;
     const resultPeticion = await createProduccionLoteWithRequisiciones(
       produccionLote
     );
     console.log(produccionLote, resultPeticion);
     //return;
-    
+
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
       // regresamos a la anterior vista

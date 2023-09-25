@@ -1,6 +1,6 @@
-const FormatDateTimeMYSQL = (newDate) => {
-    let fecha = newDate.toISOString().split("T", 1)[0];
-    let hora = newDate.toLocaleTimeString().split(" ",1)[0];
+const FormatDateTimeMYSQL = (date) => {
+    let fecha = date.toISOString().split("T", 1)[0];
+    let hora = date.toLocaleTimeString().split(" ",1)[0];
     return fecha + " " + hora;
 }
 

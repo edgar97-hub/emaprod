@@ -22,6 +22,8 @@ export default function TypeEntrada({ inputs, onChangeTipoEntrada }) {
           <MenuItem value={"COMPRAS"}>COMPRAS</MenuItem>
           <MenuItem value={"PRODT. FINAL"}>PRODT. FINAL</MenuItem>
           <MenuItem value={"DEVOLUCIONES"}>DEVOLUCIONES</MenuItem>
+          <MenuItem value={"PRODT. SELECCION"}>PRODT. SELECCION</MenuItem>
+          <MenuItem value={"PRODT. MOLIENDA"}>PRODT. MOLIENDA</MenuItem>
         </Select>
       </FormControl>
     </Box>

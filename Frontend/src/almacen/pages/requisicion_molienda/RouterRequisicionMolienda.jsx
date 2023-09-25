@@ -1,5 +1,6 @@
 import { ViewLoteMolienda } from "./ViewLoteMolienda";
 import { ListRequisicionesMolienda } from "./ListRequisicionesMolienda";
+import { AgregarProductosLoteMolienda } from "./agregar_productos_molienda/AgregarProductosLoteMolienda";
 
 export const RouterRequisicionMolienda = [
   {
@@ -9,5 +10,9 @@ export const RouterRequisicionMolienda = [
   {
     path: "view/:idProdc/:idReq",
     element: <ViewLoteMolienda />,
+  },
+  {
+    path: "agregar",
+    element: <AgregarProductosLoteMolienda />,
   },
 ];

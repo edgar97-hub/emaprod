@@ -3,18 +3,27 @@ import { useState, useEffect } from "react";
 import Select from "react-select";
 import { getLoteProduccionMolienda } from "./../helpers/requisicion/getLoteProduccionMolienda";
 
-export const FilterLoteProduccion = ({ onNewInput }) => {
+export const FilterLoteProduccion = ({ onNewInput, produccion }) => {
   const [result, setResult] = useState([]);
+  const [value, setValue] = useState({
+    value: "none",
+    label: "NINGUNO",
+    id: "none",
+  });
 
   const obtenerDataLoteProduccionMolienda = async () => {
     const { result } = await getLoteProduccionMolienda();
-    const formatSelect = result.map((element) => {
+    var formatSelect = result.map((element) => {
       return {
         value: element.id, //ID DE LA PRODUCCION
         label: `${element.codLotProd} - ${element.nomProd} - ${element.fecProdIni}`, // NOMBRE DE LA FORMULA Y PRODUCTO
         id: element.id,
       };
     });
+    formatSelect = [
+      ...[{ value: "none", label: "NINGUNO", id: "none" }],
+      ...formatSelect,
+    ];
     setResult(formatSelect);
   };
 
@@ -22,13 +31,20 @@ export const FilterLoteProduccion = ({ onNewInput }) => {
     obtenerDataLoteProduccionMolienda();
   }, []);
 
-  const handledChange = ({ value }) => {
-    onNewInput(value);
+  useEffect(() => {
+    if (produccion) {
+      setValue(produccion);
+    }
+  }, [produccion]);
+
+  const handledChange = (item) => {
+    onNewInput(item.value);
+    setValue(item);
   };
 
   return (
     <>
-      <Select options={result} onChange={handledChange} />
+      <Select options={result} value={value} onChange={handledChange} />
     </>
   );
 };

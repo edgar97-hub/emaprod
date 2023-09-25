@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     FROM requisicion r
                     JOIN requisicion_estado as re on re.id = r.idReqEst
                     JOIN area as ar on ar.id = r.idAre
-                    WHERE r.idProdc = ? ORDER BY id ASC";
+                    WHERE r.idProdc = ? and r.codReq is null ORDER BY id ASC";
 
                     $stmt_requisicion = $pdo->prepare($sql_requisicion);
                     $stmt_requisicion->bindParam(1, $idProdLot, PDO::PARAM_INT);

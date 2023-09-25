@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $idProdt = $row["idProdt"]; // producto
             $canProdFin = $row["canProdFin"]; // cantidad total
             $fecVenEntProdFin = $row["fecVenEntProdFin"]; // fecha de vencimiento
-            $idProdFinal = $row["idProdFinal"]; // cantidad total
+            $idProdFinal = $row["idProdFinal"];  
 
             $sql_consult_producto_final =
                 "SELECT * FROM produccion_producto_final
@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         $letAniEntSto = $row["letAniEntSto"];
                         $diaJulEntSto =  $row["diaJulEntSto"];
-                        $docEntSto = "producto final";
+                        $docEntSto = "PRODUCTO FINAL";
                         $anioActual = explode("-", explode(" ", $fecEntSto)[0])[0]; // año actual
                         $sql_numero_entrada =
                             "SELECT 

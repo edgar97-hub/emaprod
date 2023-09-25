@@ -21,6 +21,7 @@ import { FilterLoteProduccion } from "./../../components/FilterLoteProduccion";
 import { getLoteProduccionById } from "./../../helpers/requisicion/getLoteProduccionById";
 import { RowDetalleFormula } from "../../components/RowDetalleFormula";
 import { getFormulaWithDetalleByPrioridad } from "./../../helpers/formula/getFormulaWithDetalleByPrioridad";
+import { FilterProductoProduccion } from "./../../../components/ReferencialesFilters/Producto/FilterProductoProduccion";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -30,7 +31,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 export const AgregarRequisicionMolienda = () => {
   // ESTADO PARA LOS DATOS DEL FILTRO POR LOTE PRODUCCION
   const [produccionLote, setProduccionLote] = useState({
-    idProd: 0,
+    idProd: "none",
     codLotProd: "",
     klgLotProd: "",
     canLotProd: "",
@@ -242,32 +243,23 @@ export const AgregarRequisicionMolienda = () => {
 
   // FUNCION ASINCRONA PARA TRAER LA FORMULA APROPIADA
   async function traerDatosFormulaDetalleApropiada(body, requisicion) {
-    //const body = {
-    //  idProd: requisicion.idProdt,
-    //  lotKgrFor: klgLotProd,
-    //};
     const resultPeticion = await getFormulaWithDetalleByPrioridad(body);
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
       if (result.length === 0) {
-        //setfeedbackMessages({
-        //  style_message: "warning",
-        //  feedback_description_error:
-        //    "No se encontro ninguna formula apropiada",
-        //});
-        //handleClickFeeback();
       } else {
-        const { forDet } = result[0];
+        var { forDet } = result[0];
+        forDet.map((obj) => {
+          if (obj.canMatPriFor) {
+            obj.canMatPriFor =
+              parseFloat(obj.canMatPriFor) * parseFloat(body.canLotProd);
+            obj.canMatPriFor = obj.canMatPriFor.toFixed(3);
+          }
+        });
         setRequisicion({
           ...requisicion,
           reqMolDet: forDet,
         });
-
-        //setfeedbackMessages({
-        //  style_message: "success",
-        //  feedback_description_error: "Se encontro una formula apropiada",
-        //});
-        //handleClickFeeback();
       }
     } else {
       setfeedbackMessages({
@@ -298,18 +290,21 @@ export const AgregarRequisicionMolienda = () => {
       idProdc: id,
       idProdt: idProdt,
     };
-    //setRequisicion({
-    //  ...requisicion,
-    //  idProdc: id,
-    //  idProdt: idProdt,
-    //});
 
-    console.log(id, idProdt);
+    //console.log(id, idProdt);
     const body = {
       idProd: idProdt,
       lotKgrFor: klgLotProd,
+      canLotProd: canLotProd,
     };
     traerDatosFormulaDetalleApropiada(body, requisicion);
+  };
+
+  const onAddProductoIntermedio = ({ id }) => {
+    //setproduccionLote({
+    //  ...produccionLote,
+    //  idProdt: id,
+    //});
   };
 
   const handleCompleteDatosProduccionLote = (e) => {
@@ -327,6 +322,15 @@ export const AgregarRequisicionMolienda = () => {
 
   // FILTER POR PRODUCCION LOTE
   const onProduccionLote = (valueId) => {
+    console.log(valueId);
+
+    if (valueId === "none") {
+      produccionLote = {
+        ...produccionLote,
+        canLotProd: 0.0,
+      };
+    }
+
     setProduccionLote({
       ...produccionLote,
       idProd: valueId,
@@ -438,7 +442,8 @@ export const AgregarRequisicionMolienda = () => {
             <h6 className="card-header">Datos del lote de produccion</h6>
             <div className="card-body">
               {/* NUMERO DE LOTE */}
-              <div className="mb-3 row">
+              {/**
+                 <div className="mb-3 row">
                 <label htmlFor="nombre" className="col-sm-2 col-form-label">
                   Numero de Lote
                 </label>
@@ -446,30 +451,57 @@ export const AgregarRequisicionMolienda = () => {
                   <input disabled value={codLotProd} className="form-control" />
                 </div>
               </div>
+                 */}
               {/* PRODUCTO */}
               <div className="mb-3 row">
                 <label htmlFor="nombre" className="col-sm-2 col-form-label">
                   Producto
                 </label>
                 <div className="col-md-3">
-                  <input disabled value={nomProd} className="form-control" />
+                  {idProd === "none" ? (
+                    <FilterProductoProduccion
+                      onNewInput={onAddProductoIntermedio}
+                    />
+                  ) : (
+                    <input disabled value={nomProd} className="form-control" />
+                  )}
+                  {/**
+                    <input disabled value={nomProd} className="form-control" />
+                     */}
                 </div>
               </div>
               {/* CANTIDAD REQUISICION */}
               <div className="mb-3 row">
                 <label htmlFor="categoria" className="col-sm-2 col-form-label">
-                  Cantidad
+                  Peso programado
                 </label>
-                <div className="col-md-2 d-flex">
-                  <input
+                <div className="col-md-3">
+                  {/**
+                     <input
                     disabled
                     value={canLotProd}
                     className="form-control me-2"
                   />
+                     */}
+
+                  <input
+                    type="number"
+                    name="canLotProd"
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      setProduccionLote({
+                        ...produccionLote,
+                        [name]: value,
+                      });
+                    }}
+                    value={canLotProd}
+                    className="form-control"
+                  />
                 </div>
               </div>
               {/* KILOGRAMOS POR LOTE */}
-              <div className="mb-3 row">
+              {/**
+                <div className="mb-3 row">
                 <label htmlFor="stock" className="col-sm-2 col-form-label">
                   Kilogramos de lote
                 </label>
@@ -477,6 +509,7 @@ export const AgregarRequisicionMolienda = () => {
                   <input disabled value={klgLotProd} className="form-control" />
                 </div>
               </div>
+               */}
             </div>
           </div>
         </div>

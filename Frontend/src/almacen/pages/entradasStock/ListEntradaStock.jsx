@@ -236,6 +236,12 @@ const ListEntradaStock = () => {
             ) {
               entradas.push(data);
             }
+            if (inputs.tipoEntrada == "PRODT. SELECCION" && data.esSel) {
+              entradas.push(data);
+            }
+            if (inputs.tipoEntrada == "PRODT. MOLIENDA" && data.esMol) {
+              entradas.push(data);
+            }
           });
           console.log(entradas);
 
