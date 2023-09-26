@@ -373,8 +373,17 @@ export const AgregarProductosLoteProduccion = () => {
     //console.log(resultPeticion);
     const { message_error, description_error } = resultPeticion;
     if (message_error.length === 0) {
-      // regresamos a la anterior vista
       onNavigateBack();
+      setfeedbackMessages({
+        style_message: "success",
+        feedback_description_error: "Guardado con exito",
+      });
+      handleClickFeeback();
+
+      setTimeout(() => {
+        //window.location.reload();
+        window.close();
+      }, "1000");
     } else {
       setfeedbackMessages({
         style_message: "error",
@@ -605,6 +614,7 @@ export const AgregarProductosLoteProduccion = () => {
 
                 <div className="col-md-2">
                   <label className="form-label">Cantidad</label>
+                  <br />
                   <TextField
                     type="number"
                     autoComplete="off"

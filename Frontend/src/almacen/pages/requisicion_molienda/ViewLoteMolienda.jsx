@@ -196,6 +196,22 @@ export const ViewLoteMolienda = () => {
     });
 
     if (message_error.length === 0) {
+      if (!result[0].canLotProd) {
+        result[0].canLotProd = "ww";
+      }
+      if (!result[0].desProdTip) {
+        result[0].desProdTip = "POLVOS";
+      }
+      if (!result[0].nomProd) {
+        result[0].nomProd = "POLVOS";
+      }
+      if (!result[0].id) {
+        result[0].id = "-1";
+      }
+      if (!result[0].numop) {
+        result[0].numop = "-1";
+      }
+
       setproduccionRequisicionDetalle(result[0]);
     } else {
       setfeedbackMessages({
@@ -233,68 +249,64 @@ export const ViewLoteMolienda = () => {
             <div className="card-body">
               <div className="mb-3 row">
                 {/* NUMERO DE LOTE */}
-                <div className="col-md-2">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Número de Lote</b>
-                  </label>
-                  <input
-                    type="text"
-                    disabled={true}
-                    value={codLotProd}
-                    className="form-control"
-                  />
-                </div>
+                {codLotProd && (
+                  <div className="col-md-2">
+                    <label htmlFor="nombre" className="form-label">
+                      <b>Número de Lote</b>
+                    </label>
+                    <input
+                      type="text"
+                      disabled={true}
+                      value={codLotProd}
+                      className="form-control"
+                    />
+                  </div>
+                )}
 
-                <div className="col-md-2">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Número OP</b>
-                  </label>
-                  <input
-                    type="text"
-                    disabled={true}
-                    value={numop}
-                    className="form-control"
-                  />
-                </div>
+                {numop && (
+                  <div className="col-md-2">
+                    <label htmlFor="nombre" className="form-label">
+                      <b>Número OP</b>
+                    </label>
+                    <input
+                      type="text"
+                      disabled={true}
+                      value={numop}
+                      className="form-control"
+                    />
+                  </div>
+                )}
 
                 {/* PRODUCTO */}
-                <div className="col-md-4 me-4">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Producto</b>
-                  </label>
-                  <input
-                    disabled={true}
-                    type="text"
-                    value={nomProd}
-                    className="form-control"
-                  />
-                </div>
-
-                {/* CANTIDAD DE LOTE      swap [catidad,pesolote]******************************/}
-                <div className="col-md-2">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Cantidad</b>
-                  </label>
-                  <input
-                    type="number"
-                    disabled={true}
-                    value={klgLotProd}
-                    className="form-control"
-                  />
-                </div>
+                {nomProd && (
+                  <div className="col-md-4 me-4">
+                    <label htmlFor="nombre" className="form-label">
+                      <b>Producto</b>
+                    </label>
+                    <input
+                      disabled={true}
+                      type="text"
+                      value={nomProd}
+                      className="form-control"
+                    />
+                  </div>
+                )}
 
                 {/* KILOGRAMOS DE LOTE */}
-                <div className="col-md-2">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Peso de Lote Total</b>
-                  </label>
-                  <input
-                    type="number"
-                    disabled={true}
-                    value={canLotProd}
-                    className="form-control"
-                  />
-                </div>
+
+                {canLotProd && (
+                  <div className="col-md-2">
+                    <label htmlFor="nombre" className="form-label">
+                      <b>Peso de Lote Total</b>
+                    </label>
+                    <input
+                      type="number"
+                      disabled={true}
+                      value={canLotProd}
+                      className="form-control"
+                    />
+                  </div>
+                )}
 
                 {/* KILOGRAMOS DE LOTE 
                 <div className="col-md-2">
@@ -323,41 +335,47 @@ export const ViewLoteMolienda = () => {
               </div>
               <div className="mb-3 row d-flex align-items-center">
                 {/* TIPO DE PRODUCCION */}
-                <div className="col-md-3">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Tipo de produccion</b>
-                  </label>
-                  <input
-                    type="text"
-                    disabled={true}
-                    value={desProdTip}
-                    className="form-control"
-                  />
-                </div>
+                {desProdTip && (
+                  <div className="col-md-3">
+                    <label htmlFor="nombre" className="form-label">
+                      <b>Tipo de produccion</b>
+                    </label>
+                    <input
+                      type="text"
+                      disabled={true}
+                      value={desProdTip}
+                      className="form-control"
+                    />
+                  </div>
+                )}
                 {/* ESTADO DE PRODUCCION */}
-                <div className="col-md-4">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Estado de Producción</b>
-                  </label>
-                  <input
-                    type="text"
-                    disabled={true}
-                    value={desEstPro}
-                    className="form-control"
-                  />
-                </div>
+                {desEstPro && (
+                  <div className="col-md-4">
+                    <label htmlFor="nombre" className="form-label">
+                      <b>Estado de Producción</b>
+                    </label>
+                    <input
+                      type="text"
+                      disabled={true}
+                      value={desEstPro}
+                      className="form-control"
+                    />
+                  </div>
+                )}
                 {/* FECHA DE VENCIMIENTO */}
-                <div className="col-md-4">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Fecha vencimiento lote</b>
-                  </label>
-                  <input
-                    type="text"
-                    disabled={true}
-                    value={fecVenLotProd}
-                    className="form-control"
-                  />
-                </div>
+                {fecVenLotProd && (
+                  <div className="col-md-4">
+                    <label htmlFor="nombre" className="form-label">
+                      <b>Fecha vencimiento lote</b>
+                    </label>
+                    <input
+                      type="text"
+                      disabled={true}
+                      value={fecVenLotProd}
+                      className="form-control"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>

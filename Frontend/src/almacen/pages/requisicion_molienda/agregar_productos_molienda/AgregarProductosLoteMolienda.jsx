@@ -359,7 +359,6 @@ export const AgregarProductosLoteMolienda = () => {
     }
   };
 
-  // CODIGO QUE SE EJECUTA ANTES DE LA RENDERIZACION
   useEffect(() => {
     obtenerDataProductosFinalesProduccion();
   }, []);

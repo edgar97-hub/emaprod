@@ -113,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         break; // salimos del flujo
                     }
                 }
-
+              // die(json_encode($cantidad_faltante));
                 // comprobamos finalmente que la cantidad faltante sea exactamente 0
                 if ($cantidad_faltante == 0) {
                     // CONSULTAMOS EL ALMACEN DESTINO

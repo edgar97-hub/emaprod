@@ -30,7 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $data_requsicion_molienda = [];
 
     if ($pdo) {
-        // SOLO SELECCIONAMOS LAS REQUISICIONES CORRESPONDIENTES AL AREA DE MOLIENDA
         $sql =
             "SELECT
             r.id,
@@ -50,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             r.codReq
             FROM requisicion r
             JOIN producto as p on p.id = r.idProdt
-            JOIN produccion pc  on pc.id = r.idProdc
+            RIGHT JOIN produccion pc  on pc.id = r.idProdc
             JOIN produccion_tipo pct on pct.id = pc.idProdTip
             JOIN area a on a.id = r.idAre
             JOIN requisicion_estado as re on re.id = r.idReqEst
@@ -58,6 +57,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             #DATE(r.fecPedReq) BETWEEN '$fechaInicio' AND '$fechaFin'
             ORDER BY r.fecPedReq DESC
             ";
+
+        $sql =
+            "SELECT
+            r.id,
+            r.idProdc,
+            r.idReqEst,
+            r.idProdt,
+            r.idAre,
+            a.desAre,
+            '' AS codLotProd,
+            '' AS idProdTip,
+            'POLVOS' AS desProdTip,
+            '' AS klgLotProd,
+            r.cantProg AS canLotProd,
+            re.desReqEst,
+            p.nomProd,
+            r.fecPedReq, 
+            r.codReq
+            FROM requisicion r
+            JOIN producto as p on p.id = r.idProdt
+            JOIN area a on a.id = r.idAre
+            JOIN requisicion_estado as re on re.id = r.idReqEst
+            WHERE r.idAre = ?
+            #DATE(r.fecPedReq) BETWEEN '$fechaInicio' AND '$fechaFin'
+            ORDER BY r.fecPedReq DESC
+            ";
+
         try {
 
             //die(json_encode("test"));

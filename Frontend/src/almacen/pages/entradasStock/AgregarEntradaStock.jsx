@@ -131,7 +131,7 @@ const AgregarEntradaStock = () => {
       diaJulEntSto: DiaJuliano(requestJSON.fecEntSto),
       letAniEntSto: letraAnio(requestJSON.fecEntSto),
     };
-    
+
     // AHORA ENVIAMOS LA DATA AL BACKEND
     const { message_error, description_error } = await createEntradaStock(
       requestJSON
@@ -139,6 +139,14 @@ const AgregarEntradaStock = () => {
     if (message_error.length === 0) {
       // navegamos a la anterior vista
       onNavigateBack();
+      setfeedbackMessages({
+        style_message: "success",
+        feedback_description_error: "Creado con exito",
+      });
+      handleClickFeeback();
+      setTimeout(() => {
+        window.close();
+      }, "1000");
     } else {
       // mostramos el error recepcionado del backend
       setfeedbackMessages({
@@ -163,7 +171,7 @@ const AgregarEntradaStock = () => {
       idAlm === 0 ||
       docEntSto.length === 0 ||
       canTotEnt <= 0 ||
-      canTotCom <= 0 
+      canTotCom <= 0
       // ||
       //fecVenEntSto.length === 0
     ) {
@@ -247,7 +255,10 @@ const AgregarEntradaStock = () => {
             </div>
             {/* SEARCH NAME PRODUCTO */}
             <div className="col-md-8">
-              <FilterAllProductos onNewInput={onAddCodProd} mostrarCodigo={true} />
+              <FilterAllProductos
+                onNewInput={onAddCodProd}
+                mostrarCodigo={true}
+              />
             </div>
             {/* <div className="col-md-3 form-check d-flex justify-content-start align-items-center">
               <label className="form-check-label">Para seleccionar</label>
@@ -274,7 +285,7 @@ const AgregarEntradaStock = () => {
             </div>
             {/* SEARCH NAME PROVEEDOR */}
             <div className="col-md-8">
-              <FilterProveedor onNewInput={onAddCodProv} mostrarCodigo={true}/>
+              <FilterProveedor onNewInput={onAddCodProv} mostrarCodigo={true} />
             </div>
           </div>
 
@@ -293,15 +304,13 @@ const AgregarEntradaStock = () => {
             </div>
             {/* SEARCH NAME PROVEEDOR */}
             <div className="col-md-6">
-              <FilterAlmacen onNewInput={onAddCodAlm}  mostrarCodigo={true} />
+              <FilterAlmacen onNewInput={onAddCodAlm} mostrarCodigo={true} />
             </div>
           </div>
 
           {/* FECHA DE LA formState */}
           <div className="mb-3 row">
-            <label className="col-sm-2 col-form-label">
-              Fecha de Entrada
-            </label>
+            <label className="col-sm-2 col-form-label">Fecha de Entrada</label>
             <div className="col-md-4">
               <FechaPicker onNewfecEntSto={onAddFecEntSto} />
             </div>

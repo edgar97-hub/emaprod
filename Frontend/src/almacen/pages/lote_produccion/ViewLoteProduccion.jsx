@@ -103,12 +103,14 @@ export const ViewLoteProduccion = () => {
 
   // crear salidas correspondientes
   const onCreateSalidasStock = async (requisicion_detalle) => {
-    // abrimos el loader
-    openLoader();
+    //openLoader();
     const resultPeticion = await createSalidasStockAutomaticas(
       requisicion_detalle
     );
 
+    //console.log(resultPeticion);
+
+    //return
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
       // volvemos a consultar la data
@@ -194,6 +196,8 @@ export const ViewLoteProduccion = () => {
         obj.numop = result[0].numop;
       });
     });
+
+    console.log(result[0].prodLotReq);
 
     if (message_error.length === 0) {
       setproduccionRequisicionDetalle(result[0]);

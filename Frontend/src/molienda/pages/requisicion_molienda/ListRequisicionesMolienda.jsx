@@ -284,7 +284,7 @@ export const ListRequisicionesMolienda = () => {
     var ss = dataRequisicionTemp[idPosElement].reqDet;
     const requisicionMoliendaDetalle = ss;
 
-    console.log(requisicionMoliendaDetalle, idPosElement, dataRequisicionTemp);
+    //console.log(requisicionMoliendaDetalle, idPosElement, dataRequisicionTemp);
 
     //return;
     setDetalleSeleccionado(requisicionMoliendaDetalle);
@@ -472,7 +472,7 @@ export const ListRequisicionesMolienda = () => {
                         </TableCell>
                         <TableCell align="left">{row.desProdTip}</TableCell>
                         <TableCell align="left">{row.nomProd}</TableCell>
-                        <TableCell align="left">{row.klgLotProd}</TableCell>
+                        <TableCell align="left">{row.canLotProd}</TableCell>
                         <TableCell align="center">
                           <span
                             className={

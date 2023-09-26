@@ -163,9 +163,10 @@ export const AgregarRequisicionMolienda = () => {
 
   // FUNCION ASINCRONA PARA CREAR LA REQUISICION CON SU DETALLE
   const crearRequisicion = async () => {
+    requisicion.canLotProd = produccionLote.canLotProd;
     console.log(requisicion);
 
-    return;
+    //return;
     var response = await createRequisicionWithDetalle(requisicion);
     console.log(requisicion, response);
 
@@ -243,6 +244,8 @@ export const AgregarRequisicionMolienda = () => {
   // FUNCION ASINCRONA PARA TRAER LA FORMULA APROPIADA
   async function traerDatosFormulaDetalleApropiada(body, requisicion) {
     const resultPeticion = await getFormulaWithDetalleByPrioridad(body);
+
+    //console.log(resultPeticion)
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
       if (result.length === 0) {
@@ -283,7 +286,7 @@ export const AgregarRequisicionMolienda = () => {
       var { id, idProdt, codLotProd, nomProd, canLotProd, klgLotProd } =
         result[0];
 
-      console.log(result[0]);
+      //console.log(result[0]);
 
       setProduccionLote({
         ...produccionLote,
