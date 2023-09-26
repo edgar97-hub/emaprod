@@ -18,6 +18,7 @@ import FechaPickerMonth from "./../../../components/Fechas/FechaPickerMonth";
 import { FilterTipoProduccion } from "./../../../components/ReferencialesFilters/TipoProduccion/FilterTipoProduccion";
 import { FilterProductoProduccion } from "./../../../components/ReferencialesFilters/Producto/FilterProductoProduccion";
 import { getRequisicionMoliendaWithDetalle } from "./../../../almacen/helpers/requisicion-molienda/getRequisicionMoliendaWithDetalle";
+import { FormatDateMYSQL } from "../../../utils/functions/FormatDate";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -36,8 +37,8 @@ export const ListRequisicionesMolienda = () => {
   // filtros
   const { fecReqMolIni, fecReqMolFin, formState, setFormState, onInputChange } =
     useForm({
-      fecReqMolIni: "",
-      fecReqMolFin: "",
+      fecReqMolIni: FormatDateMYSQL(),
+      fecReqMolFin: FormatDateMYSQL(),
     });
 
   // ESTADOS PARA LA PAGINACIÓN
@@ -251,11 +252,12 @@ export const ListRequisicionesMolienda = () => {
   };
 
   //FUNCION PARA TRAER LA DATA DE REQUISICION MOLIENDA
-  const obtenerDataRequisicionMolienda = async (body = {}) => {
+  const obtenerDataRequisicionMolienda = async (body = formState) => {
     const resultPeticion = await getRequisicionMoliendaWithDetalle(body);
     const { message_error, description_error, result } = resultPeticion;
 
-    // console.log(resultPeticion);
+    //console.log(resultPeticion);
+    //return;
     if (message_error.length === 0) {
       setdataRequisicion(result);
       setdataRequisicionTemp(result);
@@ -467,7 +469,7 @@ export const ListRequisicionesMolienda = () => {
                         <TableCell align="left">{row.codReq}</TableCell>
                         <TableCell align="left">{row.desProdTip}</TableCell>
                         <TableCell align="left">{row.nomProd}</TableCell>
-                        <TableCell align="left">{row.klgLotProd}</TableCell>
+                        <TableCell align="right">{row.canLotProd}</TableCell>
                         <TableCell align="center">
                           <span
                             className={

@@ -24,6 +24,7 @@ import { getMateriaPrimaById } from "./../../../helpers/Referenciales/producto/g
 import { FilterAreaEncargada } from "./../../components/FilterAreaEncargada";
 import { createProduccionLoteWithRequisiciones } from "./../../helpers/produccion_lote/createProduccionLoteWithRequisiciones";
 import { FormatDateTimeMYSQLNow } from "../../../utils/functions/FormatDate";
+import { checkSalidasStock } from "./../../../almacen/helpers/lote-produccion/checkSalidasStock";
 
 // IMPROTACIONES PARA LINEA DE PROGRESION
 import Box from "@mui/material/Box";
@@ -655,18 +656,36 @@ export const CrearProduccionLote = () => {
     });
   };
 
-  // CREAR LOTE DE PRODUCCION
   const crearProduccionLote = async () => {
-    //totalUnidadesLoteProduccion,
-    //klgTotalLoteProduccion,
-    //klgDisponibleLoteProduccion,
-
     produccionLote.totalUnidadesLoteProduccion = totalUnidadesLoteProduccion;
     produccionLote.klgTotalLoteProduccion = klgTotalLoteProduccion;
-    //produccionLote.klgDisponibleLoteProduccion = klgDisponibleLoteProduccion;
 
-    console.log(produccionLote);
-    //return;
+    var body = {
+      canReqDet: produccionLote.canLotProd,
+      //desReqDetEst: "Requerido",
+      //id: 527,
+      //idAre: 6,
+      idProdt: produccionLote.idProdt,
+      //idReq: 146,
+      idReqDetEst: 1,
+      //nomProd: "DISPLAY - AJI PANCA FRESCO BATAN X 24 SACHETS",
+      //numop: "OP20230954",
+      //simMed: "UND",
+    };
+
+    const response = await checkSalidasStock(body);
+    console.log(produccionLote, response);
+
+    if (response != 0) {
+      setfeedbackMessages({
+        style_message: "error",
+        feedback_description_error:
+          "no hay entradas disponibles para el producto intermedio ",
+      });
+      handleClickFeeback();
+      return;
+    }
+
     const resultPeticion = await createProduccionLoteWithRequisiciones(
       produccionLote
     );
@@ -835,6 +854,7 @@ export const CrearProduccionLote = () => {
                     <label htmlFor="nombre" className="form-label">
                       <b>Fecha Vencimiento Lote</b>
                     </label>
+                    <br />
                     <FechaPickerYear
                       onNewfecEntSto={onAddFechaVencimientoLoteProduccion}
                     />

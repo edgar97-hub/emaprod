@@ -22,6 +22,7 @@ import { createSalidasStockAutomaticas } from "./../../helpers/lote-produccion/c
 import { DialogUpdateDetalleRequisicion } from "../../components/componentes-lote-produccion/DialogUpdateDetalleRequisicion";
 import { updateProduccionDetalleRequisicion } from "../../helpers/lote-produccion/updateProduccionDetalleRequisicion";
 import { useAuth } from "../../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -31,6 +32,8 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 export const ViewLoteProduccion = () => {
   // RECIBIMOS LOS PARAMETROS DE LA URL
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [produccionRequisicionDetalle, setproduccionRequisicionDetalle] =
     useState({
       idProdt: 0,
@@ -104,13 +107,13 @@ export const ViewLoteProduccion = () => {
   // crear salidas correspondientes
   const onCreateSalidasStock = async (requisicion_detalle) => {
     //openLoader();
+    //console.log(requisicion_detalle);
+    // return
+
     const resultPeticion = await createSalidasStockAutomaticas(
       requisicion_detalle
     );
 
-    //console.log(resultPeticion);
-
-    //return
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
       // volvemos a consultar la data
@@ -223,24 +226,40 @@ export const ViewLoteProduccion = () => {
           <div className="card d-flex mb-4">
             <h6 className="card-header">Acciones</h6>
             <div className="card-body align-self-center">
-              <Link
-                to={`/almacen/productos-lote/crear?idLotProdc=${id}`}
+              <div
+                onClick={() => {
+                  //console.log(prodLotReq);
+                  let result = prodLotReq.every(
+                    (value) => value.idReqEst === 3 // estado completado
+                  );
+                  if (result) {
+                    navigate(`/almacen/productos-lote/crear?idLotProdc=${id}`);
+                  }
+                }}
                 className="btn btn-primary"
               >
                 Registrar Productos Finales
-              </Link>
-              <Link
-                to={`/almacen/produccion-devoluciones/crear?idLotProdc=${id}`}
+              </div>
+              <div
+                onClick={() => {
+                  navigate(
+                    `/almacen/produccion-devoluciones/crear?idLotProdc=${id}`
+                  );
+                }}
                 className="btn btn-warning ms-3"
               >
                 Registrar devoluciones
-              </Link>
-              <Link
-                to={`/almacen/produccion-agregaciones/crear?idLotProdc=${id}`}
+              </div>
+              <div
+                onClick={() => {
+                  navigate(
+                    `/almacen/produccion-agregaciones/crear?idLotProdc=${id}`
+                  );
+                }}
                 className="btn btn-danger ms-3"
               >
                 Registrar Agregaciones
-              </Link>
+              </div>
             </div>
           </div>
           {/* Datos de produccion */}

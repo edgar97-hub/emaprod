@@ -234,6 +234,8 @@ const PDFExample = ({ data }) => {
   var fechaFin = data.result.agregaciones.detAgr[0]?.fechaFin;
   var flag = data.result.agregaciones.detAgr[0]?.flag;
 
+  console.log(data.result.agregaciones.detAgr);
+
   return (
     <PDFViewer width="100%" height="100%">
       <Document>

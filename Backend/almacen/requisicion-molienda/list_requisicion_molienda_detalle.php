@@ -79,10 +79,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             JOIN producto as p on p.id = r.idProdt
             JOIN area a on a.id = r.idAre
             JOIN requisicion_estado as re on re.id = r.idReqEst
-            WHERE r.idAre = ?
-            #DATE(r.fecPedReq) BETWEEN '$fechaInicio' AND '$fechaFin'
+            WHERE r.idAre = ? and
+            DATE(r.fecPedReq) BETWEEN '$fechaInicio' AND '$fechaFin'
             ORDER BY r.fecPedReq DESC
             ";
+
+
+        //die(json_encode($fechaInicio));
 
         try {
 

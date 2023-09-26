@@ -32,6 +32,7 @@ import {
 import { DetalleProductosFinales } from "./DetalleProductosFinales";
 import FechaPicker from "../../../../../src/components/Fechas/FechaPicker";
 import FechaPickerYear from "../../../../components/Fechas/FechaPickerYear";
+import { viewMoliendaRequisicionId } from "./../../../helpers/requisicion-molienda/viewMoliendaRequisicionId";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -41,7 +42,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 export const AgregarProductosLoteMolienda = () => {
   // RECIBIMOS LOS PARAMETROS DE LA URL
   const location = useLocation();
-  const { idLotProdc = "" } = queryString.parse(location.search);
+  const { idReq = "" } = queryString.parse(location.search);
 
   // ESTADOS DE LOS PRODUCTOS FINALES DE LA PRODUCCION
   const [proFinProd, setProFinProd] = useState({
@@ -184,51 +185,26 @@ export const AgregarProductosLoteMolienda = () => {
 
   // ******** OBTENER DATA DE PRODUCTOS FINALES *********
   const obtenerDataProductosFinalesProduccion = async () => {
-    const resultPeticion = await getProduccionWhitProductosFinales(idLotProdc);
+    //const resultPeticion = await getProduccionWhitProductosFinales(idLotProdc);
+
+    var idProdc = -1;
+
+    const resultPeticion = await viewMoliendaRequisicionId(idProdc, idReq);
 
     const { message_error, description_error, result } = resultPeticion;
-    var products = result[0].proFinProdDet;
 
-    var copyProducts = products.reduce((accumulator, currentValue) => {
-      if (accumulator.some((obj) => obj.idProdt === currentValue.idProdt)) {
-        accumulator.map((obj) => {
-          if (obj.idProdt === currentValue.idProdt) {
-            obj.canTotProgProdFin =
-              parseFloat(obj.canTotProgProdFin) +
-              parseFloat(currentValue.canTotProgProdFin);
+    if (!result[0].id) {
+      // result[0].id = "-1";
+    }
+    result[0].numop = result[0].prodLotReq[0].codReq;
+    result[0].canLotProd = result[0].prodLotReq[0].cantProg;
+    result[0].canIng = result[0].prodLotReq[0].canIng;
+    result[0].nomProd = result[0].prodLotReq[0].nomProd;
+    result[0].desProdTip = "POLVOS";
+    result[0].idProdt = result[0].prodLotReq[0].idProdt;
+    result[0].idReq = result[0].prodLotReq[0].id;
 
-            obj.canTotProgProdFin = _parseInt(obj, "canTotProgProdFin");
-            obj.canTotIngProdFin =
-              parseFloat(obj.canTotIngProdFin) +
-              parseFloat(currentValue.canTotIngProdFin);
-            obj.canTotIngProdFin = parseFloat(obj.canTotIngProdFin).toFixed(2);
-
-            currentValue.total = obj.canTotProgProdFin;
-            currentValue.canTotProgProdFin = _parseInt(
-              currentValue,
-              "canTotProgProdFin"
-            );
-            const clone = structuredClone(currentValue);
-            obj.detail.push(clone);
-          }
-        });
-      } else {
-        const clone = structuredClone(currentValue);
-        clone.canTotProgProdFin = _parseInt(currentValue, "canTotProgProdFin");
-        currentValue.canTotProgProdFin = _parseInt(
-          currentValue,
-          "canTotProgProdFin"
-        );
-
-        clone.total = clone.canTotProgProdFin;
-        currentValue.detail = [clone];
-        accumulator.push(currentValue);
-      }
-      return accumulator;
-    }, []);
-    result[0].proFinProdDet = copyProducts;
-    result[0].productsAutocomplete = products;
-    //console.log(result[0]);
+    // console.log(result[0]);
     getProdIntermedio(result[0]);
 
     if (message_error.length === 0) {
@@ -244,7 +220,9 @@ export const AgregarProductosLoteMolienda = () => {
 
   async function getProdIntermedio(produccion) {
     var idProdt = produccion.idProdt;
-    var idProdc = produccion.id;
+    var idProdc = produccion.idReq;
+    var idReq = produccion.idReq;
+
     const resultPeticion = await getMateriaPrimaById(idProdt);
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
@@ -259,6 +237,7 @@ export const AgregarProductosLoteMolienda = () => {
       } = result[0];
       // generamos nuestro detalle
       const detalle = {
+        idReq,
         idProdFinal: productoFinal.idProdfinal,
         idProdc: idProdc, // lote de produccion asociado
         idProdt: idProd, // producto
@@ -300,15 +279,12 @@ export const AgregarProductosLoteMolienda = () => {
     var productoFin = {};
     detalleProductosFinales.map((obj) => {
       obj.canTotIngProdFin = parseFloat(canIng) + parseFloat(obj.canProdFin);
-
-      if (
-        parseFloat(obj?.canTotIngProdFin).toFixed(3) >
-        parseFloat(canLotProd).toFixed(3)
-      ) {
+      if (parseFloat(obj?.canTotIngProdFin) > parseFloat(canLotProd)) {
         productoFin = obj;
         productoFin.check = true;
       }
     });
+
     //console.log(detalleProductosFinales, idProdTip, dataEntrada, productoFin);
 
     if (productoFin.check) {
@@ -328,8 +304,7 @@ export const AgregarProductosLoteMolienda = () => {
       idProdTip,
       dataEntrada
     );
-
-    //console.log(resultPeticion);
+    //return;
     const { message_error, description_error } = resultPeticion;
     if (message_error.length === 0) {
       // regresamos a la anterior vista
@@ -373,22 +348,9 @@ export const AgregarProductosLoteMolienda = () => {
             <h6 className="card-header">Datos de produccion</h6>
             <div className="card-body">
               <div className="mb-3 row">
-                {/* NUMERO DE LOTE */}
                 <div className="col-md-2">
                   <label htmlFor="nombre" className="form-label">
-                    <b>Numero de Lote</b>
-                  </label>
-                  <input
-                    type="text"
-                    disabled={true}
-                    value={codLotProd}
-                    className="form-control"
-                  />
-                </div>
-
-                <div className="col-md-2">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Numero OP</b>
+                    <b>Codigo</b>
                   </label>
                   <input
                     type="text"
@@ -410,24 +372,12 @@ export const AgregarProductosLoteMolienda = () => {
                     className="form-control"
                   />
                 </div>
-                {/* KILOGRAMOS DE LOTE */}
-                <div className="col-md-2">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Peso de Lote</b>
-                  </label>
-                  <input
-                    type="number"
-                    disabled={true}
-                    value={klgLotProd}
-                    className="form-control"
-                  />
-                </div>
               </div>
 
               <div className="mb-3 row d-flex align-items-center">
                 <div className="col-md-2">
                   <label htmlFor="nombre" className="form-label">
-                    <b>Cantidad programada</b>
+                    <b>Peso programado</b>
                   </label>
                   <input
                     type="number"
@@ -459,30 +409,6 @@ export const AgregarProductosLoteMolienda = () => {
                     type="text"
                     disabled={true}
                     value={desProdTip}
-                    className="form-control"
-                  />
-                </div>
-                {/* ESTADO DE PRODUCCION */}
-                <div className="col-md-4">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Estado de produccion</b>
-                  </label>
-                  <input
-                    type="text"
-                    disabled={true}
-                    value={desEstPro}
-                    className="form-control"
-                  />
-                </div>
-                {/* FECHA DE VENCIMIENTO */}
-                <div className="col-md-4">
-                  <label htmlFor="nombre" className="form-label">
-                    <b>Fecha vencimiento lote</b>
-                  </label>
-                  <input
-                    type="text"
-                    disabled={true}
-                    value={fecVenLotProd}
                     className="form-control"
                   />
                 </div>

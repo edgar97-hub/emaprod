@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $data = json_decode($json, true);
 
     $detProdFinLotProd = $data["detProdFinLotProd"];
-    $idProdTip = $data["idProdTip"];
+    //$idProdTip = $data["idProdTip"];
     $datEntSto = $data["datEntSto"];
     $fecha = date('Y-m-d H:i:s');
 
@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             try {
                 $sql_update_producto_final =
-                    "UPDATE produccion
+                    "UPDATE requisicion
                     SET canIng  = canIng  + $canProdFin 
                     WHERE id = ?";
 
@@ -50,15 +50,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 try {
 
 
-                    // evaluamos si es un tipo de produccion de sub producto
-                    if (true  || $idProdTip == 5) {
+                    if ($idProdc) {
                         // OBTENEMOS LOS DATOS DE LA ENTRADA
                         //$fecEntSto = $datEntSto["fecEntSto"]; 
                         $fecEntSto = $row["fecEntSto"];
 
                         $codProd = $row["codProd2"]; // codigo de producto
                         $idProv = 1; // proveedor EMARANSAC
-                        $idAlm = 1; // almacen principal
+                        $idAlm = 6; // almacen transitorio
                         $idEntStoEst = 1; // disponible
                         $codProv = "00"; // proveedor EMARANSAC
                         $esSel = 0; // es seleccion

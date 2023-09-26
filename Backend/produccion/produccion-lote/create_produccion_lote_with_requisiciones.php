@@ -269,7 +269,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         }
                     }
 
-                    // die (json_encode($reqDetEnc) );
+                    //die (json_encode($reqDetProdc) );
 
                     // AHORA CREAMOS LAS REQUISICIONES CORRESPONDIENTES
                     $idReqEst = 1; // requerido
@@ -322,33 +322,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             if ($idLastInsertReqMatPri != 0) {
                                 $sql_insert_requisicion_materia_prima_detalle = "";
 
-                                foreach ($reqDetMatPri as $row_detalle) {
-                                    // extraemos los datos necesarios
-                                    $idProdtMatPri = $row_detalle["idMatPri"];
-                                    $canReqDet = $row_detalle["canMatPriFor"] * $canLotProd;
 
-                                    /** test */
-                                    $idProdFinFlag = 0;
-                                    if (isset($row_detalle["idProdFinFlag"])) {
-                                        $idProdFinFlag  = intval($row_detalle["idProdFinFlag"]);
-                                    }
-                                    //die (json_encode(  $idProdFinFlag) );
+                                $idProdtMatPri = $idProdt;
+                                $canReqDet = $canLotProd;
 
-                                    // generamos la query
-                                    $sql_insert_requisicion_materia_prima_detalle =
-                                        "INSERT INTO
-                                            requisicion_detalle
-                                            (idProdt, idReq, idReqDetEst, canReqDet, idProdFin)
-                                            VALUES (?, ?, ?, ?, ?)";
-
-                                    $stmt_insert_requisicion_materia_prima_detalle = $pdo->prepare($sql_insert_requisicion_materia_prima_detalle);
-                                    $stmt_insert_requisicion_materia_prima_detalle->bindParam(1, $idProdtMatPri, PDO::PARAM_INT);
-                                    $stmt_insert_requisicion_materia_prima_detalle->bindParam(2, $idLastInsertReqMatPri, PDO::PARAM_INT);
-                                    $stmt_insert_requisicion_materia_prima_detalle->bindParam(3, $idReqDetEst, PDO::PARAM_INT);
-                                    $stmt_insert_requisicion_materia_prima_detalle->bindParam(4, $canReqDet, PDO::PARAM_STR);
-                                    $stmt_insert_requisicion_materia_prima_detalle->bindParam(5, $idProdFinFlag, PDO::PARAM_STR);
-                                    $stmt_insert_requisicion_materia_prima_detalle->execute();
+                                /** test */
+                                $idProdFinFlag = 0;
+                                if (isset($row_detalle["idProdFinFlag"])) {
+                                    $idProdFinFlag  = intval($row_detalle["idProdFinFlag"]);
                                 }
+
+                                $sql_insert_requisicion_materia_prima_detalle =
+                                    "INSERT INTO
+                                           requisicion_detalle
+                                           (idProdt, idReq, idReqDetEst, canReqDet, idProdFin)
+                                           VALUES (?, ?, ?, ?, ?)";
+
+                                $stmt_insert_requisicion_materia_prima_detalle = $pdo->prepare($sql_insert_requisicion_materia_prima_detalle);
+                                $stmt_insert_requisicion_materia_prima_detalle->bindParam(1, $idProdtMatPri, PDO::PARAM_INT);
+                                $stmt_insert_requisicion_materia_prima_detalle->bindParam(2, $idLastInsertReqMatPri, PDO::PARAM_INT);
+                                $stmt_insert_requisicion_materia_prima_detalle->bindParam(3, $idReqDetEst, PDO::PARAM_INT);
+                                $stmt_insert_requisicion_materia_prima_detalle->bindParam(4, $canReqDet, PDO::PARAM_STR);
+                                $stmt_insert_requisicion_materia_prima_detalle->bindParam(5, $idProdFinFlag, PDO::PARAM_STR);
+                                $stmt_insert_requisicion_materia_prima_detalle->execute();
+
+                                // foreach ($reqDetMatPri as $row_detalle) {
+                                //   $idProdtMatPri = $row_detalle["idMatPri"];
+                                //    $canReqDet = $row_detalle["canMatPriFor"] * $canLotProd;
+
+                                /** test */
+                                //    $idProdFinFlag = 0;
+                                //    if (isset($row_detalle["idProdFinFlag"])) {
+                                //        $idProdFinFlag  = intval($row_detalle["idProdFinFlag"]);
+                                //    }
+
+                                // generamos la query
+                                //    $sql_insert_requisicion_materia_prima_detalle =
+                                //        "INSERT INTO
+                                //            requisicion_detalle
+                                //            (idProdt, idReq, idReqDetEst, canReqDet, idProdFin)
+                                //            VALUES (?, ?, ?, ?, ?)";
+                                //
+                                //$stmt_insert_requisicion_materia_prima_detalle = $pdo->prepare($sql_insert_requisicion_materia_prima_detalle);
+                                //$stmt_insert_requisicion_materia_prima_detalle->bindParam(1, $idProdtMatPri, PDO::PARAM_INT);
+                                //$stmt_insert_requisicion_materia_prima_detalle->bindParam(2, $idLastInsertReqMatPri, PDO::PARAM_INT);
+                                //$stmt_insert_requisicion_materia_prima_detalle->bindParam(3, $idReqDetEst, PDO::PARAM_INT);
+                                //$stmt_insert_requisicion_materia_prima_detalle->bindParam(4, $canReqDet, PDO::PARAM_STR);
+                                //$stmt_insert_requisicion_materia_prima_detalle->bindParam(5, $idProdFinFlag, PDO::PARAM_STR);
+                                //$stmt_insert_requisicion_materia_prima_detalle->execute();
+                                //}
+
                             } else {
                                 $message_error = "ERROR EN LA INSERCION";
                                 $description_error = "Error al tratar de insertar la requisicion";

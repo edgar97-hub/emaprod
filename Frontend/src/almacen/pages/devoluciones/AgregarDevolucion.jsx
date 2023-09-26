@@ -548,8 +548,16 @@ export const AgregarDevolucion = () => {
     const { message_error, description_error } = resultPeticion;
 
     if (message_error.length === 0) {
-      // regresamos a la anterior vista
-      onNavigateBack();
+      //onNavigateBack();
+      setfeedbackMessages({
+        style_message: "success",
+        feedback_description_error: "Creado con exito",
+      });
+      handleClickFeeback();
+      setTimeout(() => {
+        window.close();
+      }, "1000");
+      
     } else {
       setfeedbackMessages({
         style_message: "error",

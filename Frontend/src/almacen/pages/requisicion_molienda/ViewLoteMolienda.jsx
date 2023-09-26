@@ -104,13 +104,17 @@ export const ViewLoteMolienda = () => {
   // crear salidas correspondientes
   const onCreateSalidasStock = async (requisicion_detalle) => {
     // abrimos el loader
-    openLoader();
+    //openLoader();
+
+    requisicion_detalle.numop = numop;
+
     const resultPeticion = await createSalidasStockAutomaticas(
       requisicion_detalle
     );
 
     const { message_error, description_error, result } = resultPeticion;
-    if (message_error.length === 0) {
+
+    if (message_error?.length === 0) {
       // volvemos a consultar la data
       obtenerDataProduccionRequisicionesDetalle();
       // cerramos modal
@@ -182,35 +186,25 @@ export const ViewLoteMolienda = () => {
   // funcion para obtener la produccion con sus requisiciones y su detalle
   const obtenerDataProduccionRequisicionesDetalle = async () => {
     const resultPeticion = await viewMoliendaRequisicionId(idProdc, idReq);
-    console.log(resultPeticion, idProdc);
-    //return;
 
     const { message_error, description_error, result } = resultPeticion;
 
-    // console.log(result[0].prodLotReq);
-
-    result[0].prodLotReq.map((obj) => {
-      obj.reqDet.map((obj) => {
-        obj.numop = result[0].numop;
-      });
-    });
+    //result[0].prodLotReq.map((obj) => {
+     // obj.reqDet.map((obj) => {
+     //   obj.numop = result[0].numop;
+     // });
+    //});
 
     if (message_error.length === 0) {
-      if (!result[0].canLotProd) {
-        result[0].canLotProd = "ww";
-      }
       if (!result[0].desProdTip) {
         result[0].desProdTip = "POLVOS";
-      }
-      if (!result[0].nomProd) {
-        result[0].nomProd = "POLVOS";
       }
       if (!result[0].id) {
         result[0].id = "-1";
       }
-      if (!result[0].numop) {
-        result[0].numop = "-1";
-      }
+      result[0].numop = result[0].prodLotReq[0].codReq;
+      result[0].canLotProd = result[0].prodLotReq[0].cantProg;
+      result[0].nomProd = result[0].prodLotReq[0].nomProd;
 
       setproduccionRequisicionDetalle(result[0]);
     } else {
@@ -236,7 +230,7 @@ export const ViewLoteMolienda = () => {
             <h6 className="card-header">Acciones</h6>
             <div className="card-body align-self-center">
               <Link
-                to={`/almacen/requisicion-molienda/agregar?idLotProdc=${idProdc}`}
+                to={`/almacen/requisicion-molienda/agregar?idReq=${idReq}`}
                 className="btn btn-primary"
               >
                 Registrar productos intermedios
@@ -266,7 +260,7 @@ export const ViewLoteMolienda = () => {
                 {numop && (
                   <div className="col-md-2">
                     <label htmlFor="nombre" className="form-label">
-                      <b>Número OP</b>
+                      <b>Codigo</b>
                     </label>
                     <input
                       type="text"
@@ -297,7 +291,7 @@ export const ViewLoteMolienda = () => {
                 {canLotProd && (
                   <div className="col-md-2">
                     <label htmlFor="nombre" className="form-label">
-                      <b>Peso de Lote Total</b>
+                      <b>Peso programado</b>
                     </label>
                     <input
                       type="number"

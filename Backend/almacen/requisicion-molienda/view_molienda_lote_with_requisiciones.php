@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         //die(json_encode($idProdLot));
 
 
-        if ($idProdLot == "-1") {
+        if (true ||  $idProdLot == "-1") {
             $row["prodLotReq"] = [];
             $sql_requisicion =
                 "SELECT
@@ -31,8 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 r.idAre,
                 ar.desAre,
                 r.fecPedReq,
-                r.fecEntReq
+                r.fecEntReq, r.codReq, r.cantProg,r.canIng ,p.nomProd, p.id as idProdt
                 FROM requisicion r
+                JOIN producto as p ON p.id = r.idProdt
                 JOIN requisicion_estado as re on re.id = r.idReqEst
                 JOIN area as ar on ar.id = r.idAre
                 WHERE  r.id = ? ORDER BY id ASC";
