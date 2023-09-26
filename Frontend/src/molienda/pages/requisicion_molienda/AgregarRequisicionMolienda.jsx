@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 // IMPORTACIONES PARA TABLE MUI
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -165,7 +165,7 @@ export const AgregarRequisicionMolienda = () => {
   const crearRequisicion = async () => {
     console.log(requisicion);
 
-    //return
+    return;
     var response = await createRequisicionWithDetalle(requisicion);
     console.log(requisicion, response);
 
@@ -188,7 +188,6 @@ export const AgregarRequisicionMolienda = () => {
   // SUBMIT FORMULARIO DE REQUISICION (M-D)
   const handleSubmitRequisicion = (e) => {
     e.preventDefault();
-    console.log(requisicion);
     if (requisicion.idProdc === 0 || requisicion.reqMolDet.length === 0) {
       setfeedbackMessages({
         style_message: "warning",
@@ -251,6 +250,7 @@ export const AgregarRequisicionMolienda = () => {
         var { forDet } = result[0];
         forDet.map((obj) => {
           if (obj.canMatPriFor) {
+            obj.canMatPriForCopy = obj.canMatPriFor;
             obj.canMatPriFor =
               parseFloat(obj.canMatPriFor) * parseFloat(body.canLotProd);
             obj.canMatPriFor = obj.canMatPriFor.toFixed(3);
@@ -271,71 +271,110 @@ export const AgregarRequisicionMolienda = () => {
   }
 
   // FUNCION ASINCRONA PARA TRAER AL LOTE DE PRODUCCION Y SUS DATOS
-  const traerDatosLoteProduccion = async () => {
-    const { result } = await getLoteProduccionById(idProd);
-    const { id, idProdt, codLotProd, nomProd, canLotProd, klgLotProd } =
-      result[0];
+  const traerDatosLoteProduccion = async (idProdc, produccionLote) => {
+    //console.log(produccionLote);
+    var idProdt = "";
+    var nomProd = "";
+    var canLotProd = "";
+    var id = "";
+    var klgLotProd = "";
+    if (idProdc !== "none") {
+      const { result } = await getLoteProduccionById(idProdc);
+      var { id, idProdt, codLotProd, nomProd, canLotProd, klgLotProd } =
+        result[0];
 
-    setProduccionLote({
-      ...produccionLote,
-      idProdt: idProdt,
-      codLotProd: codLotProd,
-      nomProd: nomProd,
-      canLotProd: canLotProd,
-      klgLotProd: klgLotProd,
-    });
+      console.log(result[0]);
+
+      setProduccionLote({
+        ...produccionLote,
+        idProdt: idProdt,
+        codLotProd: codLotProd,
+        nomProd: nomProd,
+        canLotProd: canLotProd,
+        klgLotProd: klgLotProd,
+      });
+    } else {
+      setProduccionLote({
+        ...produccionLote,
+        idProdt: idProdt,
+        codLotProd: codLotProd,
+        nomProd: nomProd,
+        canLotProd: canLotProd,
+        klgLotProd: klgLotProd,
+      });
+    }
+
+    if (id) {
+      var requisicion = {
+        ...requisicion,
+        idProdc: id,
+        idProdt: idProdt,
+      };
+      const body = {
+        idProd: idProdt,
+        lotKgrFor: klgLotProd,
+        canLotProd: canLotProd,
+      };
+      traerDatosFormulaDetalleApropiada(body, requisicion);
+    } else {
+      setRequisicion({
+        ...requisicion,
+        idProdc: -1, // orden de molienda no sera vinculado a orden de produccion
+        reqMolDet: [],
+      });
+    }
+  };
+
+  const onAddProductoIntermedio = ({ id }) => {
+    console.log(id);
 
     var requisicion = {
       ...requisicion,
-      idProdc: id,
-      idProdt: idProdt,
+      idProdc: -1,
+      idProdt: id,
     };
-
-    //console.log(id, idProdt);
     const body = {
-      idProd: idProdt,
-      lotKgrFor: klgLotProd,
+      idProd: id,
       canLotProd: canLotProd,
     };
     traerDatosFormulaDetalleApropiada(body, requisicion);
   };
 
-  const onAddProductoIntermedio = ({ id }) => {
-    //setproduccionLote({
-    //  ...produccionLote,
-    //  idProdt: id,
-    //});
-  };
-
-  const handleCompleteDatosProduccionLote = (e) => {
-    e.preventDefault();
-    if (idProd === 0) {
-      setfeedbackMessages({
-        style_message: "warning",
-        feedback_description_error: "Escoge un lote de produccion",
-      });
-      handleClickFeeback();
-    } else {
-      traerDatosLoteProduccion();
-    }
-  };
+  //const handleCompleteDatosProduccionLote = (idProd) => {
+  //e.preventDefault();
+  //  if (idProd === 0) {
+  //    setfeedbackMessages({
+  //      style_message: "warning",
+  //      feedback_description_error: "Escoge un lote de produccion",
+  //    });
+  //    handleClickFeeback();
+  //  } else {
+  //    traerDatosLoteProduccion(idProd);
+  //  }
+  //};
 
   // FILTER POR PRODUCCION LOTE
   const onProduccionLote = (valueId) => {
-    console.log(valueId);
-
-    if (valueId === "none") {
-      produccionLote = {
-        ...produccionLote,
-        canLotProd: 0.0,
-      };
-    }
-
-    setProduccionLote({
+    var _produccionLote = {
       ...produccionLote,
+      canLotProd: 0.0,
       idProd: valueId,
-    });
+    };
+    //if (valueId !== "none") {
+    //handleCompleteDatosProduccionLote(valueId);
+    traerDatosLoteProduccion(valueId, _produccionLote);
+    //}
+    //console.log(valueId);
+
+    //setProduccionLote({
+    //  ...produccionLote,
+    //  idProd: valueId,
+    //});
   };
+
+  useEffect(() => {
+    //console.log(idProd);
+  }, [idProd]);
 
   // AGREGAR MATERIA PRIMA A DETALLE DE REQUISICION
   const handleAddNewMateriPrimaDetalle = async (e) => {
@@ -368,6 +407,7 @@ export const AgregarRequisicionMolienda = () => {
             nomProd: nomProd,
             simMed: simMed,
             canMatPriFor: cantidadMateriaPrima,
+            canMatPriForCopy: cantidadMateriaPrima,
           };
 
           // SETEAMOS SU ESTADO PARA QUE PUEDA SER MOSTRADO EN LA TABLA DE DETALLE
@@ -414,7 +454,8 @@ export const AgregarRequisicionMolienda = () => {
               </div>
 
               {/* BOTON AGREGAR DATOS LOTE DE PRODUCCION */}
-              <div className="col-md-3">
+              {/**
+                 <div className="col-md-3">
                 <button
                   onClick={handleCompleteDatosProduccionLote}
                   className="btn btn-primary"
@@ -432,6 +473,7 @@ export const AgregarRequisicionMolienda = () => {
                   Jalar datos de produccion
                 </button>
               </div>
+             */}
             </div>
           </div>
         </div>
@@ -458,12 +500,16 @@ export const AgregarRequisicionMolienda = () => {
                   Producto
                 </label>
                 <div className="col-md-3">
-                  {idProd === "none" ? (
+                  {produccionLote.idProd == "none" ? (
                     <FilterProductoProduccion
                       onNewInput={onAddProductoIntermedio}
                     />
                   ) : (
-                    <input disabled value={nomProd} className="form-control" />
+                    <input
+                      disabled
+                      value={produccionLote.nomProd}
+                      className="form-control"
+                    />
                   )}
                   {/**
                     <input disabled value={nomProd} className="form-control" />
@@ -492,6 +538,18 @@ export const AgregarRequisicionMolienda = () => {
                       setProduccionLote({
                         ...produccionLote,
                         [name]: value,
+                      });
+
+                      requisicion.reqMolDet.map((obj) => {
+                        if (obj.canMatPriFor) {
+                          obj.canMatPriFor =
+                            parseFloat(obj.canMatPriForCopy) *
+                            parseFloat(value);
+                          obj.canMatPriFor = obj.canMatPriFor.toFixed(3);
+                        }
+                      });
+                      setRequisicion({
+                        ...requisicion,
                       });
                     }}
                     value={canLotProd}
@@ -692,7 +750,7 @@ export const AgregarRequisicionMolienda = () => {
           </button>
           <button
             type="submit"
-            disabled={disableButton}
+            //disabled={disableButton}
             onClick={handleSubmitRequisicion}
             className="btn btn-primary"
           >

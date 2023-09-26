@@ -33,18 +33,20 @@ export const FilterLoteProduccion = ({ onNewInput, produccion }) => {
 
   useEffect(() => {
     if (produccion) {
-      setValue(produccion);
+      //setValue(produccion);
     }
   }, [produccion]);
 
   const handledChange = (item) => {
     onNewInput(item.value);
+
+    //console.log(item);
     setValue(item);
   };
 
   return (
     <>
-      <Select options={result} value={value} onChange={handledChange} />
+      <Select options={result} value={value || {}} onChange={handledChange} />
     </>
   );
 };
