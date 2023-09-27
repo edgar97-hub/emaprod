@@ -113,7 +113,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         break; // salimos del flujo
                     }
                 }
-              // die(json_encode($cantidad_faltante));
                 // comprobamos finalmente que la cantidad faltante sea exactamente 0
                 if ($cantidad_faltante == 0) {
                     // CONSULTAMOS EL ALMACEN DESTINO
@@ -126,6 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     while ($row_consult_almacen_destino = $stmt_consult_almacen_destino->fetch(PDO::FETCH_ASSOC)) {
                         $idAlmDes = $row_consult_almacen_destino["id"];
                     }
+                    //die(json_encode($entradasUtilizadas));
 
                     $sql = "";
                     // RECORREMOS TODAS LAS ENTRADAS UTILIZADAS PARA LA SALIDA

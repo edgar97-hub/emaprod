@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 JOIN producto as p on p.id = fd.idMatPri
                 JOIN area as a on a.id = fd.idAre
                 JOIN clase as c on p.idCla = c.id
-                JOIN sub_clase as sc on p.idSubCla = sc.id
+                LEFT JOIN sub_clase as sc on p.idSubCla = sc.id
                 JOIN medida as m on p.idMed = m.id 
                 WHERE fd.idFor = ?
                 ";

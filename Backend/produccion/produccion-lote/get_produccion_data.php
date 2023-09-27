@@ -205,7 +205,7 @@ function getAgregationsByOrderProdc($pdo, $idLotProdc)
             pa.canProdAgr,
             pa.fecCreProdAgr,
             pa.fechaInicio,
-            pa.fechaFin,pa.flag
+            pa.fechaFin,pa.flag, p.codProd2
             FROM produccion_agregacion as pa
             JOIN producto as p ON p.id = pa.idProdt
             JOIN medida as me ON me.id =  p.idMed

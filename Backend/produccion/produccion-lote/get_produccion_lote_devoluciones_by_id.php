@@ -30,7 +30,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         pd.klgLotProd,
         pd.canLotProd,
         pd.fecVenLotProd,
-        pd.numop
+        pd.numop, 
+        p.codProd2
     FROM produccion pd
     JOIN producto as p ON p.id = pd.idProdt
     JOIN produccion_estado as pe ON pe.id = pd.idProdEst
@@ -58,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 al.nomAlm,
                 pdv.idProdDevMot,
                 pdm.desProdDevMot,
-                pdv.canProdDev
+                pdv.canProdDev, p.codProd2
                 FROM produccion_devolucion as pdv
                 JOIN producto as p ON p.id = pdv.idProdt
                 JOIN medida as me ON me.id = p.idMed
@@ -99,20 +100,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 
-function getRequisiciones($pdo, $idLotProdc, $row){
+function getRequisiciones($pdo, $idLotProdc, $row)
+{
 
 
-                    #SELECT 
-                    #pc.id as idProdc,
-                    #p.nomProd,
-                    #p.id as idProdt
-                    #FROM  producto as p 
-                    #JOIN produccion as pc ON pc.idProdt = p.id
-                    #JOIN requisicion as r ON r.idProdc = pc.id
-                    #RIGHT JOIN requisicion_detalle as rq ON rq.idReq = r.id
-                    #WHERE pc.id = ?
-                $sql_detalle_devoluciones_lote_produccion =
-                    "SELECT 
+    #SELECT 
+    #pc.id as idProdc,
+    #p.nomProd,
+    #p.id as idProdt
+    #FROM  producto as p 
+    #JOIN produccion as pc ON pc.idProdt = p.id
+    #JOIN requisicion as r ON r.idProdc = pc.id
+    #RIGHT JOIN requisicion_detalle as rq ON rq.idReq = r.id
+    #WHERE pc.id = ?
+    $sql_detalle_devoluciones_lote_produccion =
+        "SELECT 
                 DISTINCT
                 r.idProdc ,
                 r.idAre,
@@ -132,18 +134,18 @@ function getRequisiciones($pdo, $idLotProdc, $row){
                 join produccion_agregacion pa on pa.idProdc = r.idProdc
                 where r.idProdc  =  ?  and r.idAre != 2 ORDER BY rd.id DESC";
 
-                try {
-                    $stmt_detalle_devoluciones_lote_produccion = $pdo->prepare($sql_detalle_devoluciones_lote_produccion);
-                    $stmt_detalle_devoluciones_lote_produccion->bindParam(1, $idLotProdc, PDO::PARAM_INT);
-                    $stmt_detalle_devoluciones_lote_produccion->execute();
+    try {
+        $stmt_detalle_devoluciones_lote_produccion = $pdo->prepare($sql_detalle_devoluciones_lote_produccion);
+        $stmt_detalle_devoluciones_lote_produccion->bindParam(1, $idLotProdc, PDO::PARAM_INT);
+        $stmt_detalle_devoluciones_lote_produccion->execute();
 
-                    while ($row_detalle_agregacion_lote_produccion = $stmt_detalle_devoluciones_lote_produccion->fetch(PDO::FETCH_ASSOC)) {
-                        array_push($row["requisiciones"], $row_detalle_agregacion_lote_produccion);
-                    }
-                } catch (PDOException $e) {
-                    $message_error = "ERROR INTERNO EN LA CONSULTA DE AGREGACIONES";
-                    $description_error = $e->getMessage();
-                    $row["requisiciones"] = $description_error;
-                }
-                return $row;
+        while ($row_detalle_agregacion_lote_produccion = $stmt_detalle_devoluciones_lote_produccion->fetch(PDO::FETCH_ASSOC)) {
+            array_push($row["requisiciones"], $row_detalle_agregacion_lote_produccion);
+        }
+    } catch (PDOException $e) {
+        $message_error = "ERROR INTERNO EN LA CONSULTA DE AGREGACIONES";
+        $description_error = $e->getMessage();
+        $row["requisiciones"] = $description_error;
+    }
+    return $row;
 }

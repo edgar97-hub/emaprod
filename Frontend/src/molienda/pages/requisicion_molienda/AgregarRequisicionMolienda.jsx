@@ -51,7 +51,7 @@ export const AgregarRequisicionMolienda = () => {
   const [requisicion, setRequisicion] = useState({
     idProdc: 0,
     idProdt: 0,
-    reqMolDet: [], // DETALLE DE REQUISICION MOLIENDA
+    reqMolDet: [],
   });
   // const { idProdc, idProdt, reqMolDet } = requisicion;
 
@@ -163,7 +163,7 @@ export const AgregarRequisicionMolienda = () => {
 
   // FUNCION ASINCRONA PARA CREAR LA REQUISICION CON SU DETALLE
   const crearRequisicion = async () => {
-    requisicion.canLotProd = produccionLote.canLotProd;
+    requisicion.klgLotProd = produccionLote.klgLotProd;
     console.log(requisicion);
 
     //return;
@@ -242,27 +242,41 @@ export const AgregarRequisicionMolienda = () => {
   };
 
   // FUNCION ASINCRONA PARA TRAER LA FORMULA APROPIADA
-  async function traerDatosFormulaDetalleApropiada(body, requisicion) {
+  async function getProductosFormulaDetalle(body, requisicion) {
     const resultPeticion = await getFormulaWithDetalleByPrioridad(body);
 
-    //console.log(resultPeticion)
+    console.log(resultPeticion);
+    // return;
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
       if (result.length === 0) {
       } else {
         var { forDet } = result[0];
+
+        var klgLotProd = 0;
         forDet.map((obj) => {
           if (obj.canMatPriFor) {
-            obj.canMatPriForCopy = obj.canMatPriFor;
-            obj.canMatPriFor =
-              parseFloat(obj.canMatPriFor) * parseFloat(body.canLotProd);
-            obj.canMatPriFor = obj.canMatPriFor.toFixed(3);
+            obj.canMatPriForCopy = parseFloat(obj.canMatPriFor);
+            klgLotProd += obj.canMatPriForCopy;
+            //obj.canMatPriFor =
+            //  parseFloat(obj.canMatPriFor) * parseFloat(body.canLotProd);
+            //obj.canMatPriFor = obj.canMatPriFor.toFixed(3);
           }
         });
+
         setRequisicion({
           ...requisicion,
           reqMolDet: forDet,
         });
+
+        console.log(klgLotProd);
+        if (!body.klgLotProd) {
+          setProduccionLote({
+            ...produccionLote,
+            canLotProd: 1,
+            klgLotProd: klgLotProd,
+          });
+        }
       }
     } else {
       setfeedbackMessages({
@@ -318,7 +332,7 @@ export const AgregarRequisicionMolienda = () => {
         lotKgrFor: klgLotProd,
         canLotProd: canLotProd,
       };
-      traerDatosFormulaDetalleApropiada(body, requisicion);
+      getProductosFormulaDetalle(body, requisicion);
     } else {
       setRequisicion({
         ...requisicion,
@@ -339,22 +353,12 @@ export const AgregarRequisicionMolienda = () => {
     const body = {
       idProd: id,
       canLotProd: canLotProd,
+      klgLotProd: "",
     };
-    traerDatosFormulaDetalleApropiada(body, requisicion);
-  };
 
-  //const handleCompleteDatosProduccionLote = (idProd) => {
-  //e.preventDefault();
-  //  if (idProd === 0) {
-  //    setfeedbackMessages({
-  //      style_message: "warning",
-  //      feedback_description_error: "Escoge un lote de produccion",
-  //    });
-  //    handleClickFeeback();
-  //  } else {
-  //    traerDatosLoteProduccion(idProd);
-  //  }
-  //};
+    //console.log(body);
+    getProductosFormulaDetalle(body, requisicion);
+  };
 
   // FILTER POR PRODUCCION LOTE
   const onProduccionLote = (valueId) => {
@@ -363,16 +367,7 @@ export const AgregarRequisicionMolienda = () => {
       canLotProd: 0.0,
       idProd: valueId,
     };
-    //if (valueId !== "none") {
-    //handleCompleteDatosProduccionLote(valueId);
     traerDatosLoteProduccion(valueId, _produccionLote);
-    //}
-    //console.log(valueId);
-
-    //setProduccionLote({
-    //  ...produccionLote,
-    //  idProd: valueId,
-    //});
   };
 
   useEffect(() => {
@@ -519,7 +514,39 @@ export const AgregarRequisicionMolienda = () => {
                      */}
                 </div>
               </div>
-              {/* CANTIDAD REQUISICION */}
+              <div className="mb-3 row">
+                <label htmlFor="categoria" className="col-sm-2 col-form-label">
+                  Cantidad Lote
+                </label>
+                <div className="col-md-3">
+                  <input
+                    type="number"
+                    name="canLotProd"
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+
+                      var klgLotProd = 0;
+                      requisicion.reqMolDet.map((obj) => {
+                        obj.canMatPriFor =
+                          parseFloat(obj.canMatPriForCopy) * parseFloat(value);
+                        klgLotProd += obj.canMatPriFor;
+                        obj.canMatPriFor = obj.canMatPriFor.toFixed(3);
+                      });
+
+                      setProduccionLote({
+                        ...produccionLote,
+                        [name]: value,
+                        klgLotProd: klgLotProd,
+                      });
+                      setRequisicion({
+                        ...requisicion,
+                      });
+                    }}
+                    value={canLotProd}
+                    className="form-control"
+                  />
+                </div>
+              </div>
               <div className="mb-3 row">
                 <label htmlFor="categoria" className="col-sm-2 col-form-label">
                   Peso programado
@@ -535,9 +562,11 @@ export const AgregarRequisicionMolienda = () => {
 
                   <input
                     type="number"
-                    name="canLotProd"
+                    name="klgLotProd"
+                    disabled
                     onChange={(e) => {
-                      const { name, value } = e.target;
+                      /**
+                       const { name, value } = e.target;
                       setProduccionLote({
                         ...produccionLote,
                         [name]: value,
@@ -554,8 +583,9 @@ export const AgregarRequisicionMolienda = () => {
                       setRequisicion({
                         ...requisicion,
                       });
+                       */
                     }}
-                    value={canLotProd}
+                    value={klgLotProd}
                     className="form-control"
                   />
                 </div>
@@ -574,60 +604,6 @@ export const AgregarRequisicionMolienda = () => {
             </div>
           </div>
         </div>
-
-        {false && codLotProd.length !== 0 && (
-          <div className="row mt-4 mx-4">
-            <div className="card d-flex">
-              <h6 className="card-header">Plantilla de formula</h6>
-              <div className="card-body d-flex justify-content-between align-items-center">
-                <div className="col-md-5">
-                  <label className="form-label">Formula</label>
-                  <div className="col d-flex">
-                    <div className="col-9">
-                      <FilterFormula onNewInput={onFormula} />
-                    </div>
-                    <div className="col-3">
-                      <button
-                        onClick={handleCompleteFormFormula}
-                        className="btn btn-primary ms-2"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="bi bi-plus-circle-fill me-2"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
-                        </svg>
-                        Jalar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-7 d-flex justify-content-end">
-                  <button
-                    onClick={traerDatosFormulaDetalleApropiada}
-                    className="btn btn-success"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      className="bi bi-search me-2"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                    </svg>
-                    Buscar formula apropiada
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         <div className="row mt-4 mx-4">
           <div className="card d-flex">

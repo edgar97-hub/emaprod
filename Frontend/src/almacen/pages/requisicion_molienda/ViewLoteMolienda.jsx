@@ -112,6 +112,9 @@ export const ViewLoteMolienda = () => {
       requisicion_detalle
     );
 
+
+    console.log(resultPeticion)
+    //return
     const { message_error, description_error, result } = resultPeticion;
 
     if (message_error?.length === 0) {

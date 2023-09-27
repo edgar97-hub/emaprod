@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ar.desAre,
                     fptd.idAlm,
                     al.nomAlm,
-                    fptd.canForProDet
+                    fptd.canForProDet, p.codProd2
                     FROM formula_producto_terminado_detalle fptd
                     JOIN producto as p on p.id = fptd.idProd
                     JOIN medida as me on me.id = p.idMed

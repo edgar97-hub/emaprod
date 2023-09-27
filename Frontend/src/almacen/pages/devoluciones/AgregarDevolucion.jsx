@@ -21,6 +21,9 @@ import { createDevolucionesLoteProduccion } from "./../../helpers/devoluciones-l
 import { getProduccionWhitProductosFinales } from "./../../helpers/producto-produccion/getProduccionWhitProductosFinales";
 import { getFormulaProductoDetalleByProducto } from "../../../../src/produccion/helpers/formula_producto/getFormulaProductoDetalleByProducto";
 import { _parseInt } from "../../../utils/functions/FormatDate";
+import PdfDevoluciones from "./PdfDevoluciones";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import ReactDOM from "react-dom";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -393,14 +396,13 @@ export const AgregarDevolucion = () => {
     return copyProducts;
   }
 
-  function getDev() {}
   const traerDatosProduccionLoteWithDevoluciones = async () => {
     if (idLotProdc.length !== 0) {
       const resultPeticion = await getProduccionLoteWithDevolucionesById(
         idLotProdc
       );
       var productos = await getProductToDev(idLotProdc);
-      console.log(resultPeticion);
+      //console.log(resultPeticion);
 
       //canProdDev: "1"
       //codProd: null
@@ -416,7 +418,6 @@ export const AgregarDevolucion = () => {
       var devoluciones = [];
       await Promise.all(
         productos.map(async (obj) => {
-          // if(obj.id == 69){
           var nomProdFin = obj.nomProd;
           var detalleRequisiciones = [];
           detalleRequisiciones = await handleAddProductoProduccionLote(
@@ -438,10 +439,9 @@ export const AgregarDevolucion = () => {
               idProdt: obj.idProd,
               nomProd: obj.nomProd,
               simMed: obj.simMed,
+              codProd2: obj.codProd2,
             });
           });
-
-          //}
         })
       );
 
@@ -463,7 +463,7 @@ export const AgregarDevolucion = () => {
         }
         return accumulator;
       }, []);
-
+      
       const { message_error, description_error, result } = resultPeticion;
       // console.log( result[0])
 
@@ -551,13 +551,12 @@ export const AgregarDevolucion = () => {
       //onNavigateBack();
       setfeedbackMessages({
         style_message: "success",
-        feedback_description_error: "Creado con exito",
+        feedback_description_error: "Guardado con exito",
       });
       handleClickFeeback();
       setTimeout(() => {
         window.close();
       }, "1000");
-      
     } else {
       setfeedbackMessages({
         style_message: "error",
@@ -605,6 +604,7 @@ export const AgregarDevolucion = () => {
     <>
       <div className="container-fluid px-4">
         <h1 className="mt-4 text-center">Registrar devoluciones</h1>
+
         <div className="row mt-4 mx-4">
           {/* Datos de produccion */}
           <div className="card d-flex">
@@ -713,10 +713,45 @@ export const AgregarDevolucion = () => {
               </div>
             </div>
           </div>
+          <div className="card d-flex mt-4">
+            <h6 className="card-header"></h6>
+
+            <div className="card-body">
+              <div className="mb-3 row">
+                <div className="btn-toolbar">
+                  <button
+                    onClick={() => {
+                      //handleButtonClick(idLotProdc, "agregaciones", row.flag);
+
+                      const newWindow = window.open(
+                        "",
+                        "windowName",
+                        "fullscreen=yes"
+                      );
+                      ReactDOM.render(
+                        <PdfDevoluciones
+                          data={"data"}
+                          numop={numop}
+                          nomProd={nomProd}
+                          detDev={detDev}
+                          prodToDev={detalleProductosDevueltos}
+                        />,
+                        newWindow.document.body
+                      );
+                    }}
+                    className="btn btn-primary me-2 btn"
+                  >
+                    <PictureAsPdfIcon />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* DEVOLUCIONES ASOCIADAS AL LOTE DE PRODUCCION */}
           <div className="card d-flex mt-4">
             <h6 className="card-header">Devoluciones registradas</h6>
+
             <div className="card-body">
               <div className="mb-3 row">
                 <Paper>
@@ -786,6 +821,7 @@ export const AgregarDevolucion = () => {
                     productos={devolucionesProduccionLote.requisiciones}
                   />
                 </div>
+
                 {/* CANTIDAD DE PRRODUCTOS FINALES ESPERADOS */}
                 <div className="col-md-2">
                   <label className="form-label">Cantidad producto</label>
@@ -850,7 +886,6 @@ export const AgregarDevolucion = () => {
                           <TableCell align="left" width={120}>
                             <b>Cantidad</b>
                           </TableCell>
-
                           <TableCell align="left" width={120}>
                             <b>Acciones</b>
                           </TableCell>

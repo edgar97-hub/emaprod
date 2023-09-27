@@ -32,7 +32,7 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
-import ReactDOM from "react-dom"; // Importa ReactDOM
+import ReactDOM from "react-dom";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -234,7 +234,7 @@ const PDFExample = ({ data }) => {
   var fechaFin = data.result.agregaciones.detAgr[0]?.fechaFin;
   var flag = data.result.agregaciones.detAgr[0]?.flag;
 
-  console.log(data.result.agregaciones.detAgr);
+  //console.log(data.result.agregaciones.detAgr);
 
   return (
     <PDFViewer width="100%" height="100%">
@@ -446,7 +446,82 @@ const PDFExample = ({ data }) => {
               </View>
             </View>
             {prodsFinal.length && <ProdsFinal rows={prodsFinal} />}
-            <Agregations data={data} />
+            <Text
+              style={{
+                ...styles.title,
+                fontWeight: "bold",
+                fontSize: 7,
+                marginLeft: -440,
+                marginTop: 12,
+              }}
+            >
+              Agregaciones
+            </Text>
+            <View style={{ ...styles.section, marginTop: -25 }}>
+              <View style={styles.gridContainer}>
+                <View style={[styles.gridHeader, styles.green_]}>
+                  <Text style={{ ...styles.gridTitle, flex: 0.4 }}>
+                    {" "}
+                    Codigo
+                  </Text>
+                  <Text style={{ ...styles.gridTitle, flex: 2 }}>Nombre</Text>
+                  <Text
+                    style={{
+                      ...styles.gridTitle,
+                      flex: 1,
+                      textAlign: "center",
+                    }}
+                  >
+                    Motivo
+                  </Text>
+                  <Text
+                    style={{
+                      ...styles.gridTitle,
+                      flex: 1,
+                      textAlign: "center",
+                    }}
+                  >
+                    Almecen destino
+                  </Text>
+                  <Text style={{ ...styles.gridTitle, flex: 1 }}>Fecha</Text>
+                  <Text style={{ ...styles.gridTitle, flex: 1 }}>Cantidad</Text>
+                </View>
+                {data.result?.agregaciones.detAgr?.map((detalle, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.gridRow,
+                      index % 2 === 0 ? { backgroundColor: "#a4a8b0" } : {},
+                    ]}
+                  >
+                    <Text style={{ ...styles.gridContent_p, flex: 0.4 }}>
+                      {detalle.codProd2}
+                    </Text>
+                    <Text style={{ ...styles.gridContent_p, flex: 2 }}>
+                      {detalle.nomProd}
+                    </Text>
+                    <Text style={{ ...styles.gridContent_p, flex: 1 }}>
+                      {detalle.desProdAgrMot}
+                    </Text>
+                    <Text
+                      style={{
+                        ...styles.gridContent_p,
+                        flex: 1,
+                        textAlign: "center",
+                      }}
+                    >
+                      {detalle.nomAlm}
+                    </Text>
+                    <Text style={styles.gridContent_p}>
+                      {detalle.fecCreProdAgr}
+                    </Text>
+                    <Text style={styles.gridContent_num}>
+                      {_parseInt(detalle)}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
           </View>
         </Page>
       </Document>
@@ -516,7 +591,7 @@ const ProdsFinal = ({ rows }) => {
                 <Text style={styles.gridContent_p}>{producto.simMed}</Text>
                 <Text style={styles.gridContent_num}>
                   {_parseInt(producto)}
-                </Text>{" "}
+                </Text>
                 {/** producto.canTotProgProdFin */}
               </View>
             ))}
@@ -527,69 +602,6 @@ const ProdsFinal = ({ rows }) => {
   );
 };
 
-const Agregations = ({ data }) => {
-  return (
-    <>
-      <Text
-        style={{
-          ...styles.title,
-          fontWeight: "bold",
-          fontSize: 7,
-          marginLeft: -440,
-          marginTop: 12,
-        }}
-      >
-        Agregaciones
-      </Text>
-      <View style={{ ...styles.section, marginTop: -25 }}>
-        <View style={styles.gridContainer}>
-          <View style={[styles.gridHeader, styles.green_]}>
-            <Text style={{ ...styles.gridTitle, flex: 0.4 }}> Cód Aso</Text>
-            <Text style={{ ...styles.gridTitle, flex: 2 }}>Nombre</Text>
-            <Text style={{ ...styles.gridTitle, flex: 1, textAlign: "center" }}>
-              Motivo
-            </Text>
-            <Text style={{ ...styles.gridTitle, flex: 1, textAlign: "center" }}>
-              Almecen destino
-            </Text>
-            <Text style={{ ...styles.gridTitle, flex: 1 }}>Fecha</Text>
-            <Text style={{ ...styles.gridTitle, flex: 1 }}>Cantidad</Text>
-          </View>
-          {data.result?.agregaciones.detAgr?.map((detalle, index) => (
-            <View
-              key={index}
-              style={[
-                styles.gridRow,
-                index % 2 === 0 ? { backgroundColor: "#a4a8b0" } : {},
-              ]}
-            >
-              <Text style={{ ...styles.gridContent_p, flex: 0.4 }}>
-                {detalle.idProdFin}
-              </Text>
-              <Text style={{ ...styles.gridContent_p, flex: 2 }}>
-                {detalle.nomProd}
-              </Text>
-              <Text style={{ ...styles.gridContent_p, flex: 1 }}>
-                {detalle.desProdAgrMot}
-              </Text>
-              <Text
-                style={{
-                  ...styles.gridContent_p,
-                  flex: 1,
-                  textAlign: "center",
-                }}
-              >
-                {detalle.nomAlm}
-              </Text>
-              <Text style={styles.gridContent_p}>{detalle.fecCreProdAgr}</Text>
-              <Text style={styles.gridContent_num}>{_parseInt(detalle)}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
-    </>
-  );
-};
 const generatePDF = (data, show) => {
   const windowName = data.result.produccion.numop; // Nombre de la ventana basado en los datos
 
