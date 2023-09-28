@@ -31,7 +31,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 r.idAre,
                 ar.desAre,
                 r.fecPedReq,
-                r.fecEntReq, r.codReq, r.cantProg,r.canIng ,p.nomProd, p.id as idProdt
+                r.fecEntReq, 
+                r.codReq, 
+                r.cantProg,
+                r.canIng,
+                p.nomProd, 
+                p.id as idProdt,
+                r.reqFinEst,
+                r.variacion
                 FROM requisicion r
                 JOIN producto as p ON p.id = r.idProdt
                 JOIN requisicion_estado as re on re.id = r.idReqEst

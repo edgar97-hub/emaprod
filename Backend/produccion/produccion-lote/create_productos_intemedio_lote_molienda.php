@@ -15,7 +15,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $detProdFinLotProd = $data["detProdFinLotProd"];
     //$idProdTip = $data["idProdTip"];
     $datEntSto = $data["datEntSto"];
+    $pedidoCompletado = (int)$datEntSto["pedidoCompletado"];
+    $variacion = floatval($datEntSto["variacion"]);
+
     $fecha = date('Y-m-d H:i:s');
+    $canVar = 0;
+    $variacion = floatval($datEntSto["variacion"]);
+
+    if (isset($variacion)) {
+        $canVar = $variacion;
+    }
 
     if ($pdo) {
 
@@ -27,11 +36,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             //$idProdFinal = $row["idProdFinal"];  
 
 
+            //die(json_encode($pedidoCompletado));
 
             try {
                 $sql_update_producto_final =
                     "UPDATE requisicion
-                    SET canIng  = canIng  + $canProdFin 
+                    SET canIng  = canIng  + $canProdFin,
+                    reqFinEst  = $pedidoCompletado,
+                    variacion  = $canVar
                     WHERE id = ?";
 
                 try {
@@ -40,6 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     //$stmt_update_producto_final->bindParam(2, $idProdc, PDO::PARAM_INT);
                     //$stmt_update_producto_final->bindParam(3, $idProdt, PDO::PARAM_INT);
                     $stmt_update_producto_final->bindParam(1, $idProdc, PDO::PARAM_INT);
+
                     $stmt_update_producto_final->execute();
                 } catch (PDOException $e) {
                     $message_error = "Error en la actualizacion de producto final";
@@ -114,8 +127,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 canTotDis,
                                 docEntSto,
                                 fecEntSto,
-                                fecVenEntSto, referencia)
-                                VALUES (?,?,?,?,?,?,?,?,?, $canProdFin, $canProdFin,?,?,?,?)";
+                                fecVenEntSto, referencia, canVar)
+                                VALUES (?,?,?,?,?,?,?,?,?, $canProdFin, $canProdFin,?,?,?,?,?)";
 
                             try {
                                 $stmt_insert_entrada_stock = $pdo->prepare($sql_insert_entrada_stock);
@@ -132,6 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 $stmt_insert_entrada_stock->bindParam(11, $fecEntSto);
                                 $stmt_insert_entrada_stock->bindParam(12, $fecVenEntProdFin);
                                 $stmt_insert_entrada_stock->bindParam(13, $idProdc);
+                                $stmt_insert_entrada_stock->bindParam(14, $canVar);
 
                                 $stmt_insert_entrada_stock->execute();
                             } catch (PDOException $e) {

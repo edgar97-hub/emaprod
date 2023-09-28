@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 // HOOKS
 import { useForm } from "../../../hooks/useForm";
 // IMPORTACIONES PARA TABLE MUI
@@ -107,24 +107,10 @@ const ListEntradaStock = () => {
     setfeedbackDelete(false);
   };
 
-  // Funcion para traer la data de las entradas
   const obtenerDataEntradaStock = async (body = {}) => {
-    // hacer validaciones correpondientes
     const resultPeticion = await getEntradasStock(body);
-    const { message_error, description_error, result } = resultPeticion;
-
-    console.log(resultPeticion);
+    const { result } = resultPeticion;
     return result;
-    if (message_error?.length === 0) {
-      // setdataEntSto(result);
-      // setdataEntStoTmp(result);
-    } else {
-      //setfeedbackMessages({
-      //  style_message: "error",
-      //  feedback_description_error: description_error,
-      //});
-      //handleClickFeeback();
-    }
   };
 
   // Manejadores de cambios
@@ -194,16 +180,10 @@ const ListEntradaStock = () => {
     //obtenerDataEntradaStock(body);
   };
 
+  //useMemo(() => {}, [inputs, formState]);
+
   useEffect(() => {
     let resultSearch = [];
-    //console.log(dataEntSto);
-
-    // codigo: "",
-    // seleccion: "",
-    // ingresado: "",
-    // disponible: "",
-
-    //console.log("1",formState)
 
     if (inputs.procesar) {
       obtenerDataEntradaStock(formState)
@@ -212,41 +192,37 @@ const ListEntradaStock = () => {
           var totalMer = 0;
           var entradas = [];
 
-          console.log("2", formState, dataEntSto);
-
-          // setInputs({
-          //   ...inputs,
-          //   procesar: false,
-          // });
-
-          // return;
-          dataEntSto.map((data) => {
+          function checkType(data) {
+            //console.log(inputs.tipoEntrada, data);
             if (inputs.tipoEntrada == "TODO") {
-              entradas.push(data);
+              return true;
             }
             if (inputs.tipoEntrada == "COMPRAS" && data.referencia == 0) {
-              entradas.push(data);
+              return true;
             }
             if (inputs.tipoEntrada == "PRODT. FINAL" && data.referencia) {
-              entradas.push(data);
+              return true;
             }
             if (
               inputs.tipoEntrada == "DEVOLUCIONES" &&
               data.devoluciones?.length
             ) {
-              entradas.push(data);
+              return true;
             }
             if (inputs.tipoEntrada == "PRODT. SELECCION" && data.esSel) {
-              entradas.push(data);
+              return true;
             }
             if (inputs.tipoEntrada == "PRODT. MOLIENDA" && data.esMol) {
-              entradas.push(data);
+              return true;
+            } else {
+              return false;
             }
-          });
-          console.log(entradas);
+          }
+          dataEntSto = dataEntSto.reverse();
 
-          entradas.map((data) => {
+          dataEntSto.map((data) => {
             if (
+              checkType(data) &&
               (inputs.almacen.label?.includes(data.nomAlm) ||
                 inputs.almacen.label?.length == 0) &&
               (inputs.provedor.label?.includes(data.nomProv) ||
@@ -257,7 +233,6 @@ const ListEntradaStock = () => {
                 inputs.codigo?.length == 0) &&
               (data.docEntSto?.includes(inputs.documento) ||
                 inputs.documento?.length == 0) &&
-              // inputs.seleccion == data.esSel &&
               (data.canTotEnt?.includes(inputs.ingresado) ||
                 inputs.ingresado?.length == 0) &&
               (data.canTotDis?.includes(inputs.disponible) ||
@@ -265,23 +240,29 @@ const ListEntradaStock = () => {
               (data.merTot?.includes(inputs.merTot) ||
                 inputs.merTot?.length == 0)
             ) {
-              // total += parseFloat(data.canTotDis);
-              // data.acumulado = total.toFixed(2);
+              //console.log(data);
+              // no sumar el acumulado del producto agua potable
+              if (data.idProd !== 418) {
+                totalDis += parseFloat(data.canTotDis);
+                data.disAcu = totalDis.toFixed(2);
+                totalMer += parseFloat(data.merTot);
+                data.merAcu = totalMer.toFixed(2);
+              }
 
               resultSearch.push({ ...data });
             }
           });
-          resultSearch = resultSearch.reverse();
-          resultSearch.map((obj) => {
+          //resultSearch = resultSearch.reverse();
+          /**
+           resultSearch.map((obj) => {
             totalDis += parseFloat(obj.canTotDis);
             obj.disAcu = totalDis.toFixed(2);
 
             totalMer += parseFloat(obj.merTot);
             obj.merAcu = totalMer.toFixed(2);
           });
+          */
           resultSearch = resultSearch.reverse();
-
-          // console.log(resultSearch);
 
           setfeedbackMessages({
             style_message: "info",
@@ -618,7 +599,9 @@ const ListEntradaStock = () => {
                     <TableCell align="left" width={160}>
                       <b>Fecha cre.</b>
                     </TableCell>
-
+                    <TableCell align="left" width={160}>
+                      <b>Variacion</b>
+                    </TableCell>
                     <TableCell align="left" width={160}>
                       <b>Disponible Acu.</b>
                     </TableCell>
@@ -681,6 +664,7 @@ const ListEntradaStock = () => {
                         <TableCell align="left">{row.fecEntSto}</TableCell>
                         <TableCell align="left">{row.fecVenEntSto}</TableCell>
                         <TableCell align="left">{row.fecCreEntSto}</TableCell>
+                        <TableCell align="left">{row.canVar}</TableCell>
                         <TableCell align="left">{row.disAcu}</TableCell>
                         <TableCell align="left">{row.merAcu}</TableCell>
                         <TableCell

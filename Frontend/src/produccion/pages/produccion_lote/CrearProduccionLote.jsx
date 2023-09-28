@@ -268,6 +268,7 @@ export const CrearProduccionLote = () => {
     const { reqDet } = result[0];
     let equivalenteKilogramos = 0;
 
+    //console.log(reqDet);
     reqDet.forEach((element) => {
       if (element.idAre === 2 || element.idAre === 7) {
         equivalenteKilogramos = parseFloat(element.canForProDet);
@@ -517,7 +518,7 @@ export const CrearProduccionLote = () => {
             totalUnidadesLoteProduccion + _cantidadUnidades
           );
 
-          console.log(cantidadTotalUnidadesDelLoteProduccion);
+          //console.log(cantidadTotalUnidadesDelLoteProduccion);
           if (cantidadTotalDelLoteProduccion > klgDisponibleLoteProduccion) {
             setfeedbackMessages({
               style_message: "warning",
@@ -873,12 +874,14 @@ export const CrearProduccionLote = () => {
                   <label htmlFor="nombre" className="form-label">
                     <b>Fecha de Inicio Programado</b>
                   </label>
+                  <br />
                   <FechaPicker onNewfecEntSto={onAddFechaInicioProgramado} />
                 </div>
                 <div className="col-md-3">
                   <label htmlFor="nombre" className="form-label">
                     <b>Fecha de Fin Programado</b>
                   </label>
+                  <br />
                   <FechaPicker onNewfecEntSto={onAddFechaFinProgramado} />
                 </div>
                 <div className="col-md-6">

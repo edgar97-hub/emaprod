@@ -460,10 +460,8 @@ const PDFExample = ({ data }) => {
             <View style={{ ...styles.section, marginTop: -25 }}>
               <View style={styles.gridContainer}>
                 <View style={[styles.gridHeader, styles.green_]}>
-                  <Text style={{ ...styles.gridTitle, flex: 0.4 }}>
-                    {" "}
-                    Codigo
-                  </Text>
+                  <Text style={{ ...styles.gridTitle, flex: 0.4 }}>Cod Aso</Text>
+                  <Text style={{ ...styles.gridTitle, flex: 0.4 }}>Codigo</Text>
                   <Text style={{ ...styles.gridTitle, flex: 2 }}>Nombre</Text>
                   <Text
                     style={{
@@ -494,6 +492,9 @@ const PDFExample = ({ data }) => {
                       index % 2 === 0 ? { backgroundColor: "#a4a8b0" } : {},
                     ]}
                   >
+                    <Text style={{ ...styles.gridContent_p, flex: 0.4 }}>
+                      {detalle.idProdFin}
+                    </Text>
                     <Text style={{ ...styles.gridContent_p, flex: 0.4 }}>
                       {detalle.codProd2}
                     </Text>

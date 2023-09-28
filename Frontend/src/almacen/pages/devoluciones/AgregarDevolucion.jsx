@@ -348,10 +348,8 @@ export const AgregarDevolucion = () => {
 
   async function getProductToDev(idLotProdc) {
     const resultPeticion = await getProduccionWhitProductosFinales(idLotProdc);
-    const { message_error, description_error, result } = resultPeticion;
+    const { result } = resultPeticion;
     var products = result[0].proFinProdDet;
-    //var productsAutocomplete = products.filter((obj) => !obj.isAgregation);
-    //console.log(result[0])
 
     var copyProducts = products.reduce((accumulator, currentValue) => {
       if (accumulator.some((obj) => obj.idProdt === currentValue.idProdt)) {
@@ -463,7 +461,7 @@ export const AgregarDevolucion = () => {
         }
         return accumulator;
       }, []);
-      
+
       const { message_error, description_error, result } = resultPeticion;
       // console.log( result[0])
 
@@ -520,7 +518,6 @@ export const AgregarDevolucion = () => {
 
       const dataDetalle = [...detalleProductosDevueltos, ...devoluciones];
       setdetalleProductosDevueltos(dataDetalle);
-      // console.log(devoluciones)
 
       if (message_error.length === 0) {
         setdevolucionesProduccionLote(result[0]);
@@ -731,8 +728,11 @@ export const AgregarDevolucion = () => {
                       ReactDOM.render(
                         <PdfDevoluciones
                           data={"data"}
+                          codLotProd={codLotProd}
+                          canLotProd={canLotProd}
                           numop={numop}
                           nomProd={nomProd}
+                          desProdTip={desProdTip}
                           detDev={detDev}
                           prodToDev={detalleProductosDevueltos}
                         />,

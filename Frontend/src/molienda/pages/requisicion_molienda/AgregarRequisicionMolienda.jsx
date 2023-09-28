@@ -164,6 +164,8 @@ export const AgregarRequisicionMolienda = () => {
   // FUNCION ASINCRONA PARA CREAR LA REQUISICION CON SU DETALLE
   const crearRequisicion = async () => {
     requisicion.klgLotProd = produccionLote.klgLotProd;
+    requisicion.codLotProd = produccionLote.codLotProd;
+
     console.log(requisicion);
 
     //return;
@@ -218,27 +220,6 @@ export const AgregarRequisicionMolienda = () => {
       });
       handleClickFeeback();
     }
-  };
-  // MANEJADOR COMPLETAR FORMULARIO SEGUN FORMULA
-  const handleCompleteFormFormula = (e) => {
-    e.preventDefault();
-    if (idFor === 0) {
-      setfeedbackMessages({
-        style_message: "warning",
-        feedback_description_error: "Escoge una formula",
-      });
-      handleClickFeeback();
-    } else {
-      traerDatosFormulaDetalle();
-    }
-  };
-
-  // FILTER POR FORMULA
-  const onFormula = (valueId) => {
-    setformula({
-      ...formula,
-      idFor: valueId,
-    });
   };
 
   // FUNCION ASINCRONA PARA TRAER LA FORMULA APROPIADA
@@ -450,28 +431,6 @@ export const AgregarRequisicionMolienda = () => {
                 </label>
                 <FilterLoteProduccion onNewInput={onProduccionLote} />
               </div>
-
-              {/* BOTON AGREGAR DATOS LOTE DE PRODUCCION */}
-              {/**
-                 <div className="col-md-3">
-                <button
-                  onClick={handleCompleteDatosProduccionLote}
-                  className="btn btn-primary"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-plus-circle-fill me-2"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
-                  </svg>
-                  Jalar datos de produccion
-                </button>
-              </div>
-             */}
             </div>
           </div>
         </div>
@@ -481,18 +440,6 @@ export const AgregarRequisicionMolienda = () => {
           <div className="card d-flex">
             <h6 className="card-header">Datos del lote de produccion</h6>
             <div className="card-body">
-              {/* NUMERO DE LOTE */}
-              {/**
-                 <div className="mb-3 row">
-                <label htmlFor="nombre" className="col-sm-2 col-form-label">
-                  Numero de Lote
-                </label>
-                <div className="col-md-2">
-                  <input disabled value={codLotProd} className="form-control" />
-                </div>
-              </div>
-                 */}
-              {/* PRODUCTO */}
               <div className="mb-3 row">
                 <label htmlFor="nombre" className="col-sm-2 col-form-label">
                   Producto
@@ -509,9 +456,27 @@ export const AgregarRequisicionMolienda = () => {
                       className="form-control"
                     />
                   )}
-                  {/**
-                    <input disabled value={nomProd} className="form-control" />
-                     */}
+                </div>
+              </div>
+
+              <div className="mb-3 row">
+                <label htmlFor="categoria" className="col-sm-2 col-form-label">
+                  Numero Lote
+                </label>
+                <div className="col-md-3">
+                  <input
+                    type="number"
+                    name="codLotProd"
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      setProduccionLote({
+                        ...produccionLote,
+                        [name]: value,
+                      });
+                    }}
+                    value={codLotProd}
+                    className="form-control"
+                  />
                 </div>
               </div>
               <div className="mb-3 row">

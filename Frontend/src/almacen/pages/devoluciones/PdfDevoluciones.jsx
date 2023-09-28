@@ -200,7 +200,15 @@ function _parseInt(str) {
       : str.canReqDet;
   return val;
 }
-const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
+const PdfDevoluciones = ({
+  numop,
+  nomProd,
+  detDev,
+  prodToDev,
+  codLotProd,
+  canLotProd,
+  desProdTip,
+}) => {
   // return;
   //var agregaciones = data.result.agregaciones.detAgr;
   //var prodsFinal = data.result.agregaciones.prodsFinal;
@@ -212,6 +220,7 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
 
   var fechaInicio = "";
   var devoluciones = detDev;
+
   console.log(devoluciones);
 
   return (
@@ -226,7 +235,12 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
             paddingBottom: 40,
           }}
         >
-          <View style={styles.section}>
+          <View
+            style={{
+              ...styles.section,
+              //border: "1px solid black"
+            }}
+          >
             <View style={styles.container}>
               <Image
                 src={logo}
@@ -234,7 +248,13 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
               />
             </View>
 
-            <View style={{ ...styles.row, marginTop: -10 }}>
+            <View
+              style={{
+                ...styles.row,
+                marginTop: -10,
+                //border: "1px solid black",
+              }}
+            >
               <View style={styles.column}>
                 <Text
                   style={{
@@ -248,7 +268,8 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                 >
                   Producto Intermedio: {nomProd}
                 </Text>
-                <Text
+                {/**
+                   <Text
                   style={{
                     ...styles.content,
                     fontWeight: "bold",
@@ -272,6 +293,7 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                 >
                   Fecha de Fin Programado: {"fechaFin"}
                 </Text>
+                 */}
                 {/**
                          <Text
                         style={{
@@ -324,9 +346,51 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                       {numop}
                     </Text>
                   </View>
+
+                  <View
+                    style={{
+                      ...styles.sectionWithBorder,
+                      marginTop: 10,
+                      backgroundColor: "#d8dbe3",
+                      width: 220,
+                      height: 60,
+                      borderRadius: 5,
+                      marginRight: 20,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        ...styles.content,
+                        marginLeft: 10,
+                        marginTop: 7,
+                      }}
+                    >
+                      Número de Lote: {codLotProd}
+                    </Text>
+                    <Text
+                      style={{
+                        ...styles.content,
+                        marginLeft: 10,
+                        marginTop: 4,
+                      }}
+                    >
+                      Peso Total de Lote: {canLotProd + " KG"}
+                    </Text>
+                    <Text
+                      style={{
+                        ...styles.content,
+                        marginLeft: 10,
+                        marginTop: 4,
+                        maxWidth: "100%",
+                      }}
+                    >
+                      Tipo de Producción: {desProdTip}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
+
             <Text
               style={{
                 ...styles.title,
@@ -334,12 +398,29 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                 fontSize: 7,
                 marginLeft: -440,
                 marginTop: 12,
+                //border: "1px solid black",
               }}
             >
               Devoluciones registradas
             </Text>
-            <View style={{ ...styles.section, marginTop: -25 }}>
-              <View style={styles.gridContainer}>
+
+            <View
+              style={{
+                margin: 10,
+                padding: 10,
+                flexGrow: 0.1,
+                marginTop: -25,
+                //border: "2px solid black",
+                //maxHeight: "50px",
+              }}
+            >
+              <View
+                style={{
+                  ...styles.gridContainer,
+                  //border: "1px solid black",
+                  //minHeight: "10%",
+                }}
+              >
                 <View style={[styles.gridHeader, styles.green_]}>
                   <Text
                     style={{
@@ -420,7 +501,7 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                       style={{
                         ...styles.gridContent_p,
                         flex: 0.3,
-                       // border: "1px solid black",
+                        // border: "1px solid black",
                       }}
                     >
                       {detalle.codProd2}
@@ -429,7 +510,7 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                       style={{
                         ...styles.gridContent_p,
                         flex: 1.6,
-                       // border: "1px solid black",
+                        // border: "1px solid black",
                       }}
                     >
                       {detalle.nomProd}
@@ -484,10 +565,6 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
               </View>
             </View>
 
-
-
-
-
             <Text
               style={{
                 ...styles.title,
@@ -495,17 +572,24 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                 fontSize: 7,
                 marginLeft: -440,
                 marginTop: 1,
+                //border: "1px solid black",
               }}
             >
-              productos a devolver
+              Productos a devolver
             </Text>
-            <View style={{ ...styles.section, marginTop: -25 }}>
+            <View
+              style={{
+                ...styles.section,
+                marginTop: -25,
+                //border: "1px solid black",
+              }}
+            >
               <View style={styles.gridContainer}>
                 <View style={[styles.gridHeader, styles.green_]}>
                   <Text
                     style={{
                       ...styles.gridTitle,
-                      flex: 0.4,
+                      flex: 0.3,
                       //border: "1px solid black",
                     }}
                   >
@@ -514,7 +598,7 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                   <Text
                     style={{
                       ...styles.gridTitle,
-                      flex: 2,
+                      flex: 1.6,
                       //border: "1px solid black",
                     }}
                   >
@@ -528,12 +612,12 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                       //border: "1px solid black",
                     }}
                   >
-                    Almacen
+                    Clase
                   </Text>
                   <Text
                     style={{
                       ...styles.gridTitle,
-                      flex: 1,
+                      flex: 0.5,
                       textAlign: "center",
                       //border: "1px solid black",
                     }}
@@ -543,33 +627,14 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                   <Text
                     style={{
                       ...styles.gridTitle,
-                      flex: 0.7,
-                      textAlign: "center",
+                      flex: 0.8,
                       //border: "1px solid black",
                     }}
                   >
-                    Motivo
-                  </Text>
-                  <Text
-                    style={{
-                      ...styles.gridTitle,
-                      flex: 1,
-                      //border: "1px solid black",
-                    }}
-                  >
-                    Cant. Devuelta
-                  </Text>
-                  <Text
-                    style={{
-                      ...styles.gridTitle,
-                      flex: 1,
-                      //border: "1px solid black",
-                    }}
-                  >
-                    Cant. estimada a devolver
+                    Cantidad
                   </Text>
                 </View>
-                {devoluciones.map((detalle, index) => (
+                {prodToDev.map((detalle, index) => (
                   <View
                     key={index}
                     style={[
@@ -581,7 +646,7 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                       style={{
                         ...styles.gridContent_p,
                         flex: 0.3,
-                       // border: "1px solid black",
+                        //border: "1px solid black",
                       }}
                     >
                       {detalle.codProd2}
@@ -590,7 +655,7 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                       style={{
                         ...styles.gridContent_p,
                         flex: 1.6,
-                       // border: "1px solid black",
+                        //border: "1px solid black",
                       }}
                     >
                       {detalle.nomProd}
@@ -602,7 +667,7 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                         //border: "1px solid black",
                       }}
                     >
-                      {detalle.nomAlm}
+                      {detalle.desCla}
                     </Text>
                     <Text
                       style={{
@@ -616,29 +681,11 @@ const PdfDevoluciones = ({ numop, nomProd, detDev }) => {
                     <Text
                       style={{
                         ...styles.gridContent_p,
-                        flex: 1,
-                        //border: "1px solid black",
-                      }}
-                    >
-                      {detalle.desProdDevMot}
-                    </Text>
-                    <Text
-                      style={{
-                        ...styles.gridContent_p,
-                        flex: 0.7,
+                        flex: 0.8,
                         //border: "1px solid black",
                       }}
                     >
                       {detalle.canProdDev}
-                    </Text>
-                    <Text
-                      style={{
-                        ...styles.gridContent_p,
-                        flex: 0.7,
-                        //border: "1px solid black",
-                      }}
-                    >
-                      {detalle.cantDev}
                     </Text>
                   </View>
                 ))}

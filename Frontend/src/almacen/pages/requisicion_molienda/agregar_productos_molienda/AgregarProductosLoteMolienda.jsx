@@ -33,6 +33,7 @@ import { DetalleProductosFinales } from "./DetalleProductosFinales";
 import FechaPicker from "../../../../../src/components/Fechas/FechaPicker";
 import FechaPickerYear from "../../../../components/Fechas/FechaPickerYear";
 import { viewMoliendaRequisicionId } from "./../../../helpers/requisicion-molienda/viewMoliendaRequisicionId";
+import Checkbox from "@mui/material/Checkbox";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -43,6 +44,7 @@ export const AgregarProductosLoteMolienda = () => {
   // RECIBIMOS LOS PARAMETROS DE LA URL
   const location = useLocation();
   const { idReq = "" } = queryString.parse(location.search);
+  const [finalizarOrden, setFinalizarOrden] = useState(false);
 
   // ESTADOS DE LOS PRODUCTOS FINALES DE LA PRODUCCION
   const [proFinProd, setProFinProd] = useState({
@@ -60,6 +62,7 @@ export const AgregarProductosLoteMolienda = () => {
     nomProd: "",
     proFinProdDet: [],
     canIng: "",
+    pedidoCompletado: false,
   });
 
   const {
@@ -74,6 +77,7 @@ export const AgregarProductosLoteMolienda = () => {
     nomProd,
     proFinProdDet,
     canIng,
+    pedidoCompletado,
   } = proFinProd;
 
   // PRODUCTOS FINALES DISPONIBLES POR PRODUCCIÓN
@@ -196,6 +200,7 @@ export const AgregarProductosLoteMolienda = () => {
     if (!result[0].id) {
       // result[0].id = "-1";
     }
+
     result[0].numop = result[0].prodLotReq[0].codReq;
     result[0].canLotProd = result[0].prodLotReq[0].cantProg;
     result[0].canIng = result[0].prodLotReq[0].canIng;
@@ -203,8 +208,19 @@ export const AgregarProductosLoteMolienda = () => {
     result[0].desProdTip = "POLVOS";
     result[0].idProdt = result[0].prodLotReq[0].idProdt;
     result[0].idReq = result[0].prodLotReq[0].id;
+    result[0].idReq = result[0].prodLotReq[0].id;
+    result[0].pedidoCompletado = result[0].prodLotReq[0].reqFinEst;
+    result[0].variacion = result[0].prodLotReq[0].variacion;
 
-    // console.log(result[0]);
+    var check = result[0].prodLotReq.some((item) => item.idReqEst !== 3);
+
+    if (check) {
+      alert("falta terminar de atender los insumos para el producto intemedio");
+      window.close();
+    }
+
+    //console.log(result[0]);
+
     getProdIntermedio(result[0]);
 
     if (message_error.length === 0) {
@@ -266,12 +282,23 @@ export const AgregarProductosLoteMolienda = () => {
     const { idProdTip } = proFinProd;
     //const fechaIngreso = FormatDateTimeMYSQLNow();
 
+    var variacion =
+      canIng -
+      canLotProd +
+      (detalleProductosFinales[0]?.canProdFin
+        ? parseFloat(detalleProductosFinales[0]?.canProdFin)
+        : 0);
+
     const dataEntrada = {
       letAniEntSto: letraAnio(fecEntSto),
       diaJulEntSto: DiaJuliano(fecEntSto),
       fechaIngreso: fecEntSto,
+      pedidoCompletado: finalizarOrden,
+      variacion: finalizarOrden ? variacion : 0,
     };
 
+    // console.log(dataEntrada);
+    // return;
     detalleProductosFinales.map((obj) => {
       obj.letAniEntSto = letraAnio(obj.fecEntSto);
       obj.diaJulEntSto = DiaJuliano(obj.fecEntSto);
@@ -287,7 +314,7 @@ export const AgregarProductosLoteMolienda = () => {
 
     //console.log(detalleProductosFinales, idProdTip, dataEntrada, productoFin);
 
-    if (productoFin.check) {
+    if (false && productoFin.check) {
       setfeedbackMessages({
         style_message: "error",
         feedback_description_error:
@@ -304,6 +331,7 @@ export const AgregarProductosLoteMolienda = () => {
       idProdTip,
       dataEntrada
     );
+    //console.log(resultPeticion);
     //return;
     const { message_error, description_error } = resultPeticion;
     if (message_error.length === 0) {
@@ -397,6 +425,65 @@ export const AgregarProductosLoteMolienda = () => {
                     className="form-control"
                   />
                 </div>
+                <div className="col-md-1">
+                  <label htmlFor="nombre" className="form-label">
+                    <b>Finalizar orden</b>
+                  </label>
+                  <br />
+                  <Checkbox
+                    disabled={Boolean(pedidoCompletado)}
+                    checked={
+                      pedidoCompletado
+                        ? Boolean(pedidoCompletado)
+                        : finalizarOrden
+                    }
+                    onChange={(event) => {
+                      setFinalizarOrden(event.target.checked);
+                    }}
+                    sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
+                </div>
+                {pedidoCompletado ? (
+                  <div className="col-md-2">
+                    <label htmlFor="nombre" className="form-label">
+                      <b>Variación</b>
+                    </label>
+                    <input
+                      type="number"
+                      disabled={true}
+                      value={
+                        canIng -
+                        canLotProd +
+                        (detalleProductosFinales[0]?.canProdFin
+                          ? parseFloat(detalleProductosFinales[0]?.canProdFin)
+                          : 0)
+                      }
+                      className="form-control"
+                    />
+                  </div>
+                ) : (
+                  finalizarOrden && (
+                    <div className="col-md-2">
+                      <label htmlFor="nombre" className="form-label">
+                        <b>Variación</b>
+                      </label>
+                      <input
+                        type="number"
+                        disabled={true}
+                        //value={canIng - canLotProd }
+                        value={
+                          canIng -
+                          canLotProd +
+                          (detalleProductosFinales[0]?.canProdFin
+                            ? parseFloat(detalleProductosFinales[0]?.canProdFin)
+                            : 0)
+                        }
+                        className="form-control"
+                      />
+                    </div>
+                  )
+                )}
               </div>
 
               <div className="mb-3 row d-flex align-items-center">
@@ -484,14 +571,16 @@ export const AgregarProductosLoteMolienda = () => {
             >
               Volver
             </button>
-            <button
-              type="submit"
-              //disabled={disableButton}
-              onClick={handleSubmitProductosFinalesLoteProduccion}
-              className="btn btn-primary"
-            >
-              Guardar
-            </button>
+            {!pedidoCompletado && (
+              <button
+                type="submit"
+                disabled={pedidoCompletado}
+                onClick={handleSubmitProductosFinalesLoteProduccion}
+                className="btn btn-primary"
+              >
+                Guardar
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -20,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $codArea = "ML"; // ESTO REPRESENTA QUE ES UN REQUISICION DE MOLIENDA
     $reqMolDet = $data["reqMolDet"];
     $idLastInsertion = 0;
+    $idProdc  = 0;
 
     if ($pdo) {
 
@@ -49,17 +50,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql =
             "INSERT INTO
                 requisicion
-                (idProdc, idReqEst, idProdt, codReq, idAre, cantProg)
-                VALUES (?,?,?,?,?,?);
+                (idReqEst, idProdt, codReq, idAre, cantProg)
+                VALUES (?,?,?,?,?);
                 ";
         // PREPARAMOS LA CONSULTA
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(1, $idProdc, PDO::PARAM_INT);
-        $stmt->bindParam(2, $idReqEst, PDO::PARAM_INT);
-        $stmt->bindParam(3, $idProdt, PDO::PARAM_INT);
-        $stmt->bindParam(4, $codReq, PDO::PARAM_STR);
-        $stmt->bindParam(5, $idAre, PDO::PARAM_STR);
-        $stmt->bindParam(6, $klgLotProd, PDO::PARAM_STR);
+        //$stmt->bindParam(1, $idProdc, PDO::PARAM_INT);
+        $stmt->bindParam(1, $idReqEst, PDO::PARAM_INT);
+        $stmt->bindParam(2, $idProdt, PDO::PARAM_INT);
+        $stmt->bindParam(3, $codReq, PDO::PARAM_STR);
+        $stmt->bindParam(4, $idAre, PDO::PARAM_STR);
+        $stmt->bindParam(5, $klgLotProd, PDO::PARAM_STR);
 
         //die(json_encode("test"));
 
