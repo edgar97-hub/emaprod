@@ -8,15 +8,9 @@ export const FilterPresentacionFinal = ({ onNewInput, finalProducts }) => {
   const [result, setResult] = useState([]);
 
   const obtenerDataProductos = async () => {
-
-    if(finalProducts?.length){
-      //console.log(finalProducts)
-      //id: 101
-      //label: "RD. TUCO SAZON SALSA MOLIDO BATAN X 70 GRS"
-      //value: "211805"
+    if (finalProducts?.length) {
       setResult(finalProducts);
-
-    }else{
+    } else {
       const resultPeticion = await getPresentacionFinal();
       const formatSelect = resultPeticion.map((element) => {
         return {
@@ -25,15 +19,13 @@ export const FilterPresentacionFinal = ({ onNewInput, finalProducts }) => {
           id: element.id,
         };
       });
-      console.log(formatSelect)
-
+      //console.log(formatSelect);
       setResult(formatSelect);
     }
-    
   };
 
   useEffect(() => {
-      obtenerDataProductos();
+    obtenerDataProductos();
   }, [finalProducts]);
 
   const handledChange = (event, value) => {

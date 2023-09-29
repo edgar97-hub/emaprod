@@ -44,7 +44,7 @@ export const FilterEstadoProduccion = ({ onNewInput, inputs }) => {
         onChange={handledChange}
         onInputChange={(event, value, reason) => {
           if (reason == "input" && value == "") {
-            console.log("reason: ",reason, "value:", value)
+            //console.log("reason: ",reason, "value:", value)
             onNewInput({ label: value });
           }
         }}

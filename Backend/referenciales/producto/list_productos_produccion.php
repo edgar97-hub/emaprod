@@ -10,6 +10,18 @@ $description_error = "";
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
+
+    $parameter = "";
+
+    if (isset($data["idFrescos"]) && isset($data["idSalPar"])) {
+        $parameter = " and M.idSubCla =  " . $data["idFrescos"] . "  or M.idSubCla = " . $data["idSalPar"];
+    }
+
+    //die(json_encode($parameter));
+
     if ($pdo) {
         $sql =
             "SELECT
@@ -23,8 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         M.esProProd
         FROM producto M
         LEFT JOIN medida ME ON M.idMed = ME.id
-        WHERE M.esProProd = ?
-        ";
+        WHERE M.esProProd = ? " . $parameter;
         // Preparamos la consulta
         $stmt = $pdo->prepare($sql);
         $esProInt = 1; // filtramos los productos de molienda

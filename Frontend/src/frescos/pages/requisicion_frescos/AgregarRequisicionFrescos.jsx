@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 // IMPORTACIONES PARA TABLE MUI
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -21,6 +21,7 @@ import { FilterLoteProduccion } from "./../../components/FilterLoteProduccion";
 import { getLoteProduccionById } from "./../../helpers/requisicion/getLoteProduccionById";
 import { RowDetalleFormula } from "../../components/RowDetalleFormula";
 import { getFormulaWithDetalleByPrioridad } from "./../../helpers/formula/getFormulaWithDetalleByPrioridad";
+import { FilterProductoProduccion } from "./../../../components/ReferencialesFilters/Producto/FilterProductoProduccion";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -30,12 +31,16 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 export const AgregarRequisicionFrescos = () => {
   // ESTADO PARA LOS DATOS DEL FILTRO POR LOTE PRODUCCION
   const [produccionLote, setProduccionLote] = useState({
-    idProd: 0,
+    idProd: "none",
     codLotProd: "",
     klgLotProd: "",
     canLotProd: "",
     nomProd: "",
   });
+
+  var idFrescos = 50; // el autocompletado cargara solo frescos
+  var idSalPar = 53; // el autocompletado cargara solo sales parrillera
+
   const { idProd, codLotProd, klgLotProd, canLotProd, nomProd } =
     produccionLote;
 
@@ -50,9 +55,9 @@ export const AgregarRequisicionFrescos = () => {
   const [requisicion, setRequisicion] = useState({
     idProdc: 0,
     idProdt: 0,
-    reqMolDet: [], // DETALLE DE REQUISICION MOLIENDA
+    reqMolDet: [],
   });
-  const { idProdc, idProdt, reqMolDet } = requisicion;
+  // const { idProdc, idProdt, reqMolDet } = requisicion;
 
   // ESTADOS PARA DATOS DE DETALLE FORMULA (DETALLE)
   const [materiaPrimaDetalle, setmateriaPrimaDetalle] = useState({
@@ -122,13 +127,15 @@ export const AgregarRequisicionFrescos = () => {
   // ELIMINAR DETALLE DE REQUISICION
   const deleteDetalleRequisicion = (idItem) => {
     // FILTRAMOS EL ELEMENTO ELIMINADO
-    const nuevaDataDetalleRequisicion = reqMolDet.filter((element) => {
-      if (element.idMatPri !== idItem) {
-        return element;
-      } else {
-        return false;
+    const nuevaDataDetalleRequisicion = requisicion.reqMolDet.filter(
+      (element) => {
+        if (element.idMatPri !== idItem) {
+          return element;
+        } else {
+          return false;
+        }
       }
-    });
+    );
 
     // VOLVEMOS A SETEAR LA DATA
     setRequisicion({
@@ -141,7 +148,7 @@ export const AgregarRequisicionFrescos = () => {
   // MANEJADOR PARA ACTUALIZAR REQUISICION
   const handledFormularioDetalle = ({ target }, idItem) => {
     const { value } = target;
-    const editFormDetalle = reqMolDet.map((element) => {
+    const editFormDetalle = requisicion.reqMolDet.map((element) => {
       if (element.idMatPri === idItem) {
         return {
           ...element,
@@ -160,9 +167,17 @@ export const AgregarRequisicionFrescos = () => {
 
   // FUNCION ASINCRONA PARA CREAR LA REQUISICION CON SU DETALLE
   const crearRequisicion = async () => {
+    requisicion.klgLotProd = produccionLote.klgLotProd;
+    requisicion.codLotProd = produccionLote.codLotProd;
+    requisicion.canLotProd = produccionLote.canLotProd;
+
     console.log(requisicion);
-    const { message_error, description_error } =
-      await createRequisicionWithDetalle(requisicion);
+
+    //return;
+    var response = await createRequisicionWithDetalle(requisicion);
+    console.log(requisicion, response);
+
+    const { message_error, description_error } = response;
 
     if (message_error.length === 0) {
       // regresamos a la anterior vista
@@ -181,8 +196,7 @@ export const AgregarRequisicionFrescos = () => {
   // SUBMIT FORMULARIO DE REQUISICION (M-D)
   const handleSubmitRequisicion = (e) => {
     e.preventDefault();
-    console.log(reqMolDet);
-    if (idProdc === 0 || reqMolDet.length === 0) {
+    if (requisicion.idProdc === 0 || requisicion.reqMolDet.length === 0) {
       setfeedbackMessages({
         style_message: "warning",
         feedback_description_error:
@@ -190,10 +204,7 @@ export const AgregarRequisicionFrescos = () => {
       });
       handleClickFeeback();
     } else {
-      // setdisableButton(true);
-      // LLAMAMOS A LA FUNCION CREAR REQUISICION
       crearRequisicion();
-      // RESETEAMOS LOS VALORES
     }
   };
 
@@ -215,61 +226,43 @@ export const AgregarRequisicionFrescos = () => {
       handleClickFeeback();
     }
   };
-  // MANEJADOR COMPLETAR FORMULARIO SEGUN FORMULA
-  const handleCompleteFormFormula = (e) => {
-    e.preventDefault();
-    if (idFor === 0) {
-      setfeedbackMessages({
-        style_message: "warning",
-        feedback_description_error: "Escoge una formula",
-      });
-      handleClickFeeback();
-    } else {
-      traerDatosFormulaDetalle();
-    }
-  };
-
-  // FILTER POR FORMULA
-  const onFormula = (valueId) => {
-    setformula({
-      ...formula,
-      idFor: valueId,
-    });
-  };
 
   // FUNCION ASINCRONA PARA TRAER LA FORMULA APROPIADA
-  const traerDatosFormulaDetalleApropiada = async () => {
-    /*
-      FORMULA QUE CORRESPONDA AL PESO Y PRODUCTO REQUERIDOS
-    */
-    const body = {
-      idProd: requisicion.idProdt,
-      lotKgrFor: klgLotProd,
-    };
+  async function getProductosFormulaDetalle(body, requisicion) {
     const resultPeticion = await getFormulaWithDetalleByPrioridad(body);
+
+    console.log(resultPeticion);
+    // return;
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
       if (result.length === 0) {
-        setfeedbackMessages({
-          style_message: "warning",
-          feedback_description_error:
-            "No se encontro ninguna formula apropiada",
-        });
-        handleClickFeeback();
       } else {
-        // seteamos la data
-        const { forDet } = result[0];
+        var { forDet } = result[0];
+
+        var klgLotProd = 0;
+        forDet.map((obj) => {
+          if (obj.canMatPriFor) {
+            obj.canMatPriForCopy = parseFloat(obj.canMatPriFor);
+            klgLotProd += obj.canMatPriForCopy;
+            //obj.canMatPriFor =
+            //  parseFloat(obj.canMatPriFor) * parseFloat(body.canLotProd);
+            //obj.canMatPriFor = obj.canMatPriFor.toFixed(3);
+          }
+        });
+
         setRequisicion({
           ...requisicion,
           reqMolDet: forDet,
         });
 
-        // mostramos feedback
-        setfeedbackMessages({
-          style_message: "success",
-          feedback_description_error: "Se encontro una formula apropiada",
-        });
-        handleClickFeeback();
+        console.log(klgLotProd);
+        if (!body.klgLotProd) {
+          setProduccionLote({
+            ...produccionLote,
+            canLotProd: 1,
+            klgLotProd: klgLotProd,
+          });
+        }
       }
     } else {
       setfeedbackMessages({
@@ -278,52 +271,94 @@ export const AgregarRequisicionFrescos = () => {
       });
       handleClickFeeback();
     }
-  };
+  }
 
   // FUNCION ASINCRONA PARA TRAER AL LOTE DE PRODUCCION Y SUS DATOS
-  const traerDatosLoteProduccion = async () => {
-    const { result } = await getLoteProduccionById(idProd);
-    const { id, idProdt, codLotProd, nomProd, canLotProd, klgLotProd } =
-      result[0];
+  const traerDatosLoteProduccion = async (idProdc, produccionLote) => {
+    //console.log(produccionLote);
+    var idProdt = "";
+    var nomProd = "";
+    var canLotProd = "";
+    var id = "";
+    var klgLotProd = "";
+    if (idProdc !== "none") {
+      const { result } = await getLoteProduccionById(idProdc);
+      var { id, idProdt, codLotProd, nomProd, canLotProd, klgLotProd } =
+        result[0];
 
-    // seteamos el estado de los datos de produccion lote
-    setProduccionLote({
-      ...produccionLote,
-      idProdt: idProdt,
-      codLotProd: codLotProd,
-      nomProd: nomProd,
-      canLotProd: canLotProd,
-      klgLotProd: klgLotProd,
-    });
+      //console.log(result[0]);
 
-    // seteamos el estado de los datos de requisicion
-    setRequisicion({
-      ...requisicion,
-      idProdc: id,
-      idProdt: idProdt,
-    });
+      setProduccionLote({
+        ...produccionLote,
+        idProdt: idProdt,
+        codLotProd: codLotProd,
+        nomProd: nomProd,
+        canLotProd: canLotProd,
+        klgLotProd: klgLotProd,
+      });
+    } else {
+      setProduccionLote({
+        ...produccionLote,
+        idProdt: idProdt,
+        codLotProd: codLotProd,
+        nomProd: nomProd,
+        canLotProd: canLotProd,
+        klgLotProd: klgLotProd,
+      });
+    }
+
+    if (id) {
+      var requisicion = {
+        ...requisicion,
+        idProdc: id,
+        idProdt: idProdt,
+      };
+      const body = {
+        idProd: idProdt,
+        lotKgrFor: klgLotProd,
+        canLotProd: canLotProd,
+      };
+      getProductosFormulaDetalle(body, requisicion);
+    } else {
+      setRequisicion({
+        ...requisicion,
+        idProdc: -1, // orden de molienda no sera vinculado a orden de produccion
+        reqMolDet: [],
+      });
+    }
   };
 
-  const handleCompleteDatosProduccionLote = (e) => {
-    e.preventDefault();
-    if (idProd === 0) {
-      setfeedbackMessages({
-        style_message: "warning",
-        feedback_description_error: "Escoge un lote de produccion",
-      });
-      handleClickFeeback();
-    } else {
-      traerDatosLoteProduccion();
-    }
+  const onAddProductoIntermedio = ({ id }) => {
+    console.log(id);
+
+    var requisicion = {
+      ...requisicion,
+      idProdc: -1,
+      idProdt: id,
+    };
+    const body = {
+      idProd: id,
+      canLotProd: canLotProd,
+      klgLotProd: "",
+    };
+
+    //console.log(body);
+    getProductosFormulaDetalle(body, requisicion);
   };
 
   // FILTER POR PRODUCCION LOTE
   const onProduccionLote = (valueId) => {
-    setProduccionLote({
+    var _produccionLote = {
       ...produccionLote,
+      canLotProd: 0.0,
       idProd: valueId,
-    });
+    };
+    traerDatosLoteProduccion(valueId, _produccionLote);
   };
+
+  useEffect(() => {
+    //console.log(idProd);
+  }, [idProd]);
 
   // AGREGAR MATERIA PRIMA A DETALLE DE REQUISICION
   const handleAddNewMateriPrimaDetalle = async (e) => {
@@ -331,7 +366,7 @@ export const AgregarRequisicionFrescos = () => {
     // PRIMERO VERIFICAMOS QUE LOS INPUTS TENGAN DATOS
     if (idMateriaPrima !== 0 && cantidadMateriaPrima > 0) {
       // PRIMERO VERIFICAMOS SI EXISTE ALGUNA COINCIDENCIA DE LO INGRESADO
-      const itemFound = reqMolDet.find(
+      const itemFound = requisicion.reqMolDet.find(
         (elemento) => elemento.idMatPri === idMateriaPrima
       );
       if (itemFound) {
@@ -356,11 +391,12 @@ export const AgregarRequisicionFrescos = () => {
             nomProd: nomProd,
             simMed: simMed,
             canMatPriFor: cantidadMateriaPrima,
+            canMatPriForCopy: cantidadMateriaPrima,
           };
 
           // SETEAMOS SU ESTADO PARA QUE PUEDA SER MOSTRADO EN LA TABLA DE DETALLE
           const dataMateriaPrimaDetalle = [
-            ...reqMolDet,
+            ...requisicion.reqMolDet,
             detalleFormulaMateriaPrima,
           ];
           setRequisicion({
@@ -388,80 +424,132 @@ export const AgregarRequisicionFrescos = () => {
     <>
       <div className="container-fluid mx-3">
         <h1 className="mt-4 text-center">Agregar Requisicion</h1>
-        {/* DATOS DE LA PRODUCCION */}
-        <div className="row mt-4 mx-4">
-          <div className="card d-flex">
-            <h6 className="card-header">Lote de produccion</h6>
-            <div className="card-body d-flex justify-content-between align-items-center">
-              {/* FILTRO POR LOTE DE PRODUCCION */}
-              <div className="col-md-5">
-                <label htmlFor="inputPassword4" className="form-label">
-                  Lote de produccion
-                </label>
-                <FilterLoteProduccion onNewInput={onProduccionLote} />
-              </div>
-
-              {/* BOTON AGREGAR DATOS LOTE DE PRODUCCION */}
-              <div className="col-md-3">
-                <button
-                  onClick={handleCompleteDatosProduccionLote}
-                  className="btn btn-primary"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-plus-circle-fill me-2"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
-                  </svg>
-                  Jalar datos de produccion
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* DATOS DE LA REQUISICION */}
         <div className="row mt-4 mx-4">
           <div className="card d-flex">
             <h6 className="card-header">Datos del lote de produccion</h6>
             <div className="card-body">
-              {/* NUMERO DE LOTE */}
-              <div className="mb-3 row">
-                <label htmlFor="nombre" className="col-sm-2 col-form-label">
-                  Numero de Lote
-                </label>
-                <div className="col-md-2">
-                  <input disabled value={codLotProd} className="form-control" />
-                </div>
-              </div>
-              {/* PRODUCTO */}
               <div className="mb-3 row">
                 <label htmlFor="nombre" className="col-sm-2 col-form-label">
                   Producto
                 </label>
                 <div className="col-md-3">
-                  <input disabled value={nomProd} className="form-control" />
+                  {produccionLote.idProd == "none" ? (
+                    <FilterProductoProduccion
+                      onNewInput={onAddProductoIntermedio}
+                      idFrescos={idFrescos}
+                      idSalPar={idSalPar}
+                    />
+                  ) : (
+                    <input
+                      disabled
+                      value={produccionLote.nomProd}
+                      className="form-control"
+                    />
+                  )}
                 </div>
               </div>
-              {/* CANTIDAD REQUISICION */}
+
               <div className="mb-3 row">
                 <label htmlFor="categoria" className="col-sm-2 col-form-label">
-                  Cantidad
+                  Numero Lote
                 </label>
-                <div className="col-md-2 d-flex">
+                <div className="col-md-3">
                   <input
+                    type="number"
+                    name="codLotProd"
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      setProduccionLote({
+                        ...produccionLote,
+                        [name]: value,
+                      });
+                    }}
+                    value={codLotProd}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+              <div className="mb-3 row">
+                <label htmlFor="categoria" className="col-sm-2 col-form-label">
+                  Cantidad Lote
+                </label>
+                <div className="col-md-3">
+                  <input
+                    type="number"
+                    name="canLotProd"
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+
+                      var klgLotProd = 0;
+                      requisicion.reqMolDet.map((obj) => {
+                        obj.canMatPriFor =
+                          parseFloat(obj.canMatPriForCopy) * parseFloat(value);
+                        klgLotProd += obj.canMatPriFor;
+                        obj.canMatPriFor = obj.canMatPriFor.toFixed(3);
+                      });
+
+                      setProduccionLote({
+                        ...produccionLote,
+                        [name]: value,
+                        klgLotProd: klgLotProd,
+                      });
+                      setRequisicion({
+                        ...requisicion,
+                      });
+                    }}
+                    value={canLotProd}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+              <div className="mb-3 row">
+                <label htmlFor="categoria" className="col-sm-2 col-form-label">
+                  Peso programado
+                </label>
+                <div className="col-md-3">
+                  {/**
+                     <input
                     disabled
                     value={canLotProd}
                     className="form-control me-2"
                   />
+                     */}
+
+                  <input
+                    type="number"
+                    name="klgLotProd"
+                    disabled
+                    onChange={(e) => {
+                      /**
+                       const { name, value } = e.target;
+                      setProduccionLote({
+                        ...produccionLote,
+                        [name]: value,
+                      });
+
+                      requisicion.reqMolDet.map((obj) => {
+                        if (obj.canMatPriFor) {
+                          obj.canMatPriFor =
+                            parseFloat(obj.canMatPriForCopy) *
+                            parseFloat(value);
+                          obj.canMatPriFor = obj.canMatPriFor.toFixed(3);
+                        }
+                      });
+                      setRequisicion({
+                        ...requisicion,
+                      });
+                       */
+                    }}
+                    value={klgLotProd}
+                    className="form-control"
+                  />
                 </div>
               </div>
               {/* KILOGRAMOS POR LOTE */}
-              <div className="mb-3 row">
+              {/**
+                <div className="mb-3 row">
                 <label htmlFor="stock" className="col-sm-2 col-form-label">
                   Kilogramos de lote
                 </label>
@@ -469,66 +557,10 @@ export const AgregarRequisicionFrescos = () => {
                   <input disabled value={klgLotProd} className="form-control" />
                 </div>
               </div>
+               */}
             </div>
           </div>
         </div>
-
-        {/* CONTROL PARA JALAR DE FORMULA */}
-        {codLotProd.length !== 0 && (
-          <div className="row mt-4 mx-4">
-            <div className="card d-flex">
-              <h6 className="card-header">Plantilla de formula</h6>
-              <div className="card-body d-flex justify-content-between align-items-center">
-                {/* FILTRO POR FORMULA */}
-                <div className="col-md-5">
-                  <label className="form-label">Formula</label>
-                  <div className="col d-flex">
-                    <div className="col-9">
-                      <FilterFormula onNewInput={onFormula} />
-                    </div>
-                    <div className="col-3">
-                      <button
-                        onClick={handleCompleteFormFormula}
-                        className="btn btn-primary ms-2"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="bi bi-plus-circle-fill me-2"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
-                        </svg>
-                        Jalar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                {/* BOTON AGREGAR DATOS FORMULA */}
-                <div className="col-md-7 d-flex justify-content-end">
-                  <button
-                    onClick={traerDatosFormulaDetalleApropiada}
-                    className="btn btn-success"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      className="bi bi-search me-2"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                    </svg>
-                    Buscar formula apropiada
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         <div className="row mt-4 mx-4">
           <div className="card d-flex">
@@ -612,7 +644,7 @@ export const AgregarRequisicionFrescos = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {reqMolDet
+                      {requisicion.reqMolDet
                         .slice(
                           page * rowsPerPage,
                           page * rowsPerPage + rowsPerPage
@@ -632,7 +664,7 @@ export const AgregarRequisicionFrescos = () => {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   component="div"
-                  count={reqMolDet.length}
+                  count={requisicion.reqMolDet.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   onPageChange={handleChangePage}
@@ -654,7 +686,7 @@ export const AgregarRequisicionFrescos = () => {
           </button>
           <button
             type="submit"
-            disabled={disableButton}
+            //disabled={disableButton}
             onClick={handleSubmitRequisicion}
             className="btn btn-primary"
           >

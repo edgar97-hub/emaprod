@@ -4,11 +4,16 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getProductosProduccion } from "./../../../helpers/Referenciales/producto/getProductosProduccion";
 
-export const FilterProductoProduccion = ({ onNewInput, inputs }) => {
+export const FilterProductoProduccion = ({
+  onNewInput,
+  inputs,
+  idFrescos,
+  idSalPar,
+}) => {
   const [result, setResult] = useState([]);
 
   const obtenerDataProductoProduccion = async () => {
-    const resultPeticion = await getProductosProduccion();
+    const resultPeticion = await getProductosProduccion(idFrescos, idSalPar);
     const formatSelect = resultPeticion?.map((element) => {
       return {
         value: element.codProd2,
@@ -27,9 +32,9 @@ export const FilterProductoProduccion = ({ onNewInput, inputs }) => {
     onNewInput(value);
   };
 
-  var d = {}
-  if(inputs?.producto){
-    d.value = inputs.producto
+  var d = {};
+  if (inputs?.producto) {
+    d.value = inputs.producto;
   }
 
   return (
@@ -43,7 +48,7 @@ export const FilterProductoProduccion = ({ onNewInput, inputs }) => {
         onChange={handledChange}
         onInputChange={(event, value, reason) => {
           if (reason == "input" && value == "") {
-            console.log("reason: ",reason, "value:", value)
+            console.log("reason: ", reason, "value:", value);
             onNewInput({ label: value });
           }
         }}

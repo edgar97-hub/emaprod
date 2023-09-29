@@ -122,6 +122,21 @@ export const ListRequisicionesFrescos = () => {
   const filter = (terminoBusqueda, name) => {
     let resultSearch = [];
     switch (name) {
+      case "filterCodReq":
+        resultSearch = dataRequisicion.filter((element) => {
+          if (
+            element.codReq
+              .toString()
+              .toLowerCase()
+              .includes(terminoBusqueda.toLowerCase())
+          ) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+        setdataRequisicionTemp(resultSearch);
+        break;
       case "filterLoteProduccion":
         resultSearch = dataRequisicion.filter((element) => {
           if (
@@ -240,6 +255,8 @@ export const ListRequisicionesFrescos = () => {
   const obtenerDataRequisicionMolienda = async (body = {}) => {
     const resultPeticion = await getRequisicionMoliendaWithDetalle(body);
     const { message_error, description_error, result } = resultPeticion;
+
+    console.log(resultPeticion);
     if (message_error.length === 0) {
       setdataRequisicion(result);
       setdataRequisicionTemp(result);
@@ -263,11 +280,14 @@ export const ListRequisicionesFrescos = () => {
 
   // MOSTRAR Y OCULTAR DETALLE DE REQUISICION MOLIENDA
   const showRequisicionMoliendaDetalle = (idPosElement) => {
-    const requisicionMoliendaDetalle =
-      dataRequisicionTemp[idPosElement].reqMolDet;
-    // seteamos la data de la requisicion seleccionada
+    //var ss = dataRequisicionTemp[idPosElement].reqMolDet
+    var ss = dataRequisicionTemp[idPosElement].reqDet;
+    const requisicionMoliendaDetalle = ss;
+
+    //console.log(requisicionMoliendaDetalle, idPosElement, dataRequisicionTemp);
+
+    //return;
     setDetalleSeleccionado(requisicionMoliendaDetalle);
-    // mostramos el modal
     setMostrarDetalle(true);
   };
 
@@ -284,12 +304,16 @@ export const ListRequisicionesFrescos = () => {
           <div className="col-6">
             <div className="row">
               <div className="col-4">
-                Desde
-                <FechaPickerMonth onNewfecEntSto={onChangeDateStartData} />
+                <FechaPickerMonth
+                  onNewfecEntSto={onChangeDateStartData}
+                  label="Desde"
+                />
               </div>
               <div className="col-4">
-                Hasta
-                <FechaPickerMonth onNewfecEntSto={onChangeDateEndData} />
+                <FechaPickerMonth
+                  onNewfecEntSto={onChangeDateEndData}
+                  label="Hasta"
+                />
               </div>
             </div>
           </div>
@@ -360,6 +384,23 @@ export const ListRequisicionesFrescos = () => {
                         }}
                       />
                     </TableCell>
+
+                    <TableCell align="left" width={70}>
+                      <b>Codigo</b>
+                      <TextField
+                        name="filterCodReq"
+                        onChange={handleFormFilter}
+                        //type="number"
+                        size="small"
+                        autoComplete="off"
+                        InputProps={{
+                          style: {
+                            color: "black",
+                            background: "white",
+                          },
+                        }}
+                      />
+                    </TableCell>
                     <TableCell align="left" width={100}>
                       <b>Tipo</b>
                       <FilterTipoProduccion
@@ -394,15 +435,19 @@ export const ListRequisicionesFrescos = () => {
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Fecha requerido</b>
-                      <FechaPickerDay
+                      {/**
+                         <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaPedido}
                       />
+                         */}
                     </TableCell>
                     <TableCell align="left" width={140}>
                       <b>Fecha terminado</b>
-                      <FechaPickerDay
+                      {/**
+                        <FechaPickerDay
                         onNewfecEntSto={onChangeDateFechaTerminado}
                       />
+                       */}
                     </TableCell>
                     <TableCell align="left" width={100}>
                       <b>Acciones</b>
@@ -422,9 +467,14 @@ export const ListRequisicionesFrescos = () => {
                         <TableCell component="th" scope="row">
                           {row.codLotProd}
                         </TableCell>
-                        <TableCell align="left">{row.desProdTip}</TableCell>
+                        <TableCell component="th" scope="row">
+                          {row.codReq}
+                        </TableCell>
+                        <TableCell align="left">
+                          {row.desProdTip ? row.desProdTip : "POLVOS"}
+                        </TableCell>
                         <TableCell align="left">{row.nomProd}</TableCell>
-                        <TableCell align="left">{row.klgLotProd}</TableCell>
+                        <TableCell align="left">{row.canLotProd}</TableCell>
                         <TableCell align="center">
                           <span
                             className={
@@ -437,10 +487,10 @@ export const ListRequisicionesFrescos = () => {
                                 : "badge text-bg-success"
                             }
                           >
-                            {row.desReqMolEst}
+                            {row.desReqEst}
                           </span>
                         </TableCell>
-                        <TableCell align="left">{row.fecPedReqMol}</TableCell>
+                        <TableCell align="left">{row.fecPedReq}</TableCell>
                         <TableCell align="left">
                           {row.fecTerReqMol === null
                             ? "Aun no terminado"

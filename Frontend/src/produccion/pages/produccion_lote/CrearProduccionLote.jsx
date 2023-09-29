@@ -889,7 +889,7 @@ export const CrearProduccionLote = () => {
                       type="text"
                       name="codLotProd"
                       onChange={handledForm}
-                      value={_klgLotProd}
+                      value={_klgLotProd - canLotProd}
                       className="form-control"
                       readOnly
                     />
