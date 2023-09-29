@@ -38,9 +38,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         p.esProProd
         FROM producto p
         LEFT JOIN medida ME ON p.idMed = ME.id
-        WHERE(p.esProFin = ?   and p.id not in (398, 400, 401, 402, 403, 404)) or p.id in (171, 172, 173, 174, 175, 176)
+        WHERE (p.esProFin = ? or p.id in (171, 172, 173, 174, 175, 176) ) and p.discontinued = 0
         ";
-        // Preparamos la consulta
+        //WHERE(p.esProFin = ?   and p.id not in (398, 400, 401, 402, 403, 404)) or p.id in (171, 172, 173, 174, 175, 176) and p.discontinued = 0
+
         $stmt = $pdo->prepare($sql);
         $esProFin = 1; // filtramos los productos presentaciones finales
         $stmt->bindParam(1, $esProFin, PDO::PARAM_BOOL);

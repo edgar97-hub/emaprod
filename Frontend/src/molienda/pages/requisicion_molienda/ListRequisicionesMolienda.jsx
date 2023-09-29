@@ -470,7 +470,9 @@ export const ListRequisicionesMolienda = () => {
                         <TableCell component="th" scope="row">
                           {row.codReq}
                         </TableCell>
-                        <TableCell align="left">{row.desProdTip}</TableCell>
+                        <TableCell align="left">
+                          {row.desProdTip ? row.desProdTip : "POLVOS"}
+                        </TableCell>
                         <TableCell align="left">{row.nomProd}</TableCell>
                         <TableCell align="left">{row.canLotProd}</TableCell>
                         <TableCell align="center">

@@ -236,7 +236,7 @@ export const ViewLoteMolienda = () => {
                 to={`/almacen/requisicion-molienda/agregar?idReq=${idReq}`}
                 className="btn btn-primary"
               >
-                Registrar productos intermedios
+                Registrar producto intermedio
               </Link>
             </div>
           </div>

@@ -165,6 +165,7 @@ export const AgregarRequisicionMolienda = () => {
   const crearRequisicion = async () => {
     requisicion.klgLotProd = produccionLote.klgLotProd;
     requisicion.codLotProd = produccionLote.codLotProd;
+    requisicion.canLotProd = produccionLote.canLotProd;
 
     console.log(requisicion);
 

@@ -17,6 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $datEntSto = $data["datEntSto"];
     $pedidoCompletado = (int)$datEntSto["pedidoCompletado"];
     $variacion = floatval($datEntSto["variacion"]);
+    $codLot = $datEntSto["codLot"];
 
     $fecha = date('Y-m-d H:i:s');
     $canVar = 0;
@@ -127,8 +128,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 canTotDis,
                                 docEntSto,
                                 fecEntSto,
-                                fecVenEntSto, referencia, canVar)
-                                VALUES (?,?,?,?,?,?,?,?,?, $canProdFin, $canProdFin,?,?,?,?,?)";
+                                fecVenEntSto, referencia, canVar, codLot)
+                                VALUES (?,?,?,?,?,?,?,?,?, $canProdFin, $canProdFin,?,?,?,?,?,?)";
 
                             try {
                                 $stmt_insert_entrada_stock = $pdo->prepare($sql_insert_entrada_stock);
@@ -146,6 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 $stmt_insert_entrada_stock->bindParam(12, $fecVenEntProdFin);
                                 $stmt_insert_entrada_stock->bindParam(13, $idProdc);
                                 $stmt_insert_entrada_stock->bindParam(14, $canVar);
+                                $stmt_insert_entrada_stock->bindParam(15, $codLot);
 
                                 $stmt_insert_entrada_stock->execute();
                             } catch (PDOException $e) {

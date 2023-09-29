@@ -197,10 +197,6 @@ export const AgregarProductosLoteMolienda = () => {
 
     const { message_error, description_error, result } = resultPeticion;
 
-    if (!result[0].id) {
-      // result[0].id = "-1";
-    }
-
     result[0].numop = result[0].prodLotReq[0].codReq;
     result[0].canLotProd = result[0].prodLotReq[0].cantProg;
     result[0].canIng = result[0].prodLotReq[0].canIng;
@@ -211,6 +207,9 @@ export const AgregarProductosLoteMolienda = () => {
     result[0].idReq = result[0].prodLotReq[0].id;
     result[0].pedidoCompletado = result[0].prodLotReq[0].reqFinEst;
     result[0].variacion = result[0].prodLotReq[0].variacion;
+    result[0].codLotProd = result[0].prodLotReq[0].codLotProd;
+    result[0].canLotProd = result[0].prodLotReq[0].canLotProd;
+    result[0].klgLotProd = result[0].prodLotReq[0].klgLotProd;
 
     var check = result[0].prodLotReq.some((item) => item.idReqEst !== 3);
 
@@ -295,6 +294,7 @@ export const AgregarProductosLoteMolienda = () => {
       fechaIngreso: fecEntSto,
       pedidoCompletado: finalizarOrden,
       variacion: finalizarOrden ? variacion : 0,
+      codLot: codLotProd,
     };
 
     // console.log(dataEntrada);
@@ -378,6 +378,18 @@ export const AgregarProductosLoteMolienda = () => {
               <div className="mb-3 row">
                 <div className="col-md-2">
                   <label htmlFor="nombre" className="form-label">
+                    <b>Numero lote</b>
+                  </label>
+                  <input
+                    type="text"
+                    disabled={true}
+                    value={codLotProd}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="col-md-2">
+                  <label htmlFor="nombre" className="form-label">
                     <b>Codigo</b>
                   </label>
                   <input
@@ -405,12 +417,23 @@ export const AgregarProductosLoteMolienda = () => {
               <div className="mb-3 row d-flex align-items-center">
                 <div className="col-md-2">
                   <label htmlFor="nombre" className="form-label">
+                    <b>Cantidad lote</b>
+                  </label>
+                  <input
+                    type="text"
+                    disabled={true}
+                    value={canLotProd}
+                    className="form-control"
+                  />
+                </div>
+                <div className="col-md-2">
+                  <label htmlFor="nombre" className="form-label">
                     <b>Peso programado</b>
                   </label>
                   <input
                     type="number"
                     disabled={true}
-                    value={canLotProd}
+                    value={klgLotProd}
                     className="form-control"
                   />
                 </div>

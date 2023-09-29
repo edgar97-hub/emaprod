@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         es.id as idEntStock,
         es.fecCreEntSto, 
         es.merTot,
-        es.canVar
+        es.canVar, es.codLot
         FROM entrada_stock es
         JOIN producto p ON p.id = es.idProd
         left JOIN proveedor pv ON pv.id = es.idProv

@@ -186,14 +186,15 @@ const ListEntradaStock = () => {
     let resultSearch = [];
 
     if (inputs.procesar) {
-      obtenerDataEntradaStock(formState)
-        .then((dataEntSto) => {
+      getEntradasStock(formState)
+        .then(({ result }) => {
+          console.log(result);
+          //return;
+          var dataEntSto = result;
           var totalDis = 0;
           var totalMer = 0;
-          var entradas = [];
 
           function checkType(data) {
-            //console.log(inputs.tipoEntrada, data);
             if (inputs.tipoEntrada == "TODO") {
               return true;
             }
@@ -252,16 +253,7 @@ const ListEntradaStock = () => {
               resultSearch.push({ ...data });
             }
           });
-          //resultSearch = resultSearch.reverse();
-          /**
-           resultSearch.map((obj) => {
-            totalDis += parseFloat(obj.canTotDis);
-            obj.disAcu = totalDis.toFixed(2);
 
-            totalMer += parseFloat(obj.merTot);
-            obj.merAcu = totalMer.toFixed(2);
-          });
-          */
           resultSearch = resultSearch.reverse();
 
           setfeedbackMessages({
@@ -470,6 +462,9 @@ const ListEntradaStock = () => {
                     }}
                   >
                     <TableCell align="left" width={160}>
+                      <b>Cod Lote</b>
+                    </TableCell>
+                    <TableCell align="left" width={160}>
                       <b>Producto</b>
                       <FilterAllProductos
                         onNewInput={onChangeProducto}
@@ -506,7 +501,6 @@ const ListEntradaStock = () => {
                         }}
                       />
                     </TableCell>
-
                     <TableCell align="left" width={80}>
                       <b>Doc.</b>
                       <TextField
@@ -523,7 +517,6 @@ const ListEntradaStock = () => {
                         }}
                       />
                     </TableCell>
-
                     <TableCell align="left" width={20}>
                       <b>Seleccion</b>
                       <div className="d-flex justify-content-center">
@@ -552,7 +545,6 @@ const ListEntradaStock = () => {
                         }}
                       />
                     </TableCell>
-
                     <TableCell align="left" width={50}>
                       <b>Merma T.</b>
 
@@ -570,7 +562,6 @@ const ListEntradaStock = () => {
                         }}
                       />
                     </TableCell>
-
                     <TableCell align="left" width={50}>
                       <b>Disponible</b>
                       <TextField
@@ -624,6 +615,9 @@ const ListEntradaStock = () => {
                         }}
                       >
                         <TableCell component="th" scope="row">
+                          {row.codLot}
+                        </TableCell>
+                        <TableCell component="th" scope="row">
                           {row.nomProd}
                         </TableCell>
                         <TableCell align="left">{row.nomProv}</TableCell>
@@ -659,7 +653,6 @@ const ListEntradaStock = () => {
                         </TableCell>
                         <TableCell align="left">{row.canTotEnt}</TableCell>
                         <TableCell align="left">{row.merTot}</TableCell>
-
                         <TableCell align="left">{row.canTotDis}</TableCell>
                         <TableCell align="left">{row.fecEntSto}</TableCell>
                         <TableCell align="left">{row.fecVenEntSto}</TableCell>
@@ -682,7 +675,6 @@ const ListEntradaStock = () => {
                               borderRadius: "9px",
                             }}
                             onClick={() => {
-                              //console.log(row)
                               window.open(
                                 `/almacen/entradas-stock/view/${row.idEntStock}`,
                                 "_blank"

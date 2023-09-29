@@ -25,6 +25,7 @@ import { FilterAreaEncargada } from "./../../components/FilterAreaEncargada";
 import { createProduccionLoteWithRequisiciones } from "./../../helpers/produccion_lote/createProduccionLoteWithRequisiciones";
 import { FormatDateTimeMYSQLNow } from "../../../utils/functions/FormatDate";
 import { checkSalidasStock } from "./../../../almacen/helpers/lote-produccion/checkSalidasStock";
+import { getLoteStockEnt } from "./../../../almacen/helpers/lote-produccion/getLoteStockEnt";
 
 // IMPROTACIONES PARA LINEA DE PROGRESION
 import Box from "@mui/material/Box";
@@ -65,6 +66,7 @@ export const CrearProduccionLote = () => {
 
   // ESTADO PARA LINEA DE PROGRESO
   const [showLinearProgress, setshowLinearProgress] = useState(false);
+  const [_klgLotProd, setKlgLotProd] = useState(0);
 
   // ESTADO DE KLG DISPONIBLES PARA LOTE PRODUCCION
   const [cantidadLoteProduccion, setcantidadLoteProduccion] = useState({
@@ -120,6 +122,8 @@ export const CrearProduccionLote = () => {
       klgDisponibleLoteProduccion:
         parseFloat(klgLotProd) * parseFloat(canLotProd),
     });
+
+    console.log( parseFloat(klgLotProd) * parseFloat(canLotProd));
   }, [klgLotProd, canLotProd]);
 
   // STATE PARA CONTROLAR LA AGREGACION DE PRODUCTOS FINALES DEL LOTE
@@ -184,11 +188,37 @@ export const CrearProduccionLote = () => {
   };
 
   // EVENTO DE PRODUCTO
-  const onAddProductoProduccion = ({ id }) => {
-    setproduccionLote({
-      ...produccionLote,
-      idProdt: id,
-    });
+  const onAddProductoProduccion = async ({ id }) => {
+    const response = await getLoteStockEnt({ idProdt: id });
+    var { result } = response;
+    //response[0].codLot ;
+
+    if (result?.length) {
+      console.log(result[0].codLot);
+
+      var codLot = result[0].codLot;
+      var canLotProd = 0;
+      result = result.filter((item) => item.codLot === codLot);
+      result.map((item) => {
+        console.log(item.canTotDis);
+        canLotProd += parseFloat(item.canTotDis);
+      });
+      setproduccionLote({
+        ...produccionLote,
+        idProdt: id,
+        canLotProd: canLotProd,
+        codLotProd: codLot,
+      });
+      setKlgLotProd(canLotProd);
+    } else {
+      setproduccionLote({
+        ...produccionLote,
+        idProdt: id,
+        canLotProd: 0,
+        codLotProd: 0,
+      });
+      setKlgLotProd(0);
+    }
   };
 
   // EVENTO DE TIPO DE PRODUCCION
@@ -251,8 +281,8 @@ export const CrearProduccionLote = () => {
 
     setproductoLoteProduccion({
       ...productoLoteProduccion,
-      ["cantidadDeLote"]: cantidadklgLote,
-      ["cantidadDeProducto"]: cantidadUnidades.toFixed(2),
+      cantidadDeLote: cantidadklgLote,
+      cantidadDeProducto: cantidadUnidades.toFixed(2),
     });
   };
 
@@ -286,8 +316,8 @@ export const CrearProduccionLote = () => {
 
     setproductoLoteProduccion({
       ...productoLoteProduccion,
-      ["cantidadDeLote"]: cantidadklgLote.toFixed(3),
-      ["cantidadDeProducto"]: cantidadUnidades,
+      cantidadDeLote: cantidadklgLote.toFixed(3),
+      cantidadDeProducto: cantidadUnidades,
     });
   };
 
@@ -391,7 +421,6 @@ export const CrearProduccionLote = () => {
           "Debe proporcionar una cantidad mayor a 0 para agregar el detalle\n";
       }
 
-      // mostramos el feedback
       setfeedbackMessages({
         style_message: "warning",
         feedback_description_error: advertenciaDetalleRequisicion,
@@ -400,9 +429,7 @@ export const CrearProduccionLote = () => {
     }
   };
 
-  // eliminar un detalle
   const handleDeleteItemRequisicionProduccion = (idItem, index) => {
-    // filtramos el elemento eliminado
     const dataDetalleRequisicionProduccion = reqDetProdc.filter((element) => {
       if (element.idProd === idItem && element.indexProdFin === index) {
         return false;
@@ -411,17 +438,15 @@ export const CrearProduccionLote = () => {
       }
     });
 
-    // lo insertamos en el detalle
     setproduccionLote({
       ...produccionLote,
       reqDetProdc: dataDetalleRequisicionProduccion,
     });
   };
 
-  // editar un detalle
   const handleEditItemRequisicionProduccion = ({ target }, idItem, index) => {
     const { value } = target;
-    console.log("test ", value);
+    //console.log("test ", value);
     const editFormDetalle = reqDetProdc.map((element) => {
       if (element.idProd === idItem && element.indexProdFin === index) {
         return {
@@ -438,7 +463,6 @@ export const CrearProduccionLote = () => {
     });
   };
 
-  // *********** MANEJADOR DE ACCIONES ARREGLO DE PRODUCTOS FINALES O SUBPRODUCTOS **********
   const handleAddProductoProduccionLote = async (e) => {
     e.preventDefault();
 
@@ -458,27 +482,19 @@ export const CrearProduccionLote = () => {
         });
         handleClickFeeback();
       } else {
-        //console.log("idPRODFIN: ",idProdFin);
-        // buscamos su formulación de producto
         const resultPeticion = await getFormulaProductoDetalleByProducto(
           productoLoteProduccion.idProdFin
         );
 
         const { message_error, description_error, result } = resultPeticion;
-        //console.log(productoLoteProduccion.idProdFin);
-        //return
 
         if (message_error.length === 0) {
-          const { idProdFin, nomProd, simMed, reqDet } = result[0]; // obtenemos la requisicion
+          const { idProdFin, nomProd, simMed, reqDet } = result[0];
           let equivalenteKilogramos = 0;
-          // buscamos la requisicion de materia prima
-          //console.log("Complete Element -> ",reqDet);
 
           reqDet.forEach((element) => {
             if (element.idAre === 2 || element.idAre === 7) {
               equivalenteKilogramos = parseFloat(element.canForProDet);
-              //console.log("elemento are:", element.desAre);
-              //console.log("elemento value: ", equivalenteKilogramos);
             }
           });
 
@@ -509,10 +525,10 @@ export const CrearProduccionLote = () => {
           );
 
           var _cantidadUnidades = Math.abs(Math.floor(-cantidadUnidades));
-          console.log(
-            totalUnidadesLoteProduccion,
-            Math.abs(Math.floor(-cantidadUnidades))
-          );
+          //console.log(
+          //  totalUnidadesLoteProduccion,
+          //  Math.abs(Math.floor(-cantidadUnidades))
+          //);
 
           const cantidadTotalUnidadesDelLoteProduccion = parseInt(
             totalUnidadesLoteProduccion + _cantidadUnidades
@@ -660,6 +676,7 @@ export const CrearProduccionLote = () => {
   const crearProduccionLote = async () => {
     produccionLote.totalUnidadesLoteProduccion = totalUnidadesLoteProduccion;
     produccionLote.klgTotalLoteProduccion = klgTotalLoteProduccion;
+   // produccionLote.klgLotProd = klgTotalLoteProduccion;
 
     var body = {
       canReqDet: produccionLote.canLotProd,
@@ -676,7 +693,7 @@ export const CrearProduccionLote = () => {
 
     const response = await checkSalidasStock(body);
     console.log(produccionLote, response);
-
+    //return;
     if (response != 0) {
       setfeedbackMessages({
         style_message: "error",
@@ -717,8 +734,8 @@ export const CrearProduccionLote = () => {
       codLotProd.length === 0 ||
       idProdt === 0 ||
       idProdTip === 0 ||
-      klgLotProd <= 0 ||
-      canLotProd <= 0 ||
+      //klgLotProd <= 0 ||
+      //canLotProd <= 0 ||
       fecProdIniProg.length === 0 ||
       fecProdFinProg.length === 0 ||
       fecVenLotProd.length === 0
@@ -806,6 +823,7 @@ export const CrearProduccionLote = () => {
                       onChange={handledForm}
                       value={codLotProd}
                       className="form-control"
+                      readOnly
                     />
                   </div>
                   <div className="col-md-6 me-4">
@@ -817,7 +835,8 @@ export const CrearProduccionLote = () => {
                     />
                   </div>
 
-                  <div className="col-md-2">
+                  {/**
+                     <div className="col-md-2">
                     <label htmlFor="nombre" className="form-label">
                       <b>Peso de Lote</b>
                     </label>
@@ -829,15 +848,48 @@ export const CrearProduccionLote = () => {
                       className="form-control"
                     />
                   </div>
+                   */}
                   <div className="col-md-1">
                     <label htmlFor="nombre" className="form-label">
-                      <b>Cantidad</b>
+                      <b>Peso de Lote</b>
                     </label>
                     <input
                       type="number"
-                      name="klgLotProd"
+                      name="canLotProd"
+                      onChange={(e) => {
+                        const { name, value } = e.target;
+
+                        var data = 0;
+                        if (value <= _klgLotProd) {
+                          data = value;
+                        } else {
+                          //data = klgLotProd;
+                          setfeedbackMessages({
+                            style_message: "error",
+                            feedback_description_error:
+                              "la cantidad de peso no puede ser mayor a la cantidad disponible",
+                          });
+                          handleClickFeeback();
+                        }
+
+                        setproduccionLote({
+                          ...produccionLote,
+                          [name]: data,
+                        });
+                      }}
+                      value={canLotProd}
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="col-md-1">
+                    <label htmlFor="nombre" className="form-label">
+                      <b>Can dis Lote</b>
+                    </label>
+                    <input
+                      type="text"
+                      name="codLotProd"
                       onChange={handledForm}
-                      value={klgLotProd}
+                      value={_klgLotProd}
                       className="form-control"
                       readOnly
                     />

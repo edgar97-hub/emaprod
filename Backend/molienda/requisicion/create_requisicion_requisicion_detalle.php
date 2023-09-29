@@ -16,6 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $idProdt = $data["idProdt"];
     //$canLotProd = $data["canLotProd"];
     $klgLotProd = $data["klgLotProd"];
+    $codLotProd = $data["codLotProd"];
+    $canLotProd = $data["canLotProd"];
 
     $codArea = "ML"; // ESTO REPRESENTA QUE ES UN REQUISICION DE MOLIENDA
     $reqMolDet = $data["reqMolDet"];
@@ -50,8 +52,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql =
             "INSERT INTO
                 requisicion
-                (idReqEst, idProdt, codReq, idAre, cantProg)
-                VALUES (?,?,?,?,?);
+                (idReqEst, idProdt, codReq, idAre, cantProg, codLotProd, canLotProd)
+                VALUES (?,?,?,?,?,?,?);
                 ";
         // PREPARAMOS LA CONSULTA
         $stmt = $pdo->prepare($sql);
@@ -61,6 +63,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(3, $codReq, PDO::PARAM_STR);
         $stmt->bindParam(4, $idAre, PDO::PARAM_STR);
         $stmt->bindParam(5, $klgLotProd, PDO::PARAM_STR);
+        $stmt->bindParam(6, $codLotProd, PDO::PARAM_STR);
+        $stmt->bindParam(7, $canLotProd, PDO::PARAM_STR);
 
         //die(json_encode("test"));
 
