@@ -287,7 +287,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                     $stmt_update_almacen_stock->execute(); // ejecutamos
                                 } catch (PDOException $e) {
-                                    $pdo->rollback();
                                     $message_error = "ERROR INTERNO SERVER AL ACTUALIZAR ALMACEN STOCK";
                                     $description_error = $e->getMessage();
                                 }
@@ -303,7 +302,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                     $stmt_create_almacen_stock->execute(); // ejecutamos
                                 } catch (PDOException $e) {
-                                    $pdo->rollback();
                                     $message_error = "ERROR INTERNO SERVER AL CREAR ALMACEN STOCK";
                                     $description_error = $e->getMessage();
                                 }

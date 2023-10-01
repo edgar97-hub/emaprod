@@ -97,6 +97,8 @@ export const AtenderAgregaciones = () => {
     console.log(requisicion_detalle, resultPeticion);
 
     const { message_error, description_error, result } = resultPeticion;
+    obtenerDataProduccionRequisicionesDetalle();
+
     if (message_error.length === 0) {
       obtenerDataProduccionRequisicionesDetalle();
       closeLoader();

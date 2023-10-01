@@ -49,37 +49,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $sql_detalle =
                     "SELECT
-                    DISTINCT
-                ppf.id,
-                ppf.idProdcProdtFinEst,
-                ppfe.desProProFinEst,
-                ppf.idProdt,
-                pd.nomProd,
-                me.simMed,
-                cl.desCla,
-                ppf.canTotProgProdFin,
-                ppf.canTotIngProdFin,
-                pa.idProdFin,
-                pd.codProd2,
-                CASE WHEN pa.idProdFin is null THEN false
-                ELSE true
-                END AS isAgregation,
-                ppf.idProdc  
+                        DISTINCT
+                        ppf.id,
+                        ppf.idProdcProdtFinEst,
+                        #ppfe.desProProFinEst,
+                        ppf.idProdt,
+                        pd.nomProd,
+                        me.simMed,
+                        cl.desCla,
+                        ppf.canTotProgProdFin,
+                        ppf.canTotIngProdFin,
+                        pa.idProdFin,
+                        pd.codProd2,
+                        CASE WHEN pa.idProdFin is null THEN false
+                        ELSE true
+                        END AS isAgregation,
+                        ppf.idProdc  
 
-                FROM produccion_producto_final ppf
-                JOIN producto as pd on pd.id = ppf.idProdt
-                JOIN medida as me on me.id = pd.idMed
-                JOIN clase as cl on cl.id = pd.idCla
-                JOIN produccion_producto_final_estado as ppfe on ppfe.id = ppf.idProdcProdtFinEst
-                LEFT JOIN produccion_agregacion as pa on pa.idProdFin = ppf.id
-                WHERE ppf.idProdc = ?
-                ";
+                    FROM produccion_producto_final ppf
+                    JOIN producto as pd on pd.id = ppf.idProdt
+                    JOIN medida as me on me.id = pd.idMed
+                    JOIN clase as cl on cl.id = pd.idCla
+                    #JOIN produccion_producto_final_estado as ppfe on ppfe.id = ppf.idProdcProdtFinEst
+                    LEFT JOIN produccion_agregacion as pa on pa.idProdFin = ppf.id
+                    WHERE ppf.idProdc = ?";
                 try {
                     $stmt_detalle = $pdo->prepare($sql_detalle);
                     $stmt_detalle->bindParam(1, $idLotProdc, PDO::PARAM_INT);
                     $stmt_detalle->execute();
 
                     while ($row_detalle = $stmt_detalle->fetch(PDO::FETCH_ASSOC)) {
+                        $row_detalle["insumos"] = [];
+                        $row_detalle = getInsumosByProdFinal($pdo, $row_detalle);
                         array_push($row["proFinProdDet"], $row_detalle);
                     }
                 } catch (PDOException $e) {
@@ -101,6 +102,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['description_error'] = $description_error;
     $return['result'] = $result;
     echo json_encode($return);
+}
+
+
+function getInsumosByProdFinal($pdo, $row)
+{
+    try {
+
+        $query = "";
+
+        $idProdFinal = $row["id"];
+
+        if ($row["isAgregation"]) {
+            $query =
+            "SELECT ppf.id as idProdFin, pa.idProdt, pa.canProdAgr as canReqDet  from produccion_producto_final  ppf 
+            left join produccion_agregacion pa on pa.idProdFin = ppf.id
+            WHERE ppf.id = ?";
+        } else {
+            $query =
+            "SELECT ppf.id as idProdFin,rd.idProdt, rd.canReqDet  from requisicion_detalle  rd 
+            join produccion_producto_final  ppf ON ppf.id = rd.idProdFin
+            WHERE ppf.id = ?";
+        }
+
+
+
+        $stmt  = $pdo->prepare($query);
+        $stmt->bindParam(1, $idProdFinal, PDO::PARAM_INT);
+        $stmt->execute();
+
+        while ($row_detalle  = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            array_push($row["insumos"], $row_detalle);
+        }
+        return $row;
+    } catch (PDOException $e) {
+        $message_error = "ERROR INTERNO EN LA CONSULTA DE requisiciones y agregaciones";
+        $description_error = $e->getMessage();
+        $error[0] = $message_error;
+        $error[1] = $description_error;
+        return $error[0];
+    }
 }
 
 function getProductsFinal($pdo, $idLotProdc, $row)

@@ -248,7 +248,7 @@ export const AgregarDevolucion = () => {
   async function handleAddProductoProduccionLote(
     detalleRequisiciones,
     idProdFin,
-    cantidadDeProducto
+    cantDevProd
   ) {
     // var productoLoteProduccion = { idProdFin : 1}
     if (idProdFin !== 0) {
@@ -285,9 +285,9 @@ export const AgregarDevolucion = () => {
         // ).toFixed(2);
 
         //} else {
-        cantidadUnidades = Math.round(parseFloat(cantidadDeProducto));
+        cantidadUnidades = Math.round(parseFloat(cantDevProd));
         cantidadklgLote = parseFloat(
-          (equivalenteKilogramos * parseFloat(cantidadDeProducto)).toFixed(2)
+          (equivalenteKilogramos * parseFloat(cantDevProd)).toFixed(2)
         );
 
         //const cantidadTotalDelLoteProduccion = parseFloat(
@@ -346,15 +346,35 @@ export const AgregarDevolucion = () => {
     return detalleRequisiciones;
   }
 
+  function getAcuIns(products) {
+    var copyProducts = products.reduce((accumulator, currentValue) => {
+      if (accumulator.some((obj) => obj.idProdt === currentValue.idProdt)) {
+        accumulator.map((obj) => {
+          if (obj.idProdt === currentValue.idProdt) {
+            obj.canReqDet =
+              parseFloat(obj.canReqDet) + parseFloat(currentValue.canReqDet);
+          }
+        });
+      } else {
+        accumulator.push(currentValue);
+      }
+      return accumulator;
+    }, []);
+
+    return copyProducts;
+  }
   async function getProductToDev(idLotProdc) {
     const resultPeticion = await getProduccionWhitProductosFinales(idLotProdc);
     const { result } = resultPeticion;
     var products = result[0].proFinProdDet;
 
+    //console.log(resultPeticion);
+    //return;
     var copyProducts = products.reduce((accumulator, currentValue) => {
       if (accumulator.some((obj) => obj.idProdt === currentValue.idProdt)) {
         accumulator.map((obj) => {
           if (obj.idProdt === currentValue.idProdt) {
+            // acumulado de la cantidad de producto programada
             obj.canTotProgProdFin =
               parseFloat(obj.canTotProgProdFin) +
               parseFloat(currentValue.canTotProgProdFin);
@@ -362,24 +382,33 @@ export const AgregarDevolucion = () => {
               2
             );
 
+            // acumulado de la cantidad de producto ingresado
+            // canTotIngProdFin => la cantidad de producto terminado registrada
             obj.canTotIngProdFin =
               parseFloat(obj.canTotIngProdFin) +
               parseFloat(currentValue.canTotIngProdFin);
             obj.canTotIngProdFin = parseFloat(obj.canTotIngProdFin).toFixed(2);
+
             currentValue.total = obj.canTotProgProdFin;
 
-            var ss =
-              parseFloat(obj.canTotProgProdFin) -
-              parseFloat(obj.canTotIngProdFin);
+            // de la orden de producción y agregación obtenemos las requisiciones por producto terminado.
+            obj.insumos = [...obj.insumos, ...currentValue.insumos];
 
-            if (ss > 0) {
-              obj.cantDev =
-                parseFloat(obj.canTotProgProdFin) -
-                parseFloat(obj.canTotIngProdFin);
-              obj.cantDev = obj.cantDev.toFixed(2);
-            } else {
-              obj.cantDev = 0;
-            }
+            obj.insumos = getAcuIns(obj.insumos);
+
+            //obtenemos la diferencia entre productos programados y productos ingresados
+            //var flag =
+            //  parseFloat(obj.canTotProgProdFin) -
+            //  parseFloat(obj.canTotIngProdFin);
+
+            //if (flag > 0) {
+            //  obj.cantDev =
+            //    parseFloat(obj.canTotProgProdFin) -
+            //    parseFloat(obj.canTotIngProdFin);
+            //  obj.cantDev = obj.cantDev.toFixed(2);
+            //} else {
+            //  obj.cantDev = 0;
+            //}
           }
         });
       } else {
@@ -400,50 +429,58 @@ export const AgregarDevolucion = () => {
         idLotProdc
       );
       var productos = await getProductToDev(idLotProdc);
-      //console.log(resultPeticion);
-
-      //canProdDev: "1"
-      //codProd: null
-      //desCla: "Envase y Embalaje"
-      //desSubCla: undefined
-      //idMed: 7
-      //idProdDevMot: 1
-      //idProdc: 44
-      //idProdt: 244
-      //nomProd: "DISPLAY - EL VERDE SAZONADOR MOLIDO GIGANTE BATAN X 42 SBS"
-      //simMed: "UND"
+      //console.log(productos);
+      // return;
 
       var devoluciones = [];
       await Promise.all(
-        productos.map(async (obj) => {
-          var nomProdFin = obj.nomProd;
+        productos.map(async (prodt) => {
+          var nomProdFin = prodt.nomProd;
           var detalleRequisiciones = [];
+
+          /**
+           *  Enviamos la cantidad ingresada de producto final a la función de obtencion de insumos => handleAddProductoProduccionLote()
+           *  de la orden de producción para luego obtener la cantidad real de insumos utilizados.
+           *
+           * a los insumos programados se le restara los insumos utilizados, entonces con eso ya se tiene la cantidad a devolver.
+           */
+
           detalleRequisiciones = await handleAddProductoProduccionLote(
             detalleRequisiciones,
-            obj.idProdt,
-            obj.cantDev
+            prodt.idProdt,
+            prodt.canTotIngProdFin
           );
-          //console.log(detalleRequisiciones)
+
           detalleRequisiciones.map((obj) => {
-            devoluciones.push({
-              nomProdFin: nomProdFin,
-              canProdDev: obj.canReqProdLot,
-              codProd: "",
-              desCla: obj.desAre,
-              desSubCla: "",
-              idMed: 7,
-              idProdDevMot: 1,
-              idProdc: idLotProdc,
-              idProdt: obj.idProd,
-              nomProd: obj.nomProd,
-              simMed: obj.simMed,
-              codProd2: obj.codProd2,
-            });
+            var producto = prodt.insumos.find(
+              (item) => item.idProdt == obj.idProd
+            );
+            //console.log(detalleRequisiciones, prodt.insumos);
+
+            var flag =
+              parseFloat(producto.canReqDet) - parseFloat(obj.canReqProdLot);
+            if (producto && flag > 0) {
+              devoluciones.push({
+                nomProdFin: nomProdFin,
+                canProdDev: flag.toFixed(2),
+                codProd: "",
+                desCla: obj.desAre,
+                desSubCla: "",
+                idMed: 7,
+                idProdDevMot: 1,
+                idProdc: idLotProdc,
+                idProdt: obj.idProd,
+                nomProd: obj.nomProd,
+                simMed: obj.simMed,
+                codProd2: obj.codProd2,
+              });
+            }
           });
         })
       );
 
-      var devoluciones = devoluciones.reduce((accumulator, currentValue) => {
+      /**
+       var devoluciones = devoluciones.reduce((accumulator, currentValue) => {
         if (accumulator.some((obj) => obj.idProdt == currentValue.idProdt)) {
           accumulator.map((obj) => {
             if (obj.idProdt == currentValue.idProdt) {
@@ -461,10 +498,14 @@ export const AgregarDevolucion = () => {
         }
         return accumulator;
       }, []);
+       */
 
       const { message_error, description_error, result } = resultPeticion;
-      // console.log( result[0])
 
+      /**
+       *  de las insumos duplicadas de un producto, lo convertimos a un registro,
+       *  también actualizamos el campo "canProdDev" a un acumulativo
+       */
       result[0].detDev = result[0].detDev.reduce(
         (accumulator, currentValue) => {
           if (accumulator.some((obj) => obj.idProdt == currentValue.idProdt)) {
@@ -487,6 +528,9 @@ export const AgregarDevolucion = () => {
         []
       );
 
+      /**
+       * obtenemos la cantidad estimada a devolver por cada insumo
+       */
       var total = 0;
       result[0].detDev.map((obj) => {
         total = parseFloat(total) + parseFloat(obj.canProdDev);
@@ -503,6 +547,9 @@ export const AgregarDevolucion = () => {
         getVal();
       });
 
+      /**
+       * Actualizamos la cantidad a devolver de cada insumo, lo restamos por la cantidad que ya ha sido devuelto
+       */
       devoluciones.map((obj) => {
         result[0].detDev.map((prod) => {
           if (prod.idProdt == obj.idProdt) {
@@ -512,9 +559,6 @@ export const AgregarDevolucion = () => {
           }
         });
       });
-      console.log(productos);
-
-      console.log(result[0].detDev);
 
       const dataDetalle = [...detalleProductosDevueltos, ...devoluciones];
       setdetalleProductosDevueltos(dataDetalle);
