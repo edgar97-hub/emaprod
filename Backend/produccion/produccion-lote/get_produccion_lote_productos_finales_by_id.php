@@ -29,7 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             pd.klgLotProd,
             pd.canLotProd,
             pd.fecVenLotProd, 
-            pd.canIng
+            pd.canIng,
+            regProFin
         FROM produccion pd
         JOIN producto as p ON p.id = pd.idProdt
         JOIN produccion_estado as pe ON pe.id = pd.idProdEst

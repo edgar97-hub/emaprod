@@ -196,7 +196,12 @@ export const AgregarRequisicionFrescos = () => {
   // SUBMIT FORMULARIO DE REQUISICION (M-D)
   const handleSubmitRequisicion = (e) => {
     e.preventDefault();
-    if (requisicion.idProdc === 0 || requisicion.reqMolDet.length === 0) {
+
+    if (
+      produccionLote.codLotProd.length === 0 ||
+      requisicion.idProdc === 0 ||
+      requisicion.reqMolDet.length === 0
+    ) {
       setfeedbackMessages({
         style_message: "warning",
         feedback_description_error:
@@ -231,7 +236,7 @@ export const AgregarRequisicionFrescos = () => {
   async function getProductosFormulaDetalle(body, requisicion) {
     const resultPeticion = await getFormulaWithDetalleByPrioridad(body);
 
-    console.log(resultPeticion);
+    //console.log(resultPeticion);
     // return;
     const { message_error, description_error, result } = resultPeticion;
     if (message_error.length === 0) {
@@ -342,7 +347,7 @@ export const AgregarRequisicionFrescos = () => {
       klgLotProd: "",
     };
 
-    //console.log(body);
+    // console.log(body, requisicion);
     getProductosFormulaDetalle(body, requisicion);
   };
 

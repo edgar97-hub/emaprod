@@ -26,9 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         sc.codSubCla
         FROM producto M
         JOIN medida ME ON M.idMed = ME.id
-        RIGHT JOIN clase c ON c.id = M.idCla
-        RIGHT JOIN sub_clase sc ON sc.idCla = c.id
-        ";
+        JOIN clase c ON c.id = M.idCla
+        JOIN sub_clase sc ON M.idSubCla = sc.id";
 
         try {
             // Preparamos la consulta
@@ -63,6 +62,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo json_encode($return);
 }
 
-// Si se pudo realizar la conexion a la base de datos
-
-// Programa terminado
+ 

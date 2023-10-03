@@ -26,6 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $fechaFin = $data["fecReqMolFin"];
         }
     }
+    $idAre = $data["idAre"];
+    //die(json_encode($idAre));
 
     $data_requsicion_molienda = [];
 
@@ -90,7 +92,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             //die(json_encode("test"));
 
-            $idAre = 2; // AREA DE MOLIENDA
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(1, $idAre, PDO::PARAM_INT);
             $stmt->execute();

@@ -11,6 +11,8 @@ $description_error = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($pdo) {
 
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
 
         // 171 => COMINO MOLIDO PROCESADO X 01 KG
         // 172 => PIMIENTA NEGRA MOLIDO PROCESADO X 01 KG
@@ -26,6 +28,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // 403 =>  BOLSA  AJO MOLIDO BATAN X 01 KG
         // 404 => BOLSA OREGANO BATAN X 01 KG
 
+
+        $parameter = "";
+        if (isset($data["idProdt"])) {
+            $parameter = " and p.proRef = " . $data["idProdt"];
+        }
+
+        //die(json_encode($parameter));
         $sql =
             "SELECT
         p.id,
@@ -38,8 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         p.esProProd
         FROM producto p
         LEFT JOIN medida ME ON p.idMed = ME.id
-        WHERE (p.esProFin = ? or p.id in (171, 172, 173, 174, 175, 176) ) and p.discontinued = 0
-        ";
+        WHERE (p.esProFin = ? or p.id in (171, 172, 173, 174, 175, 176) ) and p.discontinued = 0 " . $parameter;
         //WHERE(p.esProFin = ?   and p.id not in (398, 400, 401, 402, 403, 404)) or p.id in (171, 172, 173, 174, 175, 176) and p.discontinued = 0
 
         $stmt = $pdo->prepare($sql);

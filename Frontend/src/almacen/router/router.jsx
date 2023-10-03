@@ -6,6 +6,7 @@ import { RouterAlmacenProveedor } from "./../pages/proveedor/RouterAlmacenProvee
 import { RouterAlmacenSalidasStock } from "./../pages/salidasStocks/RouterAlmacenSalida";
 import { RouterRequisicionSeleccion } from "./../pages/requisicion_seleccion/RouterRequisicionSeleccion";
 import { RouterRequisicionMolienda } from "./../pages/requisicion_molienda/RouterRequisicionMolienda";
+import { RouterRequisicionFrescos } from "./../pages/requisicion_frescos/RouterRequisicionFrescos";
 
 import { RouterReportesAlmacen } from "./../pages/reportes/RouterReportesAlmacen";
 import { RouterAlmacenProductosLote } from "./../pages/productos_lote/RouterAlmacenProductosLote";
@@ -48,6 +49,11 @@ export const RouterAlmacen = [
     path: "requisicion-molienda",
     element: <LayoutModulo />,
     children: RouterRequisicionMolienda,
+  },
+  {
+    path: "requisicion-frescos",
+    element: <LayoutModulo />,
+    children: RouterRequisicionFrescos,
   },
   {
     path: "reportes",

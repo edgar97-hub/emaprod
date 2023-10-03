@@ -39,6 +39,7 @@ export const ListRequisicionesFrescos = () => {
     useForm({
       fecReqMolIni: "",
       fecReqMolFin: "",
+      idAre: 7, // frescos
     });
 
   // ESTADOS PARA LA PAGINACIÓN
@@ -252,11 +253,11 @@ export const ListRequisicionesFrescos = () => {
   };
 
   //FUNCION PARA TRAER LA DATA DE REQUISICION MOLIENDA
-  const obtenerDataRequisicionMolienda = async (body = {}) => {
+  const obtenerDataRequisicionMolienda = async (body = formState) => {
     const resultPeticion = await getRequisicionMoliendaWithDetalle(body);
     const { message_error, description_error, result } = resultPeticion;
 
-    console.log(resultPeticion);
+    //console.log(resultPeticion);
     if (message_error.length === 0) {
       setdataRequisicion(result);
       setdataRequisicionTemp(result);

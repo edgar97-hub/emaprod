@@ -40,7 +40,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export const AgregarProductosLoteMolienda = () => {
+export const AgregarProductosLoteFrescos = () => {
   // RECIBIMOS LOS PARAMETROS DE LA URL
   const location = useLocation();
   const { idReq = "" } = queryString.parse(location.search);
@@ -201,7 +201,7 @@ export const AgregarProductosLoteMolienda = () => {
     result[0].canLotProd = result[0].prodLotReq[0].cantProg;
     result[0].canIng = result[0].prodLotReq[0].canIng;
     result[0].nomProd = result[0].prodLotReq[0].nomProd;
-    result[0].desProdTip = "POLVOS";
+    result[0].desProdTip = "FRESCOS";
     result[0].idProdt = result[0].prodLotReq[0].idProdt;
     result[0].idReq = result[0].prodLotReq[0].id;
     result[0].idReq = result[0].prodLotReq[0].id;
@@ -268,9 +268,11 @@ export const AgregarProductosLoteMolienda = () => {
       };
 
       const dataDetalle = [...detalleProductosFinales, detalle];
+
+      var year = 1;
       dataDetalle.map((item) => {
         var date = new Date(item.fecEntSto);
-        date.setFullYear(date.getFullYear() + 4);
+        date.setFullYear(date.getFullYear() + year);
         item.fecVenEntProdFin = FormatDateTimeMYSQL(date);
       });
       setdetalleProductosFinales(dataDetalle);

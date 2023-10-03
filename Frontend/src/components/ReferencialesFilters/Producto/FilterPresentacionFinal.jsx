@@ -4,14 +4,14 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getPresentacionFinal } from "../../../helpers/Referenciales/producto/getPresentacionFinal";
 
-export const FilterPresentacionFinal = ({ onNewInput, finalProducts }) => {
+export const FilterPresentacionFinal = ({ onNewInput, finalProducts, idProdt }) => {
   const [result, setResult] = useState([]);
 
   const obtenerDataProductos = async () => {
     if (finalProducts?.length) {
       setResult(finalProducts);
     } else {
-      const resultPeticion = await getPresentacionFinal();
+      const resultPeticion = await getPresentacionFinal(idProdt);
       const formatSelect = resultPeticion.map((element) => {
         return {
           value: element.codProd2 === null ? "000000" : element.codProd2,
@@ -26,7 +26,7 @@ export const FilterPresentacionFinal = ({ onNewInput, finalProducts }) => {
 
   useEffect(() => {
     obtenerDataProductos();
-  }, [finalProducts]);
+  }, [idProdt]);
 
   const handledChange = (event, value) => {
     onNewInput(value);

@@ -8,28 +8,36 @@ $result = [];
 $message_error = "";
 $description_error = "";
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
-    $idProdc = $data["idProdc"]; // id produccion
-    $idProdt = $data["idProdt"]; // id producto
-    $codArea = "FR"; // ESTO REPRESENTA QUE ES UN REQUISICION DE FRESCOS
+    $idProdc = $data["idProdc"];
+    $idProdt = $data["idProdt"];
+    //$canLotProd = $data["canLotProd"];
+    $klgLotProd = $data["klgLotProd"];
+    $codLotProd = $data["codLotProd"];
+    $canLotProd = $data["canLotProd"];
+
+    $codArea = "FR";
     $reqMolDet = $data["reqMolDet"];
     $idLastInsertion = 0;
+    $idProdc  = 0;
 
     if ($pdo) {
 
-        // PARA COMPLETAR EL CODIGO NUMERICO PRIMERO DEBEMOS CONSULTAR LA ULTIMA INSERCION
+        $idReqEst = 1; // estado de requerido
+        $idAre = 7; // area frescos
+
         $sql_consult_requisicion =
-            "SELECT SUBSTR(codReq,5,8) AS numCodReq FROM requisicion ORDER BY id DESC LIMIT 1";
+            "SELECT SUBSTR(codReq,5,8) AS numCodReq FROM requisicion where idAre = $idAre and codReq is not null  ORDER BY id DESC LIMIT 1";
         $stmt_consult_requisicion =  $pdo->prepare($sql_consult_requisicion);
         $stmt_consult_requisicion->execute();
 
         $numberRequisicion = 0;
-        $codReq = ""; // codigo de requisicion molienda
+        $codReq = "";
 
         if ($stmt_consult_requisicion->rowCount() !== 1) {
-            // nueva insercion
             $codReq = "RQ" . $codArea . "00000001";
         } else {
             while ($row = $stmt_consult_requisicion->fetch(PDO::FETCH_ASSOC)) {
@@ -38,21 +46,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $codReq = "RQ" . $codArea . str_pad(strval($numberRequisicion), 8, "0", STR_PAD_LEFT);
         }
 
-        $idReqEst = 1; // estado de requerido
+        
 
-        // insertamos la requisicion
         $sql =
             "INSERT INTO
                 requisicion
-                (idProdc, idReqEst, idProdt, codReq)
-                VALUES (?,?,?,?);
+                (idReqEst, idProdt, codReq, idAre, cantProg, codLotProd, canLotProd)
+                VALUES (?,?,?,?,?,?,?);
                 ";
         // PREPARAMOS LA CONSULTA
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(1, $idProdc, PDO::PARAM_INT);
-        $stmt->bindParam(2, $idReqEst, PDO::PARAM_INT);
-        $stmt->bindParam(3, $idProdt, PDO::PARAM_INT);
-        $stmt->bindParam(4, $codReq, PDO::PARAM_STR);
+        //$stmt->bindParam(1, $idProdc, PDO::PARAM_INT);
+        $stmt->bindParam(1, $idReqEst, PDO::PARAM_INT);
+        $stmt->bindParam(2, $idProdt, PDO::PARAM_INT);
+        $stmt->bindParam(3, $codReq, PDO::PARAM_STR);
+        $stmt->bindParam(4, $idAre, PDO::PARAM_STR);
+        $stmt->bindParam(5, $klgLotProd, PDO::PARAM_STR);
+        $stmt->bindParam(6, $codLotProd, PDO::PARAM_STR);
+        $stmt->bindParam(7, $canLotProd, PDO::PARAM_STR);
+
+        //die(json_encode("test"));
 
         try {
             $pdo->beginTransaction();

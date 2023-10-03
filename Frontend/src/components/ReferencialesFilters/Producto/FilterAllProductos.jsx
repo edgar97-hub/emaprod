@@ -30,14 +30,6 @@ export const FilterAllProductos = ({
     });
 
     if (productos?.length) {
-      //console.log(productos);
-      //productos = productos.map((obj) => obj.idProdt);
-      //resultPeticion.map((obj)=>{
-      //  if(obj.nomProd == "AJI COLORADO PANCA PICANTE MOLIDO GIGANTE BATAN X 42 SBS"){
-      //    console.log(obj)
-      //  }
-      //
-      //})
       var rows = [];
       formatSelect.map((obj) => {
         var producto = productos.find((val) => val.idProdt == obj.id);

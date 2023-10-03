@@ -25,7 +25,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export const ListRequisicionesMolienda = () => {
+export const ListRequisicionesFrescos = () => {
   // ESTADOS PARA LOS FILTROS PERSONALIZADOS
   const [dataRequisicion, setdataRequisicion] = useState([]);
   const [dataRequisicionTemp, setdataRequisicionTemp] = useState([]);
@@ -39,7 +39,7 @@ export const ListRequisicionesMolienda = () => {
     useForm({
       fecReqMolIni: FormatDateMYSQL(),
       fecReqMolFin: FormatDateMYSQL(),
-      idAre: 2,
+      idAre: 7,
     });
 
   // ESTADOS PARA LA PAGINACIÓN
@@ -503,7 +503,7 @@ export const ListRequisicionesMolienda = () => {
 
                                 console.log(row);
                                 window.open(
-                                  `/almacen/requisicion-molienda/view/${row.idProdc}/${row.id}`,
+                                  `/almacen/requisicion-frescos/view/${row.idProdc}/${row.id}`,
                                   "_blank"
                                 );
                               }}

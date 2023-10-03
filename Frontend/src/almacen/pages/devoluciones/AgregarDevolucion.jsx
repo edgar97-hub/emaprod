@@ -439,8 +439,8 @@ export const AgregarDevolucion = () => {
           var detalleRequisiciones = [];
 
           /**
-           *  Enviamos la cantidad ingresada de producto final a la función de obtencion de insumos => handleAddProductoProduccionLote()
-           *  de la orden de producción para luego obtener la cantidad real de insumos utilizados.
+           *  Enviamos la cantidad ingresada de producto final a la función de obtencion de insumos => handleAddProductoProduccionLote() de la orden de producción,
+           *  para luego obtener la cantidad real de insumos utilizados.
            *
            * a los insumos programados se le restara los insumos utilizados, entonces con eso ya se tiene la cantidad a devolver.
            */
@@ -503,7 +503,7 @@ export const AgregarDevolucion = () => {
       const { message_error, description_error, result } = resultPeticion;
 
       /**
-       *  de las insumos duplicadas de un producto, lo convertimos a un registro,
+       *  de las insumos duplicadas, lo convertimos a un registro,
        *  también actualizamos el campo "canProdDev" a un acumulativo
        */
       result[0].detDev = result[0].detDev.reduce(
@@ -563,6 +563,7 @@ export const AgregarDevolucion = () => {
       const dataDetalle = [...detalleProductosDevueltos, ...devoluciones];
       setdetalleProductosDevueltos(dataDetalle);
 
+      console.log(result[0]);
       if (message_error.length === 0) {
         setdevolucionesProduccionLote(result[0]);
       } else {

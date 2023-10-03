@@ -19,6 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($data["idFrescos"]) && isset($data["idSalPar"])) {
         $parameter = " and M.idSubCla =  " . $data["idFrescos"] . "  or M.idSubCla = " . $data["idSalPar"];
     }
+    if (isset($data["idMol"])) {
+        $parameter = " and M.idSubCla =  " . $data["idMol"];
+    }
 
     //die(json_encode($parameter));
 
@@ -63,9 +66,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['result'] = $result;
     echo json_encode($return);
 }
-
-
-
-// Si se pudo realizar la conexion a la base de datos
-
-// Programa terminado

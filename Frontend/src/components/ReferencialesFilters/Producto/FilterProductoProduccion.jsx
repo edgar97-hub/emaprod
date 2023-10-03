@@ -9,11 +9,16 @@ export const FilterProductoProduccion = ({
   inputs,
   idFrescos,
   idSalPar,
+  idMol,
 }) => {
   const [result, setResult] = useState([]);
 
   const obtenerDataProductoProduccion = async () => {
-    const resultPeticion = await getProductosProduccion(idFrescos, idSalPar);
+    const resultPeticion = await getProductosProduccion(
+      idFrescos,
+      idSalPar,
+      idMol
+    );
     const formatSelect = resultPeticion?.map((element) => {
       return {
         value: element.codProd2,

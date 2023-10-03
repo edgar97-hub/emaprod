@@ -4,8 +4,9 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getTiposProduccion } from "./../../../helpers/Referenciales/tipo_produccion/getTiposProduccion";
 
-export const FilterTipoProduccion = ({ onNewInput,inputs }) => {
+export const FilterTipoProduccion = ({ onNewInput, inputs }) => {
   const [result, setResult] = useState([]);
+  const [value, setValue] = useState({});
 
   const obtenerDataTipoProduccion = async () => {
     const resultPeticion = await getTiposProduccion();
@@ -17,6 +18,11 @@ export const FilterTipoProduccion = ({ onNewInput,inputs }) => {
         cod: element.codTipProd,
       };
     });
+    if (formatSelect.length && inputs?.idProdTip) {
+      var prod = formatSelect.find((item) => item.id == inputs?.idProdTip);
+      setValue(prod);
+    }
+
     setResult(formatSelect);
   };
 
@@ -25,12 +31,14 @@ export const FilterTipoProduccion = ({ onNewInput,inputs }) => {
   }, []);
 
   const handledChange = (event, value) => {
+    setValue(value)
     onNewInput(value);
   };
 
-  var d = {}
-  if(inputs?.tipoProduccion){
-    d.value = inputs.tipoProduccion
+  var d = {};
+  if (inputs?.tipoProduccion || inputs?.idProdTip) {
+    //d.value = inputs.tipoProduccion;
+    //d.value = result[1];
   }
 
   return (
@@ -38,13 +46,13 @@ export const FilterTipoProduccion = ({ onNewInput,inputs }) => {
       <Autocomplete
         options={result}
         disableClearable
-        {...d}
-
+        //{...d}
+        value={value}
         getOptionLabel={(option) => option.label}
         onChange={handledChange}
         onInputChange={(event, value, reason) => {
           if (reason == "input" && value == "") {
-            console.log("reason: ",reason, "value:", value)
+            console.log("reason: ", reason, "value:", value);
             onNewInput({ label: value });
           }
         }}

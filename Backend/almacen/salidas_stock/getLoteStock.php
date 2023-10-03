@@ -28,7 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 es.refNumIngEntSto,
                 DATE(es.fecEntSto) AS fecEntSto,
                 es.canTotDis, 
-                es.codLot
+                es.codLot,
+                es.fecVenEntSto
             FROM entrada_stock AS es
             WHERE idProd = ? AND idEntStoEst = ?  AND canTotDis <> 0.000
             ORDER BY es.fecEntSto ASC";

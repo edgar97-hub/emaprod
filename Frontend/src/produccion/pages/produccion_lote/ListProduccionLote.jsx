@@ -55,7 +55,6 @@ import BlockIcon from "@mui/icons-material/Block";
 
 const domain = config.API_URL;
 
-//***********************************************GENERATE PDF ********************************************* */
 
 const styles = StyleSheet.create({
   page: {

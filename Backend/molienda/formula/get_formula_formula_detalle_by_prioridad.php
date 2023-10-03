@@ -30,9 +30,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             JOIN producto as p on p.id = f.idProd
             JOIN clase c ON p.idCla = c.id
             JOIN sub_clase sc ON p.idSubCla = sc.id
-            WHERE f.idProd = ? 
-            #AND f.lotKgrFor = $lotKgrFor
-            ";
+            WHERE f.idProd = ? ";
+            //AND f.lotKgrFor = $lotKgrFor
+            
         try {
             // PREPARAMOS LA CONSULTA
             $stmt = $pdo->prepare($sql);

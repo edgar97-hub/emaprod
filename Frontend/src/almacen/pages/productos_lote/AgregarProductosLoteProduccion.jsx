@@ -33,6 +33,7 @@ import {
 import { DetalleProductosFinales } from "./DetalleProductosFinales";
 import FechaPicker from "../../../../src/components/Fechas/FechaPicker";
 import FechaPickerYear from "../../../components/Fechas/FechaPickerYear";
+import Checkbox from "@mui/material/Checkbox";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -43,6 +44,7 @@ export const AgregarProductosLoteProduccion = () => {
   // RECIBIMOS LOS PARAMETROS DE LA URL
   const location = useLocation();
   const { idLotProdc = "" } = queryString.parse(location.search);
+  const [finalizarRegProdFinal, setFinalizarRegProdFinal] = useState(false);
 
   // ESTADOS DE LOS PRODUCTOS FINALES DE LA PRODUCCION
   const [proFinProd, setProFinProd] = useState({
@@ -59,6 +61,7 @@ export const AgregarProductosLoteProduccion = () => {
     klgLotProd: "",
     nomProd: "",
     proFinProdDet: [],
+    regProFin: false,
   });
 
   const {
@@ -72,6 +75,7 @@ export const AgregarProductosLoteProduccion = () => {
     klgLotProd,
     nomProd,
     proFinProdDet,
+    regProFin,
   } = proFinProd;
 
   // PRODUCTOS FINALES DISPONIBLES POR PRODUCCIÓN
@@ -328,8 +332,11 @@ export const AgregarProductosLoteProduccion = () => {
       letAniEntSto: letraAnio(fecEntSto),
       diaJulEntSto: DiaJuliano(fecEntSto),
       fechaIngreso: fecEntSto,
+      regProFin: finalizarRegProdFinal,
+      idProdc: id,
     };
 
+    //console.log(dataEntrada);
     detalleProductosFinales.map((obj) => {
       obj.letAniEntSto = letraAnio(obj.fecEntSto);
       obj.diaJulEntSto = DiaJuliano(obj.fecEntSto);
@@ -488,7 +495,7 @@ export const AgregarProductosLoteProduccion = () => {
               </div>
               <div className="mb-3 row d-flex align-items-center">
                 {/* TIPO DE PRODUCCION */}
-                <div className="col-md-3">
+                <div className="col-md-2">
                   <label htmlFor="nombre" className="form-label">
                     <b>Tipo de produccion</b>
                   </label>
@@ -500,7 +507,7 @@ export const AgregarProductosLoteProduccion = () => {
                   />
                 </div>
                 {/* ESTADO DE PRODUCCION */}
-                <div className="col-md-4">
+                <div className="col-md-2">
                   <label htmlFor="nombre" className="form-label">
                     <b>Estado de produccion</b>
                   </label>
@@ -512,7 +519,7 @@ export const AgregarProductosLoteProduccion = () => {
                   />
                 </div>
                 {/* FECHA DE VENCIMIENTO */}
-                <div className="col-md-4">
+                <div className="col-md-2">
                   <label htmlFor="nombre" className="form-label">
                     <b>Fecha vencimiento lote</b>
                   </label>
@@ -521,6 +528,25 @@ export const AgregarProductosLoteProduccion = () => {
                     disabled={true}
                     value={fecVenLotProd}
                     className="form-control"
+                  />
+                </div>
+                <div className="col-md-1">
+                  <label htmlFor="nombre" className="form-label">
+                    <b>Finalizar entrega de productos finales</b>
+                  </label>
+                  <br />
+                  <Checkbox
+                    disabled={Boolean(regProFin)}
+                    checked={
+                      regProFin
+                        ? Boolean(regProFin)
+                        : finalizarRegProdFinal
+                    }
+                    onChange={(event) => {
+                      setFinalizarRegProdFinal(event.target.checked);
+                    }}
+                    sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                    inputProps={{ "aria-label": "controlled" }}
                   />
                 </div>
               </div>
@@ -709,7 +735,7 @@ export const AgregarProductosLoteProduccion = () => {
             </button>
             <button
               type="submit"
-              //disabled={disableButton}
+              disabled={regProFin}
               onClick={handleSubmitProductosFinalesLoteProduccion}
               className="btn btn-primary"
             >

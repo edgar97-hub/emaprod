@@ -21,6 +21,7 @@ export const getAllProductos = async (user) => {
         return acc;
     }, []);
 
+  
     if(user.idAre === 4 ){
         unique = unique.filter((obj)=> !sss.includes(obj.codSubCla) )
     }

@@ -39,6 +39,7 @@ export const ListRequisicionesMolienda = () => {
     useForm({
       fecReqMolIni: "",
       fecReqMolFin: "",
+      idAre: 2, // molienda
     });
 
   // ESTADOS PARA LA PAGINACIÓN
@@ -252,7 +253,7 @@ export const ListRequisicionesMolienda = () => {
   };
 
   //FUNCION PARA TRAER LA DATA DE REQUISICION MOLIENDA
-  const obtenerDataRequisicionMolienda = async (body = {}) => {
+  const obtenerDataRequisicionMolienda = async (body = formState) => {
     const resultPeticion = await getRequisicionMoliendaWithDetalle(body);
     const { message_error, description_error, result } = resultPeticion;
 

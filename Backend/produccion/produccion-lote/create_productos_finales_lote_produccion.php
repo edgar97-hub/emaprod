@@ -15,16 +15,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $detProdFinLotProd = $data["detProdFinLotProd"];
     $idProdTip = $data["idProdTip"];
     $datEntSto = $data["datEntSto"];
-    $fecha = date('Y-m-d H:i:s');
+    $regProFin = $datEntSto["regProFin"];
+    $idProdc = $datEntSto["idProdc"];
 
+    $fecha = date('Y-m-d H:i:s');
+    //regProFin
     if ($pdo) {
+
+
+
+        $sql_update_producto_final =
+            "UPDATE produccion
+            SET regProFin = ?
+            WHERE id = ?";
+
+        try {
+            $stmt_update_producto_final = $pdo->prepare($sql_update_producto_final);
+            $stmt_update_producto_final->bindParam(1, $regProFin); 
+            $stmt_update_producto_final->bindParam(2, $idProdc, PDO::PARAM_INT);
+            $stmt_update_producto_final->execute();
+        } catch (PDOException $e) {
+            $message_error = "Error en la actualizacion de produccion";
+            $description_error = $e->getMessage();
+        }
 
         foreach ($detProdFinLotProd as $row) {
             $idProdc = $row["idProdc"]; // lote produccion
             $idProdt = $row["idProdt"]; // producto
             $canProdFin = $row["canProdFin"]; // cantidad total
             $fecVenEntProdFin = $row["fecVenEntProdFin"]; // fecha de vencimiento
-            $idProdFinal = $row["idProdFinal"];  
+            $idProdFinal = $row["idProdFinal"];
 
             $sql_consult_producto_final =
                 "SELECT * FROM produccion_producto_final

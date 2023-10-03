@@ -52,7 +52,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['result'] = $result;
     echo json_encode($return);
 }
-
-// Si se pudo realizar la conexion a la base de datos
-
-// Programa terminado

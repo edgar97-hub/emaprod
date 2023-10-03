@@ -40,6 +40,7 @@ export const AgregarRequisicionMolienda = () => {
   const { idProd, codLotProd, klgLotProd, canLotProd, nomProd } =
     produccionLote;
 
+  var idMol = 51;
   // ESTADO PARA LOS DATOS DEL FILTRO POR FORMULA
   const [formula, setformula] = useState({
     idFor: 0,
@@ -192,7 +193,12 @@ export const AgregarRequisicionMolienda = () => {
   // SUBMIT FORMULARIO DE REQUISICION (M-D)
   const handleSubmitRequisicion = (e) => {
     e.preventDefault();
-    if (requisicion.idProdc === 0 || requisicion.reqMolDet.length === 0) {
+
+    if (
+      produccionLote.codLotProd.length === 0 ||
+      requisicion.idProdc === 0 ||
+      requisicion.reqMolDet.length === 0
+    ) {
       setfeedbackMessages({
         style_message: "warning",
         feedback_description_error:
@@ -420,12 +426,11 @@ export const AgregarRequisicionMolienda = () => {
     <>
       <div className="container-fluid mx-3">
         <h1 className="mt-4 text-center">Agregar Requisicion</h1>
-        {/* DATOS DE LA PRODUCCION */}
-        <div className="row mt-4 mx-4">
+        {/*
+           <div className="row mt-4 mx-4">
           <div className="card d-flex">
             <h6 className="card-header">Lote de produccion</h6>
             <div className="card-body d-flex justify-content-between align-items-center">
-              {/* FILTRO POR LOTE DE PRODUCCION */}
               <div className="col-md-5">
                 <label htmlFor="inputPassword4" className="form-label">
                   Lote de produccion
@@ -435,6 +440,7 @@ export const AgregarRequisicionMolienda = () => {
             </div>
           </div>
         </div>
+       */}
 
         {/* DATOS DE LA REQUISICION */}
         <div className="row mt-4 mx-4">
@@ -449,6 +455,7 @@ export const AgregarRequisicionMolienda = () => {
                   {produccionLote.idProd == "none" ? (
                     <FilterProductoProduccion
                       onNewInput={onAddProductoIntermedio}
+                      idMol={idMol}
                     />
                   ) : (
                     <input

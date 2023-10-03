@@ -83,8 +83,9 @@ export const CrearProduccionLote = () => {
 
   // ESTADO PARA LOS DATOS DE PRODUCCION LOTE
   const [produccionLote, setproduccionLote] = useState({
-    idProdt: 0, // producto intermedio
-    idProdTip: 0, // tipo de produccion
+    idProdt: -1, // producto intermedio
+    idProdTip: 6, // envasado y encajado
+    codTipProd: "EE",
     codLotProd: "", // codigo de lote
     klgLotProd: 1, // kilogramos del lote
     canLotProd: 1, // cantidad
@@ -123,7 +124,7 @@ export const CrearProduccionLote = () => {
         parseFloat(klgLotProd) * parseFloat(canLotProd),
     });
 
-    console.log( parseFloat(klgLotProd) * parseFloat(canLotProd));
+    //console.log( parseFloat(klgLotProd) * parseFloat(canLotProd));
   }, [klgLotProd, canLotProd]);
 
   // STATE PARA CONTROLAR LA AGREGACION DE PRODUCTOS FINALES DEL LOTE
@@ -194,13 +195,15 @@ export const CrearProduccionLote = () => {
     //response[0].codLot ;
 
     if (result?.length) {
-      console.log(result[0].codLot);
+      console.log(result[0]);
 
       var codLot = result[0].codLot;
+      var fecVenEntSto = result[0].fecVenEntSto;
+
       var canLotProd = 0;
       result = result.filter((item) => item.codLot === codLot);
       result.map((item) => {
-        console.log(item.canTotDis);
+        // console.log(item.canTotDis);
         canLotProd += parseFloat(item.canTotDis);
       });
       setproduccionLote({
@@ -208,6 +211,7 @@ export const CrearProduccionLote = () => {
         idProdt: id,
         canLotProd: canLotProd,
         codLotProd: codLot,
+        fecVenLotProd: fecVenEntSto,
       });
       setKlgLotProd(canLotProd);
     } else {
@@ -216,6 +220,7 @@ export const CrearProduccionLote = () => {
         idProdt: id,
         canLotProd: 0,
         codLotProd: 0,
+        fecVenLotProd: "",
       });
       setKlgLotProd(0);
     }
@@ -261,7 +266,7 @@ export const CrearProduccionLote = () => {
     );
 
     const { message_error, description_error, result } = resultPeticion;
-    console.log(result);
+    //console.log(result);
 
     const { idProdFin, nomProd, simMed, reqDet } = result[0];
     let equivalenteKilogramos = 0;
@@ -676,7 +681,7 @@ export const CrearProduccionLote = () => {
   const crearProduccionLote = async () => {
     produccionLote.totalUnidadesLoteProduccion = totalUnidadesLoteProduccion;
     produccionLote.klgTotalLoteProduccion = klgTotalLoteProduccion;
-   // produccionLote.klgLotProd = klgTotalLoteProduccion;
+    // produccionLote.klgLotProd = klgTotalLoteProduccion;
 
     var body = {
       canReqDet: produccionLote.canLotProd,
@@ -692,7 +697,7 @@ export const CrearProduccionLote = () => {
     };
 
     const response = await checkSalidasStock(body);
-    console.log(produccionLote, response);
+    //console.log(produccionLote, response);
     //return;
     if (response != 0) {
       setfeedbackMessages({
@@ -703,14 +708,14 @@ export const CrearProduccionLote = () => {
       handleClickFeeback();
       return;
     }
-
     const resultPeticion = await createProduccionLoteWithRequisiciones(
       produccionLote
     );
-    console.log(produccionLote, resultPeticion);
+    //console.log(produccionLote, resultPeticion);
     //return;
 
     const { message_error, description_error, result } = resultPeticion;
+
     if (message_error.length === 0) {
       // regresamos a la anterior vista
       onNavigateBack();
@@ -863,7 +868,7 @@ export const CrearProduccionLote = () => {
                         if (value <= _klgLotProd) {
                           data = value;
                         } else {
-                          //data = klgLotProd;
+                          data = klgLotProd;
                           setfeedbackMessages({
                             style_message: "error",
                             feedback_description_error:
@@ -901,7 +906,10 @@ export const CrearProduccionLote = () => {
                     <label htmlFor="nombre" className="form-label">
                       <b>Tipo de Producción</b>
                     </label>
-                    <FilterTipoProduccion onNewInput={onAddTipoProduccion} />
+                    <FilterTipoProduccion
+                      onNewInput={onAddTipoProduccion}
+                      inputs={produccionLote}
+                    />
                   </div>
                   <div className="col-md-6 me-6">
                     <label htmlFor="nombre" className="form-label">
@@ -910,6 +918,7 @@ export const CrearProduccionLote = () => {
                     <br />
                     <FechaPickerYear
                       onNewfecEntSto={onAddFechaVencimientoLoteProduccion}
+                      date={fecVenLotProd}
                     />
                   </div>
                 </div>
@@ -966,6 +975,7 @@ export const CrearProduccionLote = () => {
                   {/* <FilterAllProductos onNewInput={onProductoId} /> */}
                   <FilterPresentacionFinal
                     onNewInput={onAddProductoFinalLoteProduccion}
+                    idProdt={idProdt}
                   />
                 </div>
                 {/* KILOGRAMOS DE LOTE ASIGNADOS */}

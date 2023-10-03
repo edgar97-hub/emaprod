@@ -19,24 +19,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $codLotProd = $data["codLotProd"];
     $canLotProd = $data["canLotProd"];
 
-    $codArea = "ML"; // ESTO REPRESENTA QUE ES UN REQUISICION DE MOLIENDA
+    $codArea = "ML";
     $reqMolDet = $data["reqMolDet"];
     $idLastInsertion = 0;
     $idProdc  = 0;
 
     if ($pdo) {
 
-        // PARA COMPLETAR EL CODIGO NUMERICO PRIMERO DEBEMOS CONSULTAR LA ULTIMA INSERCION
+        $idReqEst = 1; // estado de requerido
+        $idAre = 2; // area molienda
+
         $sql_consult_requisicion =
-            "SELECT SUBSTR(codReq,5,8) AS numCodReq FROM requisicion ORDER BY id DESC LIMIT 1";
+            "SELECT SUBSTR(codReq,5,8) AS numCodReq FROM requisicion where idAre = $idAre and codReq is not null  ORDER BY id DESC LIMIT 1";
         $stmt_consult_requisicion =  $pdo->prepare($sql_consult_requisicion);
         $stmt_consult_requisicion->execute();
 
         $numberRequisicion = 0;
-        $codReq = ""; // codigo de requisicion molienda
+        $codReq = "";
 
         if ($stmt_consult_requisicion->rowCount() !== 1) {
-            // nueva insercion
             $codReq = "RQ" . $codArea . "00000001";
         } else {
             while ($row = $stmt_consult_requisicion->fetch(PDO::FETCH_ASSOC)) {
@@ -45,16 +46,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $codReq = "RQ" . $codArea . str_pad(strval($numberRequisicion), 8, "0", STR_PAD_LEFT);
         }
 
-        $idReqEst = 1; // estado de requerido
-        $idAre = 2;
 
-        // insertamos la requisicion
         $sql =
             "INSERT INTO
                 requisicion
                 (idReqEst, idProdt, codReq, idAre, cantProg, codLotProd, canLotProd)
-                VALUES (?,?,?,?,?,?,?);
-                ";
+                VALUES (?,?,?,?,?,?,?)";
         // PREPARAMOS LA CONSULTA
         $stmt = $pdo->prepare($sql);
         //$stmt->bindParam(1, $idProdc, PDO::PARAM_INT);

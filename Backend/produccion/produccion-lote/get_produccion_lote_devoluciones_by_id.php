@@ -115,7 +115,6 @@ function getRequisiciones($pdo, $idLotProdc, $row)
     #WHERE pc.id = ?
     $sql_detalle_devoluciones_lote_produccion =
         "SELECT 
-                DISTINCT
                 r.idProdc ,
                 r.idAre,
                 rd.id as idReq,
@@ -131,7 +130,7 @@ function getRequisiciones($pdo, $idLotProdc, $row)
                 p.nomProd FROM requisicion r 
                 join `requisicion_detalle` as rd on r.id = rd.idReq 
                 join producto p ON rd.idProdt = p.id 
-                join produccion_agregacion pa on pa.idProdc = r.idProdc
+                left join produccion_agregacion pa on pa.idProdc = r.idProdc
                 where r.idProdc  =  ?  and r.idAre != 2 ORDER BY rd.id DESC";
 
     try {
