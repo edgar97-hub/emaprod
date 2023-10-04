@@ -43,6 +43,7 @@ import IconButton from "@mui/material/IconButton";
 import BlockIcon from "@mui/icons-material/Block";
 import CircularProgress from "@mui/material/CircularProgress";
 import { FormatDateMYSQL } from "../../../utils/functions/FormatDate";
+import Tooltip from "@mui/material/Tooltip";
 // CONFIGURACIONES DE ESTILOS
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 // CONFIGURACION DE FEEDBACK
@@ -188,8 +189,8 @@ const ListEntradaStock = () => {
     if (inputs.procesar) {
       getEntradasStock(formState)
         .then(({ result }) => {
-          console.log(result);
-          //return;
+          // console.log(result);
+          // return;
           var dataEntSto = result;
           var totalDis = 0;
           var totalMer = 0;
@@ -198,7 +199,11 @@ const ListEntradaStock = () => {
             if (inputs.tipoEntrada == "TODO") {
               return true;
             }
-            if (inputs.tipoEntrada == "COMPRAS" && data.referencia == 0) {
+            if (
+              inputs.tipoEntrada == "COMPRAS" &&
+              data.referencia == 0 &&
+              data.esSel == 0
+            ) {
               return true;
             }
             if (inputs.tipoEntrada == "PRODT. FINAL" && data.referencia) {
@@ -215,6 +220,9 @@ const ListEntradaStock = () => {
             }
             if (inputs.tipoEntrada == "PRODT. MOLIENDA" && data.esMol) {
               return true;
+            }
+            if (inputs.tipoEntrada == "PRODT. FRESCOS" && data.esFre) {
+              return true;
             } else {
               return false;
             }
@@ -222,6 +230,7 @@ const ListEntradaStock = () => {
           dataEntSto = dataEntSto.reverse();
 
           dataEntSto.map((data) => {
+            //console.log(data);
             if (
               checkType(data) &&
               (inputs.almacen.label?.includes(data.nomAlm) ||
@@ -241,7 +250,6 @@ const ListEntradaStock = () => {
               (data.merTot?.includes(inputs.merTot) ||
                 inputs.merTot?.length == 0)
             ) {
-              //console.log(data);
               // no sumar el acumulado del producto agua potable
               if (data.idProd !== 418) {
                 totalDis += parseFloat(data.canTotDis);
@@ -448,7 +456,16 @@ const ListEntradaStock = () => {
           </div>
         </div>
         {/* TABLA DE RESULTADOS */}
-        <div className="mt-4">
+        <div
+          className="mt-4"
+          style={{
+            //overflowY: "auto",
+            overflow: "auto",
+            float: "left",
+            //position: "relative",
+            //border: "1px solid black",
+          }}
+        >
           <Paper>
             <TableContainer>
               <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -546,8 +563,7 @@ const ListEntradaStock = () => {
                       />
                     </TableCell>
                     <TableCell align="left" width={50}>
-                      <b>Merma T.</b>
-
+                      <b>Merma</b>
                       <TextField
                         onChange={handleFormFilter}
                         type="number"
@@ -605,161 +621,167 @@ const ListEntradaStock = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {dataEntSto
-                    //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <TableRow
-                        key={row.id}
+                  {dataEntSto.map((row, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                      }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {row.codLot}
+                      </TableCell>
+                      <TableCell component="th" scope="row">
+                        {row.nomProd}
+                      </TableCell>
+                      <TableCell align="left">{row.nomProv}</TableCell>
+                      <TableCell align="left">{row.nomAlm}</TableCell>
+                      <TableCell align="left">{row.codEntSto}</TableCell>
+                      <TableCell align="left">{row.docEntSto}</TableCell>
+                      <TableCell align="center">
+                        {row.esSel === 1 ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            color="green"
+                            className="bi bi-check-circle-fill"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            color="red"
+                            fill="currentColor"
+                            className="bi bi-x-circle-fill"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
+                          </svg>
+                        )}
+                      </TableCell>
+                      <TableCell align="left">{row.canTotEnt}</TableCell>
+                      <TableCell align="left">{row.merTot}</TableCell>
+                      <TableCell align="left">{row.canTotDis}</TableCell>
+                      <TableCell align="left">{row.fecEntSto}</TableCell>
+                      <TableCell align="left">{row.fecVenEntSto}</TableCell>
+                      <TableCell align="left">{row.fecCreEntSto}</TableCell>
+                      <TableCell align="left">{row.canVar}</TableCell>
+                      <TableCell align="left">{row.disAcu}</TableCell>
+                      <TableCell align="left">{row.merAcu}</TableCell>
+                      <TableCell
+                        align="left"
                         sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          //border: "1px solid black",
+                          width: "190px",
                         }}
                       >
-                        <TableCell component="th" scope="row">
-                          {row.codLot}
-                        </TableCell>
-                        <TableCell component="th" scope="row">
-                          {row.nomProd}
-                        </TableCell>
-                        <TableCell align="left">{row.nomProv}</TableCell>
-                        <TableCell align="left">{row.nomAlm}</TableCell>
-                        <TableCell align="left">{row.codEntSto}</TableCell>
-                        <TableCell align="left">{row.docEntSto}</TableCell>
-                        <TableCell align="center">
-                          {row.esSel === 1 ? (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              fill="currentColor"
-                              color="green"
-                              className="bi bi-check-circle-fill"
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                            </svg>
-                          ) : (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              color="red"
-                              fill="currentColor"
-                              className="bi bi-x-circle-fill"
-                              viewBox="0 0 16 16"
-                            >
-                              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
-                            </svg>
-                          )}
-                        </TableCell>
-                        <TableCell align="left">{row.canTotEnt}</TableCell>
-                        <TableCell align="left">{row.merTot}</TableCell>
-                        <TableCell align="left">{row.canTotDis}</TableCell>
-                        <TableCell align="left">{row.fecEntSto}</TableCell>
-                        <TableCell align="left">{row.fecVenEntSto}</TableCell>
-                        <TableCell align="left">{row.fecCreEntSto}</TableCell>
-                        <TableCell align="left">{row.canVar}</TableCell>
-                        <TableCell align="left">{row.disAcu}</TableCell>
-                        <TableCell align="left">{row.merAcu}</TableCell>
-                        <TableCell
-                          align="left"
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-around",
-                            alignItems: "center",
+                        <div
+                          className="btn-toolbar"
+                          style={{
+                            backgroundColor: "#0E80E5",
+                            borderRadius: "9px",
+                          }}
+                          onClick={() => {
+                            window.open(
+                              `/almacen/entradas-stock/view/${row.idEntStock}`,
+                              "_blank"
+                            );
                           }}
                         >
-                          <div
-                            className="btn-toolbar"
-                            style={{
-                              backgroundColor: "#0E80E5",
-                              borderRadius: "9px",
-                            }}
-                            onClick={() => {
-                              window.open(
-                                `/almacen/entradas-stock/view/${row.idEntStock}`,
-                                "_blank"
-                              );
-                            }}
-                          >
-                            <IconButton>
-                              <VisibilityIcon
-                                fontSize="medium"
-                                sx={{ color: "white" }}
-                              />
-                            </IconButton>
-                          </div>
+                          <IconButton>
+                            <VisibilityIcon
+                              fontSize="small"
+                              sx={{ color: "white" }}
+                            />
+                          </IconButton>
+                        </div>
 
-                          <div
-                            className="btn-toolbar"
-                            style={{
-                              backgroundColor: "#0E80E5",
-                              borderRadius: "9px",
-                            }}
-                          >
-                            {row.salidasProduccion?.length ? (
-                              <DetalleSalidas
-                                row={row}
-                                idProduccion={1}
-                                idEntStock={row.idEntStock}
-                              />
-                            ) : (
+                        <div
+                          className="btn-toolbar"
+                          style={{
+                            backgroundColor: "#0E80E5",
+                            borderRadius: "9px",
+                          }}
+                        >
+                          {row.salidasProduccion?.length ? (
+                            <DetalleSalidas
+                              row={row}
+                              idProduccion={1}
+                              idEntStock={row.idEntStock}
+                            />
+                          ) : (
+                            <Tooltip title="No hay salidas para producción">
                               <IconButton>
                                 <BlockIcon
-                                  fontSize="medium"
+                                  fontSize="small"
                                   sx={{ color: "white" }}
                                 />
                               </IconButton>
-                            )}
-                          </div>
+                            </Tooltip>
+                          )}
+                        </div>
 
-                          <div
-                            className="btn-toolbar"
-                            style={{
-                              backgroundColor: "#0E80E5",
-                              borderRadius: "9px",
-                            }}
-                          >
-                            {row.salidasSeleccion?.length ? (
-                              <DetalleSalReqSel
-                                row={row}
-                                idProduccion={1}
-                                idEntStock={row.idEntStock}
-                              />
-                            ) : (
+                        <div
+                          className="btn-toolbar"
+                          style={{
+                            backgroundColor: "#0E80E5",
+                            borderRadius: "9px",
+                          }}
+                        >
+                          {row.salidasSeleccion?.length ? (
+                            <DetalleSalReqSel
+                              row={row}
+                              idProduccion={1}
+                              idEntStock={row.idEntStock}
+                            />
+                          ) : (
+                            <Tooltip title="No hay salidas para seleccion">
                               <IconButton>
                                 <BlockIcon
-                                  fontSize="medium"
+                                  fontSize="small"
                                   sx={{ color: "white" }}
                                 />
                               </IconButton>
-                            )}
-                          </div>
+                            </Tooltip>
+                          )}
+                        </div>
 
-                          <div
-                            className="btn-toolbar"
-                            style={{
-                              backgroundColor: "#0E80E5",
-                              borderRadius: "9px",
-                            }}
-                          >
-                            {row.devoluciones?.length ? (
-                              <DetalleDevoluciones
-                                row={row}
-                                idProduccion={1}
-                                idEntStock={row.idEntStock}
-                              />
-                            ) : (
+                        <div
+                          className="btn-toolbar"
+                          style={{
+                            backgroundColor: "#0E80E5",
+                            borderRadius: "9px",
+                          }}
+                        >
+                          {row.devoluciones?.length ? (
+                            <DetalleDevoluciones
+                              row={row}
+                              idProduccion={1}
+                              idEntStock={row.idEntStock}
+                            />
+                          ) : (
+                            <Tooltip title="No hay devoluciones">
                               <IconButton>
                                 <BlockIcon
-                                  fontSize="medium"
+                                  fontSize="small"
                                   sx={{ color: "white" }}
                                 />
                               </IconButton>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                            </Tooltip>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </TableContainer>

@@ -38,8 +38,8 @@ export const AgregarRequisicionFrescos = () => {
     nomProd: "",
   });
 
-  var idFrescos = 50; // el autocompletado cargara solo frescos
-  var idSalPar = 53; // el autocompletado cargara solo sales parrillera
+  var idFrescos = 50; // el autocompletado cargara frescos
+  var idSalPar = 53; // el autocompletado cargara sales parrillera
 
   const { idProd, codLotProd, klgLotProd, canLotProd, nomProd } =
     produccionLote;
@@ -334,7 +334,7 @@ export const AgregarRequisicionFrescos = () => {
   };
 
   const onAddProductoIntermedio = ({ id }) => {
-    console.log(id);
+    //console.log(id);
 
     var requisicion = {
       ...requisicion,

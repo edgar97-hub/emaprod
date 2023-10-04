@@ -27,6 +27,8 @@ export const AuthProvider = ({ children }) => {
                     break;
                 case 7: navigate("/frescos", { replace: true });
                     break;
+                case 0: navigate("/calidad", { replace: true });
+                    break;
             };
         }, 100)
     };

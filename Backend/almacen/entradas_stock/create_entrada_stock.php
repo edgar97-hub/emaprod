@@ -28,6 +28,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fecVenEntSto = $data["fecVenEntSto"]; // fecha de vencimiento
     $fecEntSto = $data["fecEntSto"];
 
+
+    $prestProdt = $data["prestProdt"];
+    $certCal = $data["certCal"];
+    $lotProv = $data["lotProv"];
+    $resbEval = $data["resbEval"];
+    $fecProduccion = $data["fecProduccion"];
+    $humedad = $data["humedad"];
+
+
     // SOLO SI ES SELECCION
     $idEntStoEst = 1; // estado de disponible
     $canTotDis = $canTotEnt; // cantidad total disponible
@@ -77,8 +86,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // ***** FORMAMOS EL CODIGO DE ENTRADA ******
             $codEntSto = $codProd . $codProv . $letAniEntSto . $diaJulEntSto . $refNumIngEntSto;
 
-            // echo $refNumIngEntSto . " " . $codEntSto;
-            // ***** REALIZAMOS LA ENTRADA RESPECTIVA ******
+
+            $prestProdt = $data["prestProdt"];
+            $certCal = $data["certCal"];
+            $lotProv = $data["lotProv"];
+            $resbEval = $data["resbEval"];
+            $fecProduccion = $data["fecProduccion"];
+            $humedad = $data["humedad"];
+
             $sql =
                 "INSERT INTO
             entrada_stock
@@ -97,9 +112,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             canVar,
             docEntSto,
             fecVenEntSto,
-            fecEntSto)
-            VALUES (?,?,?,?,?,?,?,?,?,$canTotCom,$canTotEnt, $canTotDis, $canVar,?,?,?)
-            ";
+            fecEntSto,
+            prestProdt,
+            certCal,
+            lotProv,
+            resbEval,
+            fecProduccion,
+            humedad)
+            VALUES (?,?,?,?,?,?,?,?,?,$canTotCom,$canTotEnt, $canTotDis, $canVar,?,?,?,?,?,?,?,?,?)";
 
             try {
                 //Preparamos la consulta
@@ -116,6 +136,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bindParam(10, $docEntSto, PDO::PARAM_STR); // documento
                 $stmt->bindParam(11, $fecVenEntSto, PDO::PARAM_STR); // fecha de vencimiento
                 $stmt->bindParam(12, $fecEntSto, PDO::PARAM_STR); // fecha de entrada
+
+                $stmt->bindParam(13, $prestProdt, PDO::PARAM_STR);
+                $stmt->bindParam(14, $certCal, PDO::PARAM_STR);
+                $stmt->bindParam(15, $lotProv, PDO::PARAM_STR);
+                $stmt->bindParam(16, $resbEval, PDO::PARAM_STR);
+                $stmt->bindParam(17, $fecProduccion, PDO::PARAM_STR);
+                $stmt->bindParam(18, $humedad, PDO::PARAM_STR);
 
                 $stmt->execute(); // ejecutamos
 

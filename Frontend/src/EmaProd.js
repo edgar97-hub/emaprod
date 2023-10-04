@@ -6,6 +6,8 @@ import Home from "./home/pages/Home";
 
 // ROUTERS IMPORTADOS
 import { RouterAlmacen } from './almacen/router/router';
+import { RouterCalidad } from './calidad/router/router';
+
 import { RouterMolienda } from './molienda/router/router';
 import { RouterSeleccion } from './seleccion/router/router';
 import { RouterProduccion } from './produccion/router/router';
@@ -19,6 +21,7 @@ import NotFound from './pages/NotFound';
 // PROTECCION DE RUTAS PERSONALIZADAS
 import { AuthLayout } from "./components/AuthLayout";
 import { ProtectedLayoutAlmacen } from "./components/ProtectedLayoutAlmacen";
+import { ProtectedLayoutCalidad } from "./components/ProtectedLayoutCalidad";
 import { ProtectedLayoutMolienda } from './components/ProtectedLayoutMolienda';
 import { ProtectedLayoutSeleccion } from './components/ProtectedLayoutSeleccion';
 import { ProtectedLayoutProduccion } from "./components/ProtectedLayoutProduccion";
@@ -73,7 +76,12 @@ export const router = createBrowserRouter([
         path: "/envasado",
         element: <ProtectedLayoutEnvasado />,
         children: RouterEnvasado,
-      }
+      },
+      {
+        path: "/calidad",
+        element: <ProtectedLayoutCalidad />,
+        children: RouterCalidad,
+      },
     ],
   },
 ]);

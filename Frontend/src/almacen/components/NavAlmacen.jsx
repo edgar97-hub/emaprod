@@ -84,12 +84,14 @@ const NavAlmacen = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link
+                    <div
                       className="dropdown-item"
-                      to={"/almacen/entradas-stock/crear"}
+                      onClick={() => {
+                        window.open("/almacen/entradas-stock/crear", "_blank");
+                      }}
                     >
                       Crear
-                    </Link>
+                    </div>
                   </li>
                 </ul>
               </li>

@@ -14,7 +14,15 @@ export const getAllProductos = async (user) => {
     //24 - 02
     //24 - 01
     let sss = ["2400","2401","2402","2403","2405"]
-    
+    //let sss = []
+
+
+    result.map((item)=>{
+        if(item.nomProd == "CC"){
+            console.log(item)
+
+        }
+    })
     let unique = result.reduce(function (acc, curr) {
         if (!acc.map((obj) => obj.id).includes(curr.id))
             acc.push(curr);

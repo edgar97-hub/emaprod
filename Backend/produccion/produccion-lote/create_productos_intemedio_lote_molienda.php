@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 // si no hay ingresos de productos ese año
                                 $refNumIngEntSto = 1;
                             }
-
+                            $esMol = 1;
                             // EL CODIGO DE INGRESO ES DE 
                             $refNumIngEntSto = str_pad(strval($refNumIngEntSto), 3, "0", STR_PAD_LEFT);
                             // ***** FORMAMOS EL CODIGO DE ENTRADA ******
@@ -128,8 +128,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 canTotDis,
                                 docEntSto,
                                 fecEntSto,
-                                fecVenEntSto, referencia, canVar, codLot)
-                                VALUES (?,?,?,?,?,?,?,?,?, $canProdFin, $canProdFin,?,?,?,?,?,?)";
+                                fecVenEntSto, referencia, canVar, codLot, esMol)
+                                VALUES (?,?,?,?,?,?,?,?,?, $canProdFin, $canProdFin,?,?,?,?,?,?,?)";
 
                             try {
                                 $stmt_insert_entrada_stock = $pdo->prepare($sql_insert_entrada_stock);
@@ -148,6 +148,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 $stmt_insert_entrada_stock->bindParam(13, $idProdc);
                                 $stmt_insert_entrada_stock->bindParam(14, $canVar);
                                 $stmt_insert_entrada_stock->bindParam(15, $codLot);
+                                $stmt_insert_entrada_stock->bindParam(16, $esMol);
 
                                 $stmt_insert_entrada_stock->execute();
                             } catch (PDOException $e) {

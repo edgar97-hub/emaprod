@@ -28,35 +28,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
+
+        //select
+        //(@row_num:=@row_num +1) AS num1 
+        //from
+        //entrada_stock,
+        //(select @row_num:=0) AS s;
+
+
+
         $sql =
             "SELECT
-        es.idProd,
-        p.nomProd,
-        es.idProv,
-        CONCAT(pv.nomProv, ' ', pv.apeProv) AS nomProv,
-        es.idEntStoEst,
-        ese.desEntStoEst,
-        es.idAlm,
-        a.nomAlm,
-        es.codEntSto,
-        es.esSel,
-        es.canTotEnt,
-        es.canTotDis,
-        es.fecEntSto,
-        DATE(es.fecVenEntSto) AS fecVenEntSto,
-        es.referencia,
-        es.docEntSto,
-        es.id as idEntStock,
-        es.fecCreEntSto, 
-        es.merTot,
-        es.canVar, es.codLot
-        FROM entrada_stock es
-        JOIN producto p ON p.id = es.idProd
-        left JOIN proveedor pv ON pv.id = es.idProv
-        JOIN entrada_stock_estado ese ON ese.id = es.idEntStoEst
-        JOIN almacen a ON a.id = es.idAlm
-        WHERE DATE(fecEntSto) BETWEEN '$fechaInicio' AND '$fechaFin'
-        ORDER BY es.fecEntSto DESC";
+            (@row_num := @row_num +1) AS id,
+            es.idProd,
+            p.nomProd,
+            es.idProv,
+            CONCAT(pv.nomProv, ' ', pv.apeProv) AS nomProv,
+            es.idEntStoEst,
+            ese.desEntStoEst,
+            es.idAlm,
+            a.nomAlm,
+            es.codEntSto,
+            es.esSel,
+            es.canTotEnt,
+            es.canTotDis,
+            es.fecEntSto,
+            DATE(es.fecVenEntSto) AS fecVenEntSto,
+            es.referencia,
+            es.docEntSto,
+            es.id as idEntStock,
+            es.fecCreEntSto, 
+            es.merTot,
+            es.canVar, 
+            es.codLot,
+            es.esMol,
+            es.esFre,
+            es.prestProdt,
+            es.certCal,
+            es.lotProv,
+            es.resbEval,
+            es.fecProduccion,
+            es.humedad
+            FROM
+            (
+            SELECT
+            @row_num := 0
+            ) AS s,
+            entrada_stock es
+            JOIN producto p ON
+            p.id = es.idProd
+            LEFT JOIN proveedor pv ON
+            pv.id = es.idProv
+            JOIN entrada_stock_estado ese ON
+            ese.id = es.idEntStoEst
+            JOIN almacen a ON
+            a.id = es.idAlm  
+            WHERE DATE(fecEntSto) BETWEEN '$fechaInicio' AND '$fechaFin'
+            ORDER BY `es`.`fecEntSto` DESC";
+
 
         try {
             $stmt = $pdo->prepare($sql);

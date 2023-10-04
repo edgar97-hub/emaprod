@@ -29,6 +29,7 @@ export const FilterAllProductos = ({
       };
     });
 
+    
     if (productos?.length) {
       var rows = [];
       formatSelect.map((obj) => {
