@@ -27,7 +27,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $fechaFin = $data["fecEntFinSto"];
             }
         }
-
+        $almacen = $data["almacen"];
+        $codigo = $data["codigo"];
+        $disponible = $data["disponible"];
+        $documento = $data["documento"];
+        $ingresado = $data["ingresado"];
+        $merTot = $data["merTot"];
+        $producto = $data["producto"];
+        $provedor = $data["provedor"];
+        $seleccion = $data["seleccion"];
+        $tipoEntrada = $data["tipoEntrada"];
 
         //select
         //(@row_num:=@row_num +1) AS num1 
@@ -35,11 +44,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         //entrada_stock,
         //(select @row_num:=0) AS s;
 
-
+        //die(json_encode($data));
 
         $sql =
             "SELECT
-            (@row_num := @row_num +1) AS id,
+            (@row_num := @row_num +1) AS rowEnt,
             es.idProd,
             p.nomProd,
             es.idProv,
@@ -83,10 +92,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ese.id = es.idEntStoEst
             JOIN almacen a ON
             a.id = es.idAlm  
-            WHERE DATE(fecEntSto) BETWEEN '$fechaInicio' AND '$fechaFin'
+            WHERE 
+
+            
+
+            ('$tipoEntrada' = 'TODO' ) 
+            or ('$tipoEntrada' = 'COMPRAS' and (es.referencia = 0 and es.esSel = 0) ) 
+            or ('$tipoEntrada' = 'PRODT. FINAL' and (es.referencia > 1  ) ) 
+            or ('$tipoEntrada' = 'PRODT. SELECCION' and (es.esSel = 1  ) ) 
+            or ('$tipoEntrada' = 'PRODT. MOLIENDA' and (es.esMol = 1  ) ) 
+            or ('$tipoEntrada' = 'PRODT. FRESCOS' and (es.esFre = 1  ) ) 
+
+            and DATE(fecEntSto) BETWEEN '$fechaInicio' AND '$fechaFin'
+            and a.nomAlm like '%$almacen%'
+            and es.codEntSto like '%$codigo%'
+            and es.canTotDis like '%$disponible%'
+            and es.docEntSto like '%$documento%'
+            and es.canTotEnt like '%$ingresado%'
+            and es.merTot like '%$merTot%'
+            and (p.nomProd like '%$producto%' or '$producto' = '' )
+            and (CONCAT(pv.nomProv, ' ', pv.apeProv) like '%$provedor%' or '$provedor' = '' )
+      
             ORDER BY `es`.`fecEntSto` DESC";
 
+        //CASE '$tipoEntrada'
+        //WHEN 'TODO' THEN true
+        //WHEN 'COMPRAS' THEN true
+        //ELSE false
+        //END 
 
+        //('$tipoEntrada' = 'TODO' ) 
+        //or ($tipoEntrada = 'COMPRAS' ) 
+        //and (es.referencia = 0 and data.esSel == 0)
+
+        //if (inputs.tipoEntrada == "PRODT. FINAL" && data.referencia) {
+        //    return true;
+        //}
+        // if (inputs.tipoEntrada == "PRODT. SELECCION" && data.esSel) {
+        //   return true;
+        //}
+        //if (inputs.tipoEntrada == "PRODT. MOLIENDA" && data.esMol) {
+        //    return true;
+        //  }
+        //  if (inputs.tipoEntrada == "PRODT. FRESCOS" && data.esFre) {
+        //    return true;
+        //  }
+
+        //data.referencia == 0 &&
+        //data.esSel == 0
+
+        //and   CONCAT(pv.nomProv, ' ', pv.apeProv)  = $provedor
+        #and like (CASE WHEN $producto = '' THEN '%$producto%' ELSE '$producto' END) 
+
+        // CASE WHEN $producto = '' THEN '%$producto%' ELSE $producto' END` 
         try {
             $stmt = $pdo->prepare($sql);
             $stmt->execute(); // ejecutamos
