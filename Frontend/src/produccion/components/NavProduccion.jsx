@@ -59,7 +59,7 @@ const NavProduccion = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  Orden produccion lote
+                  Orden produccion de proceso
                 </button>
                 <ul className="dropdown-menu">
                   <li>

@@ -16,7 +16,7 @@ import { RowDetalleDevolucionLoteProduccion } from "./../../components/component
 import { FilterAllProductos } from "./../../../components/ReferencialesFilters/Producto/FilterAllProductos";
 import { TextField } from "@mui/material";
 import { getMateriaPrimaById } from "./../../../helpers/Referenciales/producto/getMateriaPrimaById";
-import { RowDetalleDevolucionLoteProduccionEdit } from "../../components/componentes-devoluciones/RowDetalleDevolucionLoteProduccionEdit";
+import { RowDetalleDevolucionLoteProduccionEdit } from "./RowDetalleDevolucionLoteProduccionEdit";
 import { createDevolucionesLoteProduccion } from "./../../helpers/devoluciones-lote-produccion/createDevolucionesLoteProduccion";
 import { getProduccionWhitProductosFinales } from "./../../helpers/producto-produccion/getProduccionWhitProductosFinales";
 import { getFormulaProductoDetalleByProducto } from "../../../../src/produccion/helpers/formula_producto/getFormulaProductoDetalleByProducto";
@@ -24,6 +24,7 @@ import { _parseInt } from "../../../utils/functions/FormatDate";
 import PdfDevoluciones from "./PdfDevoluciones";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ReactDOM from "react-dom";
+import { getMotivoDevoluciones } from "./../../../helpers/Referenciales/motivo_devoluciones/getMotivoDevoluciones";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -170,9 +171,7 @@ export const AgregarDevolucion = () => {
             simMed: simMed, // medida del producto
             canProdDev: cantidadDevuelta, // cantidad devuelta
           };
-          //console.log(detalle);
 
-          // seteamos el detalle
           const dataDetalle = [...detalleProductosDevueltos, detalle];
           setdetalleProductosDevueltos(dataDetalle);
         } else {
@@ -193,10 +192,24 @@ export const AgregarDevolucion = () => {
   };
 
   // ACCION PARA EDITAR CAMPOS EN DETALLE DE PRODUCTO DEVUELTO
-  const handleChangeInputProductoDevuelto = async ({ target }, idItem) => {
+  const handleChangeInputProductoDevuelto = async (
+    { target },
+    val,
+    indexProd
+  ) => {
     const { value } = target;
     const editFormDetalle = detalleProductosDevueltos.map((element) => {
-      if (element.idProdt === idItem) {
+      element.motivos?.map((item, index) => {
+        if (indexProd === index) {
+          item.canProdDev = value;
+        }
+      });
+      return {
+        ...element,
+        canProdDev: value,
+      };
+      /**
+       if (element.idProdt === idItem) {
         return {
           ...element,
           canProdDev: value,
@@ -204,6 +217,7 @@ export const AgregarDevolucion = () => {
       } else {
         return element;
       }
+       */
     });
     setdetalleProductosDevueltos(editFormDetalle);
   };
@@ -318,8 +332,6 @@ export const AgregarDevolucion = () => {
     const { result } = resultPeticion;
     var products = result[0].proFinProdDet;
 
-    //console.log(resultPeticion);
-    //return;
     var copyProducts = products.reduce((accumulator, currentValue) => {
       if (accumulator.some((obj) => obj.idProdt === currentValue.idProdt)) {
         accumulator.map((obj) => {
@@ -343,22 +355,7 @@ export const AgregarDevolucion = () => {
 
             // de la orden de producción y agregación, obtenemos las requisiciones por producto terminado.
             obj.insumos = [...obj.insumos, ...currentValue.insumos];
-
             obj.insumos = getAcuIns(obj.insumos);
-
-            //obtenemos la diferencia entre productos programados y productos ingresados
-            //var flag =
-            //  parseFloat(obj.canTotProgProdFin) -
-            //  parseFloat(obj.canTotIngProdFin);
-
-            //if (flag > 0) {
-            //  obj.cantDev =
-            //    parseFloat(obj.canTotProgProdFin) -
-            //    parseFloat(obj.canTotIngProdFin);
-            //  obj.cantDev = obj.cantDev.toFixed(2);
-            //} else {
-            //  obj.cantDev = 0;
-            //}
           }
         });
       } else {
@@ -379,8 +376,6 @@ export const AgregarDevolucion = () => {
         idLotProdc
       );
       var productos = await getProductToDev(idLotProdc);
-      //console.log(productos);
-      // return;
 
       var devoluciones = [];
       await Promise.all(
@@ -405,8 +400,6 @@ export const AgregarDevolucion = () => {
             var producto = prodt.insumos.find(
               (item) => item.idProdt == obj.idProd
             );
-            //console.log(detalleRequisiciones, prodt.insumos);
-
             var flag =
               parseFloat(producto?.canReqDet) - parseFloat(obj.canReqProdLot);
             if (producto && flag > 0) {
@@ -428,27 +421,6 @@ export const AgregarDevolucion = () => {
           });
         })
       );
-
-      /**
-       var devoluciones = devoluciones.reduce((accumulator, currentValue) => {
-        if (accumulator.some((obj) => obj.idProdt == currentValue.idProdt)) {
-          accumulator.map((obj) => {
-            if (obj.idProdt == currentValue.idProdt) {
-              obj.canProdDev =
-                parseFloat(obj.canProdDev) +
-                parseFloat(currentValue.canProdDev);
-              obj.canProdDev = parseFloat(obj.canProdDev).toFixed(2);
-            }
-          });
-        } else {
-          currentValue.canProdDev = parseFloat(currentValue.canProdDev).toFixed(
-            2
-          );
-          accumulator.push(currentValue);
-        }
-        return accumulator;
-      }, []);
-       */
 
       const { message_error, description_error, result } = resultPeticion;
 
@@ -511,9 +483,20 @@ export const AgregarDevolucion = () => {
       });
 
       const dataDetalle = [...detalleProductosDevueltos, ...devoluciones];
+      const motivos = await getMotivoDevoluciones();
+      dataDetalle.map((item) => {
+        item.motivos = [];
+        motivos.map((val, index) => {
+          item.motivos.push({
+            motivo: val.desProdDevMot,
+            canProdDev: index === 0 ? item.canProdDev : 0,
+            id: val.id,
+          });
+        });
+      });
+      console.log(dataDetalle);
       setdetalleProductosDevueltos(dataDetalle);
 
-      console.log(result[0]);
       if (message_error.length === 0) {
         setdevolucionesProduccionLote(result[0]);
       } else {
@@ -530,17 +513,23 @@ export const AgregarDevolucion = () => {
     var productos = detalleProductosDevueltos?.filter(
       (obj) => parseFloat(obj.canProdDev) > 0
     );
-    //console.log(productos)
-    //return
-    const resultPeticion = await createDevolucionesLoteProduccion(productos);
 
-    //console.log(resultPeticion);
-    //return
+    var sss = []
+    productos.map((item)=>{
+      item.motivos.map((motivo)=>{
+        sss.push({
+
+        })
+      })
+    })
+    
+    console.log(productos);
+    return;
+    const resultPeticion = await createDevolucionesLoteProduccion(productos);
 
     const { message_error, description_error } = resultPeticion;
 
     if (message_error.length === 0) {
-      //onNavigateBack();
       setfeedbackMessages({
         style_message: "success",
         feedback_description_error: "Guardado con exito",
@@ -875,12 +864,15 @@ export const AgregarDevolucion = () => {
                           <TableCell align="left" width={20}>
                             <b>U.M</b>
                           </TableCell>
-                          <TableCell align="left" width={170}>
+                          {/**
+                              <TableCell align="left" width={170}>
                             <b>Motivo devolucion</b>
                           </TableCell>
+                            */}
                           <TableCell align="left" width={120}>
                             <b>Cantidad</b>
                           </TableCell>
+
                           <TableCell align="left" width={120}>
                             <b>Acciones</b>
                           </TableCell>
