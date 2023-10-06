@@ -265,6 +265,7 @@ export const AgregarProductosLoteProduccion = () => {
   const obtenerDataProductosFinalesProduccion = async () => {
     const resultPeticion = await getProduccionWhitProductosFinales(idLotProdc);
 
+   // console.log(resultPeticion);
     const { message_error, description_error, result } = resultPeticion;
     var products = result[0].proFinProdDet;
 
@@ -388,7 +389,6 @@ export const AgregarProductosLoteProduccion = () => {
       handleClickFeeback();
 
       setTimeout(() => {
-        //window.location.reload();
         window.close();
       }, "1000");
     } else {
@@ -538,9 +538,7 @@ export const AgregarProductosLoteProduccion = () => {
                   <Checkbox
                     disabled={Boolean(regProFin)}
                     checked={
-                      regProFin
-                        ? Boolean(regProFin)
-                        : finalizarRegProdFinal
+                      regProFin ? Boolean(regProFin) : finalizarRegProdFinal
                     }
                     onChange={(event) => {
                       setFinalizarRegProdFinal(event.target.checked);

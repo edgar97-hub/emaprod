@@ -20,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resbEval = $data["resbEval"];
     $fecProduccion = $data["fecProduccion"];
     $humedad = $data["humedad"];
+    $obsEnt = $data["obsEnt"];
 
     if ($pdo) {
         try {
@@ -33,7 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             lotProv = ?,
             resbEval = ?,
             fecProduccion = ?,
-            humedad = ?
+            humedad = ?,
+            obsEnt = ?
             WHERE  codEntSto = ?";
             $stmt_update_entrada_stock = $pdo->prepare($sql_update_entrada_stock);
             $stmt_update_entrada_stock->bindParam(1, $prestProdt, PDO::PARAM_STR);
@@ -42,8 +44,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt_update_entrada_stock->bindParam(4, $resbEval, PDO::PARAM_STR);
             $stmt_update_entrada_stock->bindParam(5, $fecProduccion, PDO::PARAM_STR);
             $stmt_update_entrada_stock->bindParam(6, $humedad, PDO::PARAM_STR);
-            $stmt_update_entrada_stock->bindParam(7, $codEntSto, PDO::PARAM_STR);
-
+            $stmt_update_entrada_stock->bindParam(7, $obsEnt, PDO::PARAM_STR);
+            $stmt_update_entrada_stock->bindParam(8, $codEntSto, PDO::PARAM_STR);
 
             $stmt_update_entrada_stock->execute();
             $pdo->commit();

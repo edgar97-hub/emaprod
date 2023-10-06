@@ -12,19 +12,18 @@ const ExportExcel = ({ exelData }) => {
     delete row.id;
   })
 
-  var ss = []
-  exelData.map((item)=>({
+  exelData = exelData.map((item)=>({
     FECHA:item.fecEntSto,
-    PRODUCTO:item.sss,
-    "CODIGO DE PRODUCTO":"",
-    "PRESENTACION DEL PRODUCTO":"",
-    "CERTIFICADO DE CALIDAD":"",
-    LOTE:"",
-    "FECHA DE PRODUCCION":"",
-    "FECHA DE VENCIMIENTO":"",
-    "% HUMEDAD":"",
-    "RESPONSABLE DE LA EVALUCACION":""
-
+    PRODUCTO:item.nomProd,
+    "CODIGO DE PRODUCTO":item.codEntSto,
+    "PRESENTACION DEL PRODUCTO":item.prestProdt,
+    "CERTIFICADO DE CALIDAD":item.certCal ? "C":"",
+    LOTE:item.lotProv,
+    "FECHA DE PRODUCCION":item.fecProduccion,
+    "FECHA DE VENCIMIENTO":item.fecVenEntSto,
+    "% HUMEDAD":item.humedad,
+    "RESPONSABLE DE LA EVALUCACION":item.resbEval,
+    "OBSERVACIONES":item.obsEnt,
   }))
 
   const exportExcel = async () => {

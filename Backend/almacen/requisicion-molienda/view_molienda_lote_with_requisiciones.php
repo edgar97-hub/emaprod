@@ -135,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $stmt_requisicion->execute();
 
                         while ($row_requisicion = $stmt_requisicion->fetch(PDO::FETCH_ASSOC)) {
-                            $idReq = $row_requisicion["id"]; // requisicion
+                            $idReq = $row_requisicion["id"];  
                             $row_requisicion["reqDet"] = [];
                             $sql_requisicion_detalle =
                                 "SELECT
@@ -151,7 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 JOIN producto as p on p.id = rd.idProdt
                                 JOIN medida as me on me.id = p.idMed
                                 JOIN requisicion_detalle_estado as rde on rde.id = rd.idReqDetEst
-                                WHERE rd.idReq = ?";
+                                WHERE rd.idReq = ? ORDER BY  rd.id ASC";
 
                             $stmt_requisicion_detalle = $pdo->prepare($sql_requisicion_detalle);
                             $stmt_requisicion_detalle->bindParam(1, $idReq, PDO::PARAM_INT);

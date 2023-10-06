@@ -227,10 +227,8 @@ export const AgregarDevolucion = () => {
     setdetalleProductosDevueltos(editFormDetalle);
   };
 
-  // ACCION PARA ELIMINA DEL DETALLE UN PRODUCTO DEVUELTO
   const handleDeleteProductoDevuelto = async (idItem) => {
     console.log(idItem);
-    // filtramos el elemento eliminado
     const dataDetalleProductosDevueltos = detalleProductosDevueltos.filter(
       (element) => {
         if (element.idProdt !== idItem) {
@@ -241,7 +239,6 @@ export const AgregarDevolucion = () => {
       }
     );
 
-    // establecemos el detalle
     setdetalleProductosDevueltos(dataDetalleProductosDevueltos);
   };
 
@@ -250,79 +247,33 @@ export const AgregarDevolucion = () => {
     idProdFin,
     cantDevProd
   ) {
-    // var productoLoteProduccion = { idProdFin : 1}
     if (idProdFin !== 0) {
       const resultPeticion = await getFormulaProductoDetalleByProducto(
         idProdFin
       );
       const { message_error, description_error, result } = resultPeticion;
-      //console.log(result);
-      //return
 
       if (message_error.length === 0) {
         const { idProdFin, nomProd, simMed, reqDet } = result[0];
         let equivalenteKilogramos = 0;
-        //buscamos la requisicion de materia prima
-        //console.log("Complete Element -> ",reqDet);
 
         reqDet.forEach((element) => {
           if (element.idAre === 2 || element.idAre === 7) {
             equivalenteKilogramos = parseFloat(element.canForProDet);
-            //console.log("elemento are:", element.desAre);
-            //console.log("elemento value: ", equivalenteKilogramos);
           }
         });
 
         let cantidadUnidades = 0;
         let cantidadklgLote = 0;
-        //if (parseFloat(productoLoteProduccion.cantidadDeLote) > 0.0) {
-
-        //cantidadUnidades =
-        //  parseFloat(productoLoteProduccion.cantidadDeLote) /
-        //  equivalenteKilogramos;
-        //cantidadklgLote = parseFloat(
-        //  productoLoteProduccion.cantidadDeLote
-        // ).toFixed(2);
-
-        //} else {
         cantidadUnidades = Math.round(parseFloat(cantDevProd));
         cantidadklgLote = parseFloat(
           (equivalenteKilogramos * parseFloat(cantDevProd)).toFixed(2)
         );
 
-        //const cantidadTotalDelLoteProduccion = parseFloat(
-        //  klgTotalLoteProduccion + cantidadklgLote
-        //);
-
-        //const cantidadTotalUnidadesDelLoteProduccion = parseInt(
-        //  totalUnidadesLoteProduccion + cantidadUnidades
-        //);
-
-        //setcantidadLoteProduccion({
-        //  ...cantidadLoteProduccion,
-        //  klgTotalLoteProduccion: cantidadTotalDelLoteProduccion,
-        //  totalUnidadesLoteProduccion:
-        //    cantidadTotalUnidadesDelLoteProduccion,
-        //});
-
-        //const nextIndex = produccionLote.prodDetProdc.length + 1;
-        //const detalleProductosFinales = [
-        //  ...produccionLote.prodDetProdc,
-        //  {
-        //    idProdFin,
-        //    index: nextIndex,
-        //    nomProd,
-        //    simMed,
-        //    canUnd: cantidadUnidades,
-        //    canKlg: cantidadklgLote,
-        //  },
-        //];
-
         reqDet.forEach((element) => {
           if (element.idAre === 5 || element.idAre === 6) {
             detalleRequisiciones.push({
               ...element,
-              //indexProdFin: nextIndex,
               idProdFin: idProdFin,
               idProdAgrMot: 1,
               cantidadUnidades,
@@ -336,7 +287,6 @@ export const AgregarDevolucion = () => {
           }
         });
 
-        //console.log(detalleRequisicionesFormula)
         detalleRequisiciones.map((obj) => {
           obj.canReqProdLot = _parseInt(obj);
         });
@@ -391,7 +341,7 @@ export const AgregarDevolucion = () => {
 
             currentValue.total = obj.canTotProgProdFin;
 
-            // de la orden de producción y agregación obtenemos las requisiciones por producto terminado.
+            // de la orden de producción y agregación, obtenemos las requisiciones por producto terminado.
             obj.insumos = [...obj.insumos, ...currentValue.insumos];
 
             obj.insumos = getAcuIns(obj.insumos);
@@ -458,7 +408,7 @@ export const AgregarDevolucion = () => {
             //console.log(detalleRequisiciones, prodt.insumos);
 
             var flag =
-              parseFloat(producto.canReqDet) - parseFloat(obj.canReqProdLot);
+              parseFloat(producto?.canReqDet) - parseFloat(obj.canReqProdLot);
             if (producto && flag > 0) {
               devoluciones.push({
                 nomProdFin: nomProdFin,

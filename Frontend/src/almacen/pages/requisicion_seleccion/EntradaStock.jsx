@@ -159,7 +159,7 @@ export const EntradaStock = () => {
         };
       });
 
-      console.log(salidasRequisicionSeleccion);
+      //console.log(salidasRequisicionSeleccion);
       setsalidasDisponibles(salidasRequisicionSeleccion);
     } else {
       setfeedbackMessages({
@@ -223,7 +223,7 @@ export const EntradaStock = () => {
       idMatPri
     );
 
-    console.log(result)
+    console.log(result);
     setsalidasDisponibles(result);
   };
 

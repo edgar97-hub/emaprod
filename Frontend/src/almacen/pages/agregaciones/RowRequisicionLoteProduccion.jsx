@@ -13,6 +13,7 @@ export const RowRequisicionLoteProduccion = ({
   requisicion,
   onCreateSalidasStock,
   onUpdateDetalleRequisicion,
+  show,
 }) => {
   //console.log("REQUISICIONES:  ",requisicion);
   return (
@@ -128,7 +129,8 @@ export const RowRequisicionLoteProduccion = ({
                           onCreateSalidasStock={onCreateSalidasStock}
                           //onUpdateDetalleRequisicion={
                           //  onUpdateDetalleRequisicion
-                         // }
+                          // }
+                          show={show}
                         />
                       );
                     })}

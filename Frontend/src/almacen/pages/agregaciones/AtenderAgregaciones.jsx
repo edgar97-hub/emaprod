@@ -367,6 +367,8 @@ export const AtenderAgregaciones = () => {
                       showAndSetDialogUpdateDetalleRequisicion
                     }
                     requisicion={element}
+                    show={user.idAre === 1}
+
                   />
                 );
               })}

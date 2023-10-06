@@ -55,7 +55,6 @@ import BlockIcon from "@mui/icons-material/Block";
 
 const domain = config.API_URL;
 
-
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
@@ -361,7 +360,7 @@ const PDFExample = ({ data, show }) => {
                       marginRight: 20,
                     }}
                   >
-                    ORDEN DE PRODUCCIÓN
+                    ORDEN DE PROCESO
                   </Text>
                   <View
                     style={{
@@ -1042,28 +1041,13 @@ const Agregations = ({ data }) => {
   );
 };
 const generatePDF = (data, show) => {
-  const windowName = data.result.produccion.numop; // Nombre de la ventana basado en los datos
-  //const newWindow = window.open('', windowName, 'fullscreen=yes');
-  //console.log(newWindow)
-
+  const windowName = data.result.produccion.numop;
   const newWindow = window.open("", windowName, "fullscreen=yes");
-  //const newWindow = window.open(
-  //  '',
-  //  '_blank',
-  //  'noopener,noreferrer'
-  //);
   ReactDOM.render(
     <PDFExample data={data} show={show} />,
     newWindow.document.body
   );
 };
-
-/*
-const handleButtonClick = () => {
-  const newWindow = window.open('', '_blank', 'fullscreen=yes');
-  ReactDOM.render(<PDFExample/>, newWindow.document.body);
-};
-*/
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -1442,7 +1426,7 @@ export const ListProduccionLote = () => {
         }
       });
 
-      console.log(response.data.result.requisiciones);
+      //console.log(response.data.result.requisiciones);
 
       generatePDF(response.data, show);
     } catch (error) {

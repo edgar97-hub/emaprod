@@ -181,9 +181,8 @@ const ListEntradaStock = () => {
     //obtenerDataEntradaStock(body);
   };
 
-  //useMemo(() => {}, [inputs, formState]);
-
-  useEffect(() => {
+  /**
+   useEffect(() => {
     let resultSearch = [];
 
     if (inputs.procesar) {
@@ -250,15 +249,15 @@ const ListEntradaStock = () => {
         .catch((error) => console.log(error));
     }
   }, [inputs, formState]);
+  */
 
-  /*
   useEffect(() => {
     let resultSearch = [];
 
     if (inputs.procesar) {
       getEntradasStock(formState)
-        .then(({ result }) => {
-          var dataEntSto = result;
+        .then((response) => {
+          var dataEntSto = response.result;
           var totalDis = 0;
           var totalMer = 0;
 
@@ -345,7 +344,6 @@ const ListEntradaStock = () => {
         .catch((error) => console.log(error));
     }
   }, [inputs, formState]);
-  */
 
   function filter() {}
 
@@ -545,27 +543,55 @@ const ListEntradaStock = () => {
                       },
                     }}
                   >
-                    <TableCell align="left" width={160}>
+                    {/**
+                     <TableCell
+                      align="left"
+                      sx={{
+                        minWidth: 1,
+                      }}
+                    >
                       <b>#</b>
                     </TableCell>
+                    */}
                     <TableCell align="left" width={160}>
                       <b>Cod Lote</b>
                     </TableCell>
-                    <TableCell align="left" width={160}>
+                    <TableCell
+                      align="left"
+                      width={360}
+                      sx={{
+                        //border: "1px solid black",
+                        minWidth: 300,
+                      }}
+                    >
                       <b>Producto</b>
                       <FilterAllProductos
                         onNewInput={onChangeProducto}
                         inputs={inputs}
                       />
                     </TableCell>
-                    <TableCell align="left" width={160}>
+                    <TableCell
+                      align="left"
+                      width={160}
+                      sx={{
+                        //border: "1px solid black",
+                        minWidth: 200,
+                      }}
+                    >
                       <b>Proveedor</b>
                       <FilterProveedor
                         onNewInput={onChangeProveedor}
                         inputs={inputs}
                       />
                     </TableCell>
-                    <TableCell align="left" width={140}>
+                    <TableCell
+                      align="left"
+                      width={140}
+                      sx={{
+                        //border: "1px solid black",
+                        minWidth: 200,
+                      }}
+                    >
                       <b>Almacen</b>
                       <FilterAlmacen
                         onNewInput={onChangeAlmacen}
@@ -588,8 +614,60 @@ const ListEntradaStock = () => {
                         }}
                       />
                     </TableCell>
-                    <TableCell align="left" width={80}>
+                    <TableCell
+                      align="left"
+                      sx={{
+                        //border: "1px solid black",
+                        minWidth: 160,
+                      }}
+                    >
                       <b>Doc.</b>
+                      <TextField
+                        name="documento"
+                        onChange={handleFormFilter}
+                        size="small"
+                        value={inputs.documento}
+                        autoComplete="off"
+                        InputProps={{
+                          style: {
+                            color: "black",
+                            background: "white",
+                          },
+                        }}
+                      />
+                    </TableCell>
+
+                    <TableCell
+                      align="left"
+                      sx={{
+                        //border: "1px solid black",
+                        minWidth: 160,
+                      }}
+                    >
+                      <b>Orden Compra</b>
+                      <TextField
+                        name="documento"
+                        onChange={handleFormFilter}
+                        size="small"
+                        value={inputs.documento}
+                        autoComplete="off"
+                        InputProps={{
+                          style: {
+                            color: "black",
+                            background: "white",
+                          },
+                        }}
+                      />
+                    </TableCell>
+
+                    <TableCell
+                      align="left"
+                      sx={{
+                        //border: "1px solid black",
+                        minWidth: 160,
+                      }}
+                    >
+                      <b>Guia Remisión</b>
                       <TextField
                         name="documento"
                         onChange={handleFormFilter}
@@ -700,9 +778,11 @@ const ListEntradaStock = () => {
                           "&:last-child td, &:last-child th": { border: 0 },
                         }}
                       >
-                        <TableCell component="th" scope="row">
+                        {/**
+                         <TableCell component="th" scope="row">
                           {row.rowEnt}
                         </TableCell>
+                         */}
                         <TableCell component="th" scope="row">
                           {row.codLot}
                         </TableCell>
@@ -713,6 +793,9 @@ const ListEntradaStock = () => {
                         <TableCell align="left">{row.nomAlm}</TableCell>
                         <TableCell align="left">{row.codEntSto}</TableCell>
                         <TableCell align="left">{row.docEntSto}</TableCell>
+                        <TableCell align="left">{row.ordCom}</TableCell>
+                        <TableCell align="left">{row.guiRem}</TableCell>
+
                         <TableCell align="center">
                           {row.esSel === 1 ? (
                             <svg

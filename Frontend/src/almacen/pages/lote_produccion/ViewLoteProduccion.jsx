@@ -196,6 +196,7 @@ export const ViewLoteProduccion = () => {
 
     // console.log(result[0].prodLotReq);
 
+    //result[0].prodLotReq = result[0].prodLotReq.reverse();
     result[0].prodLotReq.map((obj) => {
       obj.reqDet.map((obj) => {
         obj.numop = result[0].numop;
@@ -416,6 +417,7 @@ export const ViewLoteProduccion = () => {
                       showAndSetDialogUpdateDetalleRequisicion
                     }
                     requisicion={element}
+                    show={user.idAre === 1}
                   />
                 );
               })}

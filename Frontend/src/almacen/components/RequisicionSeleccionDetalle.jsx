@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 import "../styles/style-modal.css";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import Tooltip from "@mui/material/Tooltip";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 
 export const RequisicionSeleccionDetalle = ({
   detalle,
@@ -114,33 +116,37 @@ export const RequisicionSeleccionDetalle = ({
                             {detalle.desReqSelDetEst}
                           </span>
                         </TableCell>
-                        <TableCell align="left">
+                        <TableCell
+                          align="center"
+                          sx={{ minWidth: "150px", border: "1px solid black" }}
+                        >
                           <div
                             className="btn-toolbar"
                             style={{ display: "flex", flexDirection: "row" }}
                           >
                             <button
                               onClick={() => {
-                                onCreateSalidas(detalle);
+                                if (detalle.idReqSelDetEst === 1) {
+                                  onCreateSalidas(detalle);
+                                } else {
+                                }
                               }}
-                              disabled={detalle.idReqSelDetEst !== 1}
-                              className={
-                                detalle.idReqSelDetEst !== 1
-                                  ? "btn btn-secondary me-2"
-                                  : "btn btn-success me-2"
-                              }
+                              //disabled={detalle.idReqSelDetEst !== 1}
+                              className={"btn btn-secondary me-2"}
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-check2"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
-                              </svg>
+                              {
+                                <Tooltip
+                                  title={
+                                    detalle.idReqSelDetEst == 1
+                                      ? "Atender solicitud"
+                                      : "La solicitud ya fue atendida"
+                                  }
+                                >
+                                  <CheckCircleIcon />
+                                </Tooltip>
+                              }
                             </button>
+
                             <Link
                               style={{
                                 pointerEvents:
@@ -157,16 +163,16 @@ export const RequisicionSeleccionDetalle = ({
                                   : "btn btn-primary me-2"
                               }
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-caret-up-fill"
-                                viewBox="0 0 16 16"
+                              <Tooltip
+                                title={
+                                  detalle.idReqSelDetEst === 4 ||
+                                  detalle.idReqSelDetEst === 1
+                                    ? "La entrada ya ha sido seleccionada"
+                                    : "Registro de entrada de selección"
+                                }
                               >
-                                <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
-                              </svg>
+                                <AppRegistrationIcon />
+                              </Tooltip>
                             </Link>
 
                             <button

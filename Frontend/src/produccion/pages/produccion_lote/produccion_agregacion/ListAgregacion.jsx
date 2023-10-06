@@ -10,19 +10,11 @@ import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
 // IMPORTACIONES PARA EL FEEDBACK
 import MuiAlert from "@mui/material/Alert";
-import { getProduccionLote } from "./../../../helpers/produccion_lote/getProduccionLote";
-import { FilterEstadoProduccion } from "./../../../../components/ReferencialesFilters/Produccion/FilterEstadoProduccion";
-import { FilterTipoProduccion } from "./../../../../components/ReferencialesFilters/TipoProduccion/FilterTipoProduccion";
-import { FilterEstadoInicioProgramadoProduccion } from "./../../../../components/ReferencialesFilters/Produccion/FilterEstadoInicioProgramadoProduccion";
 import { useForm } from "./../../../../hooks/useForm";
-import FechaPickerMonth from "./../../../../components/Fechas/FechaPickerMonth";
 import { TextField } from "@mui/material";
-import FechaPickerDay from "./../../../../components/Fechas/FechaPickerDay";
 import { AccionesProduccionLote } from "./../../../components/AccionesProduccionLote";
 import { updateFechasProduccion } from "./../../../helpers/produccion_lote/updateFechasProduccion";
-import { Link } from "react-router-dom";
 import axios from "axios";
-//import PDFExample from "../../pdf/PDFExample";
 import {
   PDFViewer,
   Page,
@@ -33,18 +25,7 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import ReactDOM from "react-dom";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import logo from "../emaran.png";
-import PostAddIcon from "@mui/icons-material/PostAdd";
-import SvgIcon from "@mui/material/SvgIcon";
-import iconAddFile from "../../../../../src/assets/add-file-icon.svg";
-import iconReturns from "../../../../../src/assets/easy_returns.svg";
-import ButtonPdf from "../ButtonPdf";
 import config from "../../../../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
@@ -295,21 +276,6 @@ const PDFExample = ({ data }) => {
                 >
                   Fecha de Fin Programado: {fechaFin}
                 </Text>
-                {/**
-                   <Text
-                  style={{
-                    ...styles.content,
-                    fontWeight: "bold",
-                    fontSize: 9,
-                    maxWidth: "50%",
-                    marginBottom: 2,
-                    marginLeft: 20,
-                  }}
-                >
-                  Fecha de Vencimiento Lt:{" "}
-                  {data.result.produccion.fecVenLotProd}
-                </Text>
-                   */}
                 <Text
                   style={{
                     ...styles.content,
@@ -460,7 +426,9 @@ const PDFExample = ({ data }) => {
             <View style={{ ...styles.section, marginTop: -25 }}>
               <View style={styles.gridContainer}>
                 <View style={[styles.gridHeader, styles.green_]}>
-                  <Text style={{ ...styles.gridTitle, flex: 0.4 }}>Cod Aso</Text>
+                  <Text style={{ ...styles.gridTitle, flex: 0.4 }}>
+                    Cod Aso
+                  </Text>
                   <Text style={{ ...styles.gridTitle, flex: 0.4 }}>Codigo</Text>
                   <Text style={{ ...styles.gridTitle, flex: 2 }}>Nombre</Text>
                   <Text
@@ -604,7 +572,7 @@ const ProdsFinal = ({ rows }) => {
 };
 
 const generatePDF = (data, show) => {
-  const windowName = data.result.produccion.numop; // Nombre de la ventana basado en los datos
+  const windowName = data.result.produccion.numop;
 
   const newWindow = window.open("", windowName, "fullscreen=yes");
   ReactDOM.render(
@@ -845,22 +813,6 @@ export const ListAgregacion = () => {
       setdataProduccionLote(agregaciones.detAgr);
       setdataProduccionLoteTemp(agregaciones.detAgr);
     }
-
-    //const resultPeticion = await getProduccionLote(body);
-    //const { message_error, description_error, result } = resultPeticion;
-    //console.log(result)
-
-    //if (message_error.length === 0) {
-    //console.log(result); // Imprimir los datos en la consola
-    //setdataProduccionLote(agregaciones.detAgr);
-    //setdataProduccionLoteTemp(result);
-    //} else {
-    //setfeedbackMessages({
-    //  style_message: "error",
-    //  feedback_description_error: description_error,
-    //});
-    //handleClickFeeback();
-    //}
   };
 
   // ******* REQUISICION MOLIENDA DETALLE ********
@@ -900,7 +852,6 @@ export const ListAgregacion = () => {
       }
 
       const response = await axios.get(url);
-
       response.data.result.agregaciones.prodsFinal = [];
 
       response.data.result.agregaciones.detAgr =
@@ -926,7 +877,6 @@ export const ListAgregacion = () => {
           ids.includes(obj.id)
         );
 
-      //console.log(response.data);
       generatePDF(response.data, show);
     } catch (error) {
       console.error("Error al obtener los datos:", error);

@@ -158,6 +158,20 @@ export default function FormCalidad({
                 </FormControl>
               </div>
             </div>
+
+            <div className="mb-3 row">
+              <label htmlFor="nombre" className="form-label">
+                Observacion
+              </label>
+              <div className="col-md-9">
+                <textarea
+                  value={formState.obsEnt}
+                  name="obsEnt"
+                  onChange={onInputChange}
+                  className="form-control"
+                ></textarea>
+              </div>
+            </div>
           </div>
         </DialogContent>
         <DialogActions>

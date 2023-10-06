@@ -93,6 +93,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $resbEval = $data["resbEval"];
             $fecProduccion = $data["fecProduccion"];
             $humedad = $data["humedad"];
+            $obsEnt = $data["obsEnt"];
+            $ordCom = $data["ordCom"];
+            $guiRem = $data["guiRem"];
 
             $sql =
                 "INSERT INTO
@@ -118,8 +121,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             lotProv,
             resbEval,
             fecProduccion,
-            humedad)
-            VALUES (?,?,?,?,?,?,?,?,?,$canTotCom,$canTotEnt, $canTotDis, $canVar,?,?,?,?,?,?,?,?,?)";
+            humedad,
+            obsEnt,
+            ordCom,
+            guiRem)
+            VALUES (?,?,?,?,?,?,?,?,?,$canTotCom,$canTotEnt, $canTotDis, $canVar,?,?,?,?,?,?,?,?,?,?,?,?)";
 
             try {
                 //Preparamos la consulta
@@ -143,6 +149,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bindParam(16, $resbEval, PDO::PARAM_STR);
                 $stmt->bindParam(17, $fecProduccion, PDO::PARAM_STR);
                 $stmt->bindParam(18, $humedad, PDO::PARAM_STR);
+                $stmt->bindParam(19, $obsEnt, PDO::PARAM_STR);
+                $stmt->bindParam(20, $ordCom, PDO::PARAM_STR);
+                $stmt->bindParam(21, $guiRem, PDO::PARAM_STR);
 
                 $stmt->execute(); // ejecutamos
 

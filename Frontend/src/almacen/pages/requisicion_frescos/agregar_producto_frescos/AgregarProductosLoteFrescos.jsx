@@ -45,6 +45,7 @@ export const AgregarProductosLoteFrescos = () => {
   const location = useLocation();
   const { idReq = "" } = queryString.parse(location.search);
   const [finalizarOrden, setFinalizarOrden] = useState(false);
+  const [canIngTotal, setCanIngTotal] = useState(0);
 
   // ESTADOS DE LOS PRODUCTOS FINALES DE LA PRODUCCION
   const [proFinProd, setProFinProd] = useState({
@@ -167,6 +168,13 @@ export const AgregarProductosLoteFrescos = () => {
         return element;
       }
     });
+    var total = 0;
+
+    editFormDetalle.map((item) => {
+      total += parseFloat(parseFloat(item.canProdFin).toFixed(3));
+    });
+    setCanIngTotal(total);
+
     setdetalleProductosFinales(editFormDetalle);
   };
 
@@ -192,9 +200,7 @@ export const AgregarProductosLoteFrescos = () => {
     //const resultPeticion = await getProduccionWhitProductosFinales(idLotProdc);
 
     var idProdc = -1;
-
     const resultPeticion = await viewMoliendaRequisicionId(idProdc, idReq);
-
     const { message_error, description_error, result } = resultPeticion;
 
     result[0].numop = result[0].prodLotReq[0].codReq;
@@ -251,7 +257,7 @@ export const AgregarProductosLoteFrescos = () => {
         simMed,
       } = result[0];
       // generamos nuestro detalle
-      const detalle = {
+      const prodtIntermdio = {
         idReq,
         idProdFinal: productoFinal.idProdfinal,
         idProdc: idProdc, // lote de produccion asociado
@@ -266,10 +272,30 @@ export const AgregarProductosLoteFrescos = () => {
         canProdFin: cantidadIngresada,
         fecEntSto: fecEntSto,
         esFre: 1,
-
       };
 
-      const dataDetalle = [...detalleProductosFinales, detalle];
+      const aguaPotable = {
+        idReq,
+        idProdFinal: -1,
+        idProdc: idProdc,
+        idProdt: -1,
+        codProd: codProd,
+        codProd2: codProd2,
+        desCla: "Liquidos",
+        desSubCla: "Liquidos",
+        nomProd: "AGUA POTABLE",
+        simMed: "LTS",
+        fecVenEntProdFin: fecVenSto,
+        canProdFin: cantidadIngresada,
+        fecEntSto: fecEntSto,
+        esFre: 1,
+      };
+
+      const dataDetalle = [
+        ...detalleProductosFinales,
+        prodtIntermdio,
+        aguaPotable,
+      ];
 
       var year = 1;
       dataDetalle.map((item) => {
@@ -310,12 +336,16 @@ export const AgregarProductosLoteFrescos = () => {
     var productoFin = {};
     detalleProductosFinales.map((obj) => {
       obj.canTotIngProdFin = parseFloat(canIng) + parseFloat(obj.canProdFin);
-      if (parseFloat(obj?.canTotIngProdFin) > parseFloat(canLotProd)) {
-        productoFin = obj;
-        productoFin.check = true;
-      }
+      //if (parseFloat(obj?.canTotIngProdFin) > parseFloat(canLotProd)) {
+      //  productoFin = obj;
+      //  productoFin.check = true;
+      // }
+      // total += parseFloat(obj.canProdFin);
     });
 
+    var productosFinales = [...detalleProductosFinales];
+    productosFinales[0].canProdFin = canIngTotal;
+    productosFinales = [productosFinales[0]];
     //console.log(detalleProductosFinales, idProdTip, dataEntrada, productoFin);
 
     if (false && productoFin.check) {
@@ -331,12 +361,10 @@ export const AgregarProductosLoteFrescos = () => {
     }
 
     const resultPeticion = await createProductoIntermedioLoteFrescos(
-      detalleProductosFinales,
+      productosFinales,
       idProdTip,
       dataEntrada
     );
-    //console.log(resultPeticion);
-    //return;
     const { message_error, description_error } = resultPeticion;
     if (message_error.length === 0) {
       // regresamos a la anterior vista
@@ -479,13 +507,14 @@ export const AgregarProductosLoteFrescos = () => {
                     <input
                       type="number"
                       disabled={true}
-                      value={
-                        canIng -
-                        klgLotProd +
-                        (detalleProductosFinales[0]?.canProdFin
-                          ? parseFloat(detalleProductosFinales[0]?.canProdFin)
-                          : 0)
-                      }
+                      // value={
+                      //   canIng -
+                      //   klgLotProd +
+                      //  (detalleProductosFinales[0]?.canProdFin
+                      //    ? parseFloat(detalleProductosFinales[0]?.canProdFin)
+                      //    : 0)
+                      //}
+                      value={canIng - klgLotProd + canIngTotal}
                       className="form-control"
                     />
                   </div>
@@ -499,13 +528,7 @@ export const AgregarProductosLoteFrescos = () => {
                         type="number"
                         disabled={true}
                         //value={canIng - canLotProd }
-                        value={
-                          canIng -
-                          klgLotProd +
-                          (detalleProductosFinales[0]?.canProdFin
-                            ? parseFloat(detalleProductosFinales[0]?.canProdFin)
-                            : 0)
-                        }
+                        value={canIng - klgLotProd + canIngTotal}
                         className="form-control"
                       />
                     </div>
@@ -568,14 +591,14 @@ export const AgregarProductosLoteFrescos = () => {
                             <b>Cantidad</b>
                           </TableCell>
                           <TableCell align="left" width={100}>
-                            <b>Acciones</b>
+                            <b>Acumulado</b>
                           </TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         {detalleProductosFinales.map((row, i) => (
                           <RowProductosDisponiblesProduccion
-                            key={row.idProdt}
+                            key={i}
                             detalle={row}
                             onDeleteDetalle={handleDeleteProductoDevuelto}
                             onChangeDetalle={handleChangeInputProductoFinal}

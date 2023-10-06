@@ -34,6 +34,7 @@ import FechaPicker from "../../../../../src/components/Fechas/FechaPicker";
 import FechaPickerYear from "../../../../components/Fechas/FechaPickerYear";
 import { viewMoliendaRequisicionId } from "./../../../helpers/requisicion-molienda/viewMoliendaRequisicionId";
 import Checkbox from "@mui/material/Checkbox";
+import { useAuth } from "../../../../hooks/useAuth";
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -45,6 +46,9 @@ export const AgregarProductosLoteMolienda = () => {
   const location = useLocation();
   const { idReq = "" } = queryString.parse(location.search);
   const [finalizarOrden, setFinalizarOrden] = useState(false);
+
+  const { user } = useAuth();
+
 
   // ESTADOS DE LOS PRODUCTOS FINALES DE LA PRODUCCION
   const [proFinProd, setProFinProd] = useState({

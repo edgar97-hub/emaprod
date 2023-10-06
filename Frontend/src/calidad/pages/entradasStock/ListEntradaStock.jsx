@@ -201,7 +201,7 @@ const ListEntradaStock = () => {
     if (inputs.procesar) {
       getEntradasStock(formState)
         .then(({ result }) => {
-          // console.log(result);
+          console.log(result);
           // return;
           var dataEntSto = result;
           var totalDis = 0;
@@ -628,7 +628,9 @@ const ListEntradaStock = () => {
                     <TableCell align="left" width={160}>
                       <b>Responsable Evaluacion</b>
                     </TableCell>
-
+                    <TableCell align="left" width={160}>
+                      <b>Observación</b>
+                    </TableCell>
                     <TableCell align="center" width={50}>
                       <b>Acciones</b>
                     </TableCell>
@@ -680,6 +682,7 @@ const ListEntradaStock = () => {
                       <TableCell align="left">{row.fecProduccion}</TableCell>
                       <TableCell align="left">{row.humedad}</TableCell>
                       <TableCell align="left">{row.resbEval}</TableCell>
+                      <TableCell align="left">{row.obsEnt}</TableCell>
 
                       <TableCell
                         align="left"

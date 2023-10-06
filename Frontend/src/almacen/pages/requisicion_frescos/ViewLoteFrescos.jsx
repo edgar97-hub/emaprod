@@ -208,6 +208,15 @@ export const ViewLoteFrescos = () => {
       result[0].canLotProd = result[0].prodLotReq[0].cantProg;
       result[0].nomProd = result[0].prodLotReq[0].nomProd;
 
+      result[0].prodLotReq[0].reqDet.sort(function (a, b) {
+        if (a.nomProd < b.nomProd) {
+          return -1;
+        }
+        if (a.nomProd > b.nomProd) {
+          return 1;
+        }
+        return 0;
+      });
       setproduccionRequisicionDetalle(result[0]);
     } else {
       setfeedbackMessages({
@@ -228,17 +237,19 @@ export const ViewLoteFrescos = () => {
         <h1 className="mt-4 text-center"> Orden Frescos</h1>
         <div className="row mt-4 mx-4">
           {/* Acciones */}
-          <div className="card d-flex mb-4">
-            <h6 className="card-header">Acciones</h6>
-            <div className="card-body align-self-center">
-              <Link
-                to={`/almacen/requisicion-frescos/agregar?idReq=${idReq}`}
-                className="btn btn-primary"
-              >
-                Registrar producto intermedio
-              </Link>
+          {user.idAre === 4 && (
+            <div className="card d-flex mb-4">
+              <h6 className="card-header">Acciones</h6>
+              <div className="card-body align-self-center">
+                <Link
+                  to={`/almacen/requisicion-frescos/agregar?idReq=${idReq}`}
+                  className="btn btn-primary"
+                >
+                  Registrar producto intermedio
+                </Link>
+              </div>
             </div>
-          </div>
+          )}
           {/* Datos de produccion */}
           <div className="card d-flex">
             <h6 className="card-header">Datos de Producción</h6>
@@ -393,6 +404,7 @@ export const ViewLoteFrescos = () => {
                       showAndSetDialogUpdateDetalleRequisicion
                     }
                     requisicion={element}
+                    show={user.idAre === 1}
                   />
                 );
               })}

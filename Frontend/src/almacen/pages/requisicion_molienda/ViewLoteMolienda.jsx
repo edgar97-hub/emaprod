@@ -112,8 +112,7 @@ export const ViewLoteMolienda = () => {
       requisicion_detalle
     );
 
-
-    console.log(resultPeticion)
+    console.log(resultPeticion);
     //return
     const { message_error, description_error, result } = resultPeticion;
 
@@ -193,9 +192,9 @@ export const ViewLoteMolienda = () => {
     const { message_error, description_error, result } = resultPeticion;
 
     //result[0].prodLotReq.map((obj) => {
-     // obj.reqDet.map((obj) => {
-     //   obj.numop = result[0].numop;
-     // });
+    // obj.reqDet.map((obj) => {
+    //   obj.numop = result[0].numop;
+    // });
     //});
 
     if (message_error.length === 0) {
@@ -208,7 +207,15 @@ export const ViewLoteMolienda = () => {
       result[0].numop = result[0].prodLotReq[0].codReq;
       result[0].canLotProd = result[0].prodLotReq[0].cantProg;
       result[0].nomProd = result[0].prodLotReq[0].nomProd;
-
+      result[0].prodLotReq[0].reqDet.sort(function (a, b) {
+        if (a.nomProd < b.nomProd) {
+          return -1;
+        }
+        if (a.nomProd > b.nomProd) {
+          return 1;
+        }
+        return 0;
+      });
       setproduccionRequisicionDetalle(result[0]);
     } else {
       setfeedbackMessages({
@@ -229,17 +236,19 @@ export const ViewLoteMolienda = () => {
         <h1 className="mt-4 text-center"> Orden Molienda</h1>
         <div className="row mt-4 mx-4">
           {/* Acciones */}
-          <div className="card d-flex mb-4">
-            <h6 className="card-header">Acciones</h6>
-            <div className="card-body align-self-center">
-              <Link
-                to={`/almacen/requisicion-molienda/agregar?idReq=${idReq}`}
-                className="btn btn-primary"
-              >
-                Registrar producto intermedio
-              </Link>
+          {user.idAre === 4 && (
+            <div className="card d-flex mb-4">
+              <h6 className="card-header">Acciones</h6>
+              <div className="card-body align-self-center">
+                <Link
+                  to={`/almacen/requisicion-molienda/agregar?idReq=${idReq}`}
+                  className="btn btn-primary"
+                >
+                  Registrar producto intermedio
+                </Link>
+              </div>
             </div>
-          </div>
+          )}
           {/* Datos de produccion */}
           <div className="card d-flex">
             <h6 className="card-header">Datos de Producción</h6>
@@ -394,6 +403,7 @@ export const ViewLoteMolienda = () => {
                       showAndSetDialogUpdateDetalleRequisicion
                     }
                     requisicion={element}
+                    show={user.idAre === 1}
                   />
                 );
               })}

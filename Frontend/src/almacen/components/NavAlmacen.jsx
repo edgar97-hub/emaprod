@@ -125,7 +125,6 @@ const NavAlmacen = () => {
                 </ul>
               </li>
               {/* REQUISICION MOLIENDA */}
-
               <li className="nav-item dropdown">
                 <button
                   className="btn btn-lg dropdown-toggle"
@@ -146,8 +145,8 @@ const NavAlmacen = () => {
                   </li>
                 </ul>
               </li>
+              
               {/* REQUISICION FRESCOS */}
-
               <li className="nav-item dropdown">
                 <button
                   className="btn btn-lg dropdown-toggle"

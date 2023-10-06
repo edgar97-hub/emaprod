@@ -298,6 +298,7 @@ export const CrearProduccionLote = () => {
       productoLoteProduccion.idProdFin
     );
 
+    //console.log(resultPeticion);
     const { result } = resultPeticion;
 
     const { reqDet } = result[0];
@@ -810,7 +811,7 @@ export const CrearProduccionLote = () => {
   return (
     <>
       <div className="container-fluid mx-3">
-        <h1 className="mt-4 text-center">Crear Orden de Producción</h1>
+        <h1 className="mt-4 text-center">Crear Orden de Proceso</h1>
 
         <div className="row mt-4 mx-4">
           <div className="card d-flex">
@@ -959,7 +960,7 @@ export const CrearProduccionLote = () => {
               </div>
             </div>
           </div>
-          {/* DATOS DE PRODUCTOS FINALES O LOTES DE SUBPRODUCTOS*/}
+
           <div className="card d-flex mt-4">
             <h6 className="card-header">
               Detalle Presentaciones Finales{" "}

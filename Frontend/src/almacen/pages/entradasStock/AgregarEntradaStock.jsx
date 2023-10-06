@@ -48,6 +48,9 @@ const AgregarEntradaStock = () => {
     resbEval: "",
     fecProduccion: "",
     humedad: "",
+    obsEnt: "",
+    ordCom: "",
+    guiRem: "",
   });
   const {
     idProd,
@@ -69,6 +72,9 @@ const AgregarEntradaStock = () => {
     resbEval,
     fecProduccion,
     humedad,
+    obsEnt,
+    ordCom,
+    guiRem,
   } = formState;
 
   const onInputChange = ({ target }) => {
@@ -230,8 +236,8 @@ const AgregarEntradaStock = () => {
           "Falta llenar informacion del documento de entrada\n";
       }
       if (fecVenEntSto.length === 0) {
-        advertenciaFormularioIncompleto +=
-          "Falta llenar informacion de la fecha de vencimiento\n";
+        //advertenciaFormularioIncompleto +=
+        //  "Falta llenar informacion de la fecha de vencimiento\n";
       }
       if (canTotCom <= 0) {
         advertenciaFormularioIncompleto +=
@@ -376,16 +382,6 @@ const AgregarEntradaStock = () => {
                 </div>
               </div>
 
-              {/* FECHA DE VENCIMIENTO DE LA formState */}
-              <div className="mb-3 row">
-                <label className="col-sm-2 col-form-label">
-                  Fecha de vencimiento
-                </label>
-                <div className="col-md-4">
-                  <FechaPickerYear onNewfecEntSto={onAddFecVenEntSto} />
-                </div>
-              </div>
-
               {/* INPUT DOCUMENTO formState */}
               <div className="mb-3 row">
                 <label
@@ -400,6 +396,41 @@ const AgregarEntradaStock = () => {
                     value={docEntSto}
                     type="text"
                     name="docEntSto"
+                    className="form-control"
+                  />
+                </div>
+              </div>
+              <div className="mb-3 row">
+                <label
+                  htlmfor={"documento-formState"}
+                  className="col-sm-2 col-form-label"
+                >
+                  Orden de compra
+                </label>
+                <div className="col-md-3">
+                  <input
+                    onChange={onInputChange}
+                    value={ordCom}
+                    type="text"
+                    name="ordCom"
+                    className="form-control"
+                  />
+                </div>
+              </div>
+
+              <div className="mb-3 row">
+                <label
+                  htlmfor={"documento-formState"}
+                  className="col-sm-2 col-form-label"
+                >
+                  Guia de remisión
+                </label>
+                <div className="col-md-3">
+                  <input
+                    onChange={onInputChange}
+                    value={guiRem}
+                    type="text"
+                    name="guiRem"
                     className="form-control"
                   />
                 </div>
@@ -542,6 +573,15 @@ const AgregarEntradaStock = () => {
               </div>
 
               <div className="mb-3 row">
+                <label className="col-sm-2 col-form-label">
+                  Fecha de vencimiento
+                </label>
+                <div className="col-md-2">
+                  <FechaPickerYear onNewfecEntSto={onAddFecVenEntSto} />
+                </div>
+              </div>
+
+              <div className="mb-3 row">
                 <label className="col-md-2 col-form-label">% Humedad</label>
                 <div className="col-md-2">
                   <input
@@ -573,6 +613,20 @@ const AgregarEntradaStock = () => {
                       ))}
                     </Select>
                   </FormControl>
+                </div>
+
+                <div className="mb-3 row">
+                  <label htmlFor="nombre" className="form-label">
+                    Observacion
+                  </label>
+                  <div className="col-md-4">
+                    <textarea
+                      value={obsEnt}
+                      name="obsEnt"
+                      onChange={onInputChange}
+                      className="form-control"
+                    ></textarea>
+                  </div>
                 </div>
               </div>
             </div>
