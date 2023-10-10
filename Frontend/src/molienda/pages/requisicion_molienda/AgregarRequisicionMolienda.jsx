@@ -331,8 +331,6 @@ export const AgregarRequisicionMolienda = () => {
   };
 
   const onAddProductoIntermedio = ({ id }) => {
-    console.log(id);
-
     var requisicion = {
       ...requisicion,
       idProdc: -1,
@@ -343,6 +341,7 @@ export const AgregarRequisicionMolienda = () => {
       canLotProd: canLotProd,
       klgLotProd: "",
     };
+    console.log(body);
 
     //console.log(body);
     getProductosFormulaDetalle(body, requisicion);

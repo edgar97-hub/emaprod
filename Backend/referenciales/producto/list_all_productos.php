@@ -21,13 +21,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         M.esProFin,
         M.esProProd,
         M.esEnvEnc,
-        M.idCla,
-        M.idSubCla,
-        sc.codSubCla
+        M.idCla
         FROM producto M
         JOIN medida ME ON M.idMed = ME.id
-        JOIN clase c ON c.id = M.idCla
-        JOIN sub_clase sc ON M.idSubCla = sc.id";
+        JOIN clase c ON c.id = M.idCla";
 
         try {
             // Preparamos la consulta
@@ -61,5 +58,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $return['result'] = $result;
     echo json_encode($return);
 }
-
- 
